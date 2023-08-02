@@ -1,6 +1,5 @@
 package ro.felixcirebea.medicalsys.dto;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Data;
