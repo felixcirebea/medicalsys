@@ -91,7 +91,7 @@ public class InvestigationService {
     public Long deleteInvestigationByName(String investigationName) {
         InvestigationEntity investigationEntity = investigationRepository
                 .findByName(investigationName).orElseThrow(() -> new RuntimeException("Data not found"));
-        infoContributor.incrementFailedDeleteOperations(); //don't know if it goes through here
+        infoContributor.incrementFailedDeleteOperations(); //don't reach this far - refactor
 
         investigationRepository.deleteById(investigationEntity.getId());
         return investigationEntity.getId();

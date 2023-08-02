@@ -15,4 +15,6 @@ public class SpecialtyEntity {
     private String name;
     @OneToMany(mappedBy = "specialty", cascade = CascadeType.ALL)
     private List<InvestigationEntity> investigations;
+    @OneToMany(mappedBy = "specialty", cascade = CascadeType.ALL)
+    private List<DoctorEntity> doctors;
 }
