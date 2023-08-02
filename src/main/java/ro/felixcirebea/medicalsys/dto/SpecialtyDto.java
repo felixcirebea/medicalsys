@@ -1,4 +1,4 @@
-package ro.felixcirebea.medicalsys.Dto;
+package ro.felixcirebea.medicalsys.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;

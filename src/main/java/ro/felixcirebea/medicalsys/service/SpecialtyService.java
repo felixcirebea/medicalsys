@@ -1,8 +1,8 @@
 package ro.felixcirebea.medicalsys.service;
 
 import org.springframework.stereotype.Service;
-import ro.felixcirebea.medicalsys.Dto.SpecialtyDto;
 import ro.felixcirebea.medicalsys.converter.SpecialtyConverter;
+import ro.felixcirebea.medicalsys.dto.SpecialtyDto;
 import ro.felixcirebea.medicalsys.entity.SpecialtyEntity;
 import ro.felixcirebea.medicalsys.repository.SpecialtyRepository;
 import ro.felixcirebea.medicalsys.util.Contributor;

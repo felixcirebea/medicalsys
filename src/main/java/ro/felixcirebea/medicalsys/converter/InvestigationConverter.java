@@ -1,7 +1,7 @@
 package ro.felixcirebea.medicalsys.converter;
 
 import org.springframework.stereotype.Component;
-import ro.felixcirebea.medicalsys.Dto.InvestigationDto;
+import ro.felixcirebea.medicalsys.dto.InvestigationDto;
 import ro.felixcirebea.medicalsys.entity.InvestigationEntity;
 import ro.felixcirebea.medicalsys.entity.SpecialtyEntity;
 
@@ -24,4 +24,12 @@ public class InvestigationConverter {
         return investigationEntity;
     }
 
+    public InvestigationDto fromEntityToDto(InvestigationEntity investigationEntity) {
+        return InvestigationDto.builder()
+                .id(investigationEntity.getId())
+                .name(investigationEntity.getName())
+                .specialty(investigationEntity.getSpecialty().getName())
+                .basePrice(investigationEntity.getBasePrice())
+                .build();
+    }
 }

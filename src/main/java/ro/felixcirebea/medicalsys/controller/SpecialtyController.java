@@ -3,7 +3,7 @@ package ro.felixcirebea.medicalsys.controller;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ro.felixcirebea.medicalsys.Dto.SpecialtyDto;
+import ro.felixcirebea.medicalsys.dto.SpecialtyDto;
 import ro.felixcirebea.medicalsys.service.SpecialtyService;
 import ro.felixcirebea.medicalsys.util.Validator;
 

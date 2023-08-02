@@ -13,6 +13,6 @@ public class SpecialtyEntity {
     private Long id;
     @Column(unique = true)
     private String name;
-    @OneToMany(mappedBy = "specialty")
+    @OneToMany(mappedBy = "specialty", cascade = CascadeType.ALL)
     private List<InvestigationEntity> investigations;
 }
