@@ -1,0 +1,31 @@
+Allergology consult,Allergology,250
+Allergology control,Allergology,150
+Allergology analyses interpretation,Allergology,250
+Prick/allergen allergy test,Allergology,50
+Propofol anesthesia,Anesthesia and intensive care,350
+Pre-anesthetic consult,Anesthesia and intensive care,225
+Lumbar puncture,Anesthesia and intensive care,1000
+Tracheostomy,Anesthesia and intensive care,4500
+Infectious diseases consult,Infectious diseases,250
+Emergency infectious diseases consult,Infectious diseases,300
+Infectious diseases control,Infectious diseases,150
+Infectious Diseases analyses interpretation,Infectious diseases,250
+Cardiology consult,Cardiology,250
+Cardiology control,Cardiology,150
+EKG,Cardiology,100
+Exercise test,Cardiology,350
+Surgery consult,Surgery,250
+Surgery control,Surgery,150
+Drainage,Surgery,1250
+Puncture,Surgery,500
+Dermatology consult,Dermatology,250
+Dermatology control,Dermatology,150
+Liquid nitrogen cryotherapy,Dermatology,700
+Dermoscopy,Dermatology,175
+Diabetes consult,Diabetes,250
+Diabetes control,Diabetes,150
+Diabetes analyses interpretation,Diabetes,100
+Nutritional therapy,Diabetes,200
+Epidemiology consult,Epidemiology,250
+Epidemiology control,Epidemiology,150
+Epidemiology analyses interpretation,Epidemiology,100

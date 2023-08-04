@@ -1,10 +1,12 @@
 package ro.felixcirebea.medicalsys.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ro.felixcirebea.medicalsys.dto.InvestigationDto;
 import ro.felixcirebea.medicalsys.converter.InvestigationConverter;
 import ro.felixcirebea.medicalsys.entity.InvestigationEntity;
 import ro.felixcirebea.medicalsys.entity.SpecialtyEntity;
+import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
 import ro.felixcirebea.medicalsys.repository.InvestigationRepository;
 import ro.felixcirebea.medicalsys.repository.SpecialtyRepository;
 import ro.felixcirebea.medicalsys.util.Contributor;
@@ -14,6 +16,7 @@ import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 @Service
+@Slf4j
 public class InvestigationService {
 
     private final InvestigationRepository investigationRepository;
@@ -21,53 +24,59 @@ public class InvestigationService {
     private final InvestigationConverter investigationConverter;
     private final Contributor infoContributor;
 
-    public InvestigationService(InvestigationRepository investigationRepository, SpecialtyRepository specialtyRepository, InvestigationConverter investigationConverter, Contributor infoContributor) {
+    public InvestigationService(InvestigationRepository investigationRepository,
+                                SpecialtyRepository specialtyRepository,
+                                InvestigationConverter investigationConverter,
+                                Contributor infoContributor) {
         this.investigationRepository = investigationRepository;
         this.specialtyRepository = specialtyRepository;
         this.investigationConverter = investigationConverter;
         this.infoContributor = infoContributor;
     }
 
-    public Long upsertInvestigation(InvestigationDto investigationDto) {
+    public Long upsertInvestigation(InvestigationDto investigationDto) throws DataNotFoundException {
         SpecialtyEntity specialtyEntity = specialtyRepository.findByName(investigationDto.getSpecialty())
-                .orElseThrow(() -> new RuntimeException("Data not found!"));
+                .orElseThrow(() -> new DataNotFoundException(String.format(
+                        "Specialty %s not found", investigationDto.getSpecialty())));
         if (investigationDto.getId() != null) {
             return updateInvestigation(investigationDto, specialtyEntity);
         }
-        return investigationRepository.save(
-                investigationConverter.fromDtoToEntity(investigationDto, specialtyEntity)
-        ).getId();
+        log.info(String.format("Investigation with name %s was saved", investigationDto.getName()));
+        return investigationRepository.save(investigationConverter.fromDtoToEntity(investigationDto, specialtyEntity))
+                .getId();
     }
 
-    private Long updateInvestigation(InvestigationDto investigationDto, SpecialtyEntity specialtyEntity) {
+    private Long updateInvestigation(InvestigationDto investigationDto, SpecialtyEntity specialtyEntity)
+            throws DataNotFoundException {
         InvestigationEntity investigationEntity = investigationRepository.findById(investigationDto.getId())
-                .orElseThrow(() -> new RuntimeException("Data not found!"));
+                .orElseThrow(() -> new DataNotFoundException("Wrong ID"));
 
         investigationEntity.setName(investigationDto.getName());
         investigationEntity.setSpecialty(specialtyEntity);
-
         if (investigationDto.getBasePrice() != null) {
             investigationEntity.setBasePrice(investigationDto.getBasePrice());
         }
 
+        log.info(String.format("Investigation with id %s was updated", investigationDto.getId()));
         return investigationRepository.save(investigationEntity).getId();
     }
 
-    public InvestigationDto getInvestigationById(String investigationId) {
+    public InvestigationDto getInvestigationById(String investigationId) throws DataNotFoundException {
         InvestigationEntity investigationEntity = investigationRepository.findById(Long.valueOf(investigationId))
-                .orElseThrow(() -> new RuntimeException("Data not found"));
+                .orElseThrow(() -> new DataNotFoundException("Wrong ID"));
         return investigationConverter.fromEntityToDto(investigationEntity);
     }
 
-    public InvestigationDto getInvestigationByName(String investigationName) {
+    public InvestigationDto getInvestigationByName(String investigationName) throws DataNotFoundException {
         InvestigationEntity investigationEntity = investigationRepository.findByName(investigationName)
-                .orElseThrow(() -> new RuntimeException("Data not found"));
+                .orElseThrow(() -> new DataNotFoundException(
+                        String.format("Investigation with name %s not found", investigationName)));
         return investigationConverter.fromEntityToDto(investigationEntity);
     }
 
-    public List<InvestigationDto> getInvestigationBySpecialty(String specialtyName) {
+    public List<InvestigationDto> getInvestigationBySpecialty(String specialtyName) throws DataNotFoundException {
         SpecialtyEntity specialtyEntity = specialtyRepository.findByName(specialtyName)
-                .orElseThrow(() -> new RuntimeException("No such specialty"));
+                .orElseThrow(() -> new DataNotFoundException(String.format("Specialty %s not found", specialtyName)));
         return specialtyEntity.getInvestigations().stream().map(investigationConverter::fromEntityToDto).toList();
     }
 
@@ -80,20 +89,26 @@ public class InvestigationService {
         Optional<InvestigationEntity> investigationEntityOptional = investigationRepository
                 .findById(Long.valueOf(investigationId));
         if (investigationEntityOptional.isEmpty()) {
+            log.warn(String.format("Can't delete investigation with id %s because it doesn't exist", investigationId));
             infoContributor.incrementFailedDeleteOperations();
             return Long.valueOf(investigationId);
         }
         investigationRepository.deleteById(Long.valueOf(investigationId));
+        log.info(String.format("Investigation with id %s deleted", investigationId));
         return Long.valueOf(investigationId);
     }
 
 
-    public Long deleteInvestigationByName(String investigationName) {
-        InvestigationEntity investigationEntity = investigationRepository
-                .findByName(investigationName).orElseThrow(() -> new RuntimeException("Data not found"));
-        infoContributor.incrementFailedDeleteOperations(); //don't reach this far - refactor
+    public Long deleteInvestigationByName(String investigationName) throws DataNotFoundException {
+        Optional<InvestigationEntity> investigationEntityOptional = investigationRepository
+                .findByName(investigationName);
 
-        investigationRepository.deleteById(investigationEntity.getId());
-        return investigationEntity.getId();
+        if (investigationEntityOptional.isEmpty()) {
+            infoContributor.incrementFailedDeleteOperations();
+            throw new DataNotFoundException(String.format("Investigation with name %s not found", investigationName));
+        }
+
+        investigationRepository.deleteById(investigationEntityOptional.get().getId());
+        return investigationEntityOptional.get().getId();
     }
 }

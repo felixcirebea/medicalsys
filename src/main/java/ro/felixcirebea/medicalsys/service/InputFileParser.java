@@ -1,11 +1,13 @@
 package ro.felixcirebea.medicalsys.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import ro.felixcirebea.medicalsys.entity.DoctorEntity;
 import ro.felixcirebea.medicalsys.entity.InvestigationEntity;
 import ro.felixcirebea.medicalsys.entity.SpecialtyEntity;
+import ro.felixcirebea.medicalsys.exception.InputFileException;
 import ro.felixcirebea.medicalsys.repository.DoctorRepository;
 import ro.felixcirebea.medicalsys.repository.InvestigationRepository;
 import ro.felixcirebea.medicalsys.repository.SpecialtyRepository;
@@ -19,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
+@Slf4j
 public class InputFileParser {
 
     private final SpecialtyRepository specialtyRepository;
@@ -26,6 +29,7 @@ public class InputFileParser {
     private final DoctorRepository doctorRepository;
 
     @Value("classpath:/input-files/specialties.csv")
+//    @Value("classpath:/input-files/specialtiesdfdsf.csv") - test purpose
     private Resource specialtyResource;
 
     @Value("classpath:/input-files/investigations.csv")
@@ -34,16 +38,24 @@ public class InputFileParser {
     @Value("classpath:/input-files/doctors.csv")
     private Resource doctorResource;
 
-    public InputFileParser(SpecialtyRepository specialtyRepository, InvestigationRepository investigationRepository, DoctorRepository doctorRepository) {
+    public InputFileParser(SpecialtyRepository specialtyRepository,
+                           InvestigationRepository investigationRepository,
+                           DoctorRepository doctorRepository) {
         this.specialtyRepository = specialtyRepository;
         this.investigationRepository = investigationRepository;
         this.doctorRepository = doctorRepository;
     }
 
     public void run() {
-        populateTable(getPath(specialtyResource), SpecialtyEntity.class);
-        populateTable(getPath(investigationResource), InvestigationEntity.class);
-        populateTable(getPath(doctorResource), DoctorEntity.class);
+        try {
+            populateTable(getPath(specialtyResource), SpecialtyEntity.class);
+            populateTable(getPath(investigationResource), InvestigationEntity.class);
+            populateTable(getPath(doctorResource), DoctorEntity.class);
+            log.info("DB successfully populated");
+        } catch (InputFileException exception) {
+            log.error(exception.getMessage());
+            System.exit(1);
+        }
     }
 
     private <T> void populateTable(String filePath, Class<T> clazz) {
@@ -54,19 +66,19 @@ public class InputFileParser {
                     case "SpecialtyEntity" -> specialtyRepository.saveAll(generateSpecialtyCollection(line));
                     case "InvestigationEntity" -> investigationRepository.save(generateInvestigationEntity(line));
                     case "DoctorEntity" -> doctorRepository.save(generateDoctorEntity(line));
-                    default -> throw new RuntimeException("No suitable class found");
+                    default -> throw new InputFileException("No suitable class found");
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new InputFileException(e.getMessage());
         }
     }
 
     private DoctorEntity generateDoctorEntity(String line) {
         String[] splitLine = line.split(",");
 
-        SpecialtyEntity specialtyEntity = specialtyRepository.findByName(splitLine[1])
-                .orElseThrow(() -> new RuntimeException("Internal error"));
+        SpecialtyEntity specialtyEntity = specialtyRepository.findByName(splitLine[1]).orElseThrow(() ->
+                new InputFileException(String.format("Internal error - %s not present in DB", splitLine[1])));
 
         DoctorEntity doctorEntity = new DoctorEntity();
         doctorEntity.setName(splitLine[0]);
@@ -79,8 +91,8 @@ public class InputFileParser {
     private InvestigationEntity generateInvestigationEntity(String line) {
         String[] splitLine = line.split(",");
 
-        SpecialtyEntity specialtyEntity = specialtyRepository.findByName(splitLine[1])
-                .orElseThrow(() -> new RuntimeException("Internal error"));
+        SpecialtyEntity specialtyEntity = specialtyRepository.findByName(splitLine[1]).orElseThrow(() ->
+                new InputFileException(String.format("Internal error - %s not present in DB", splitLine[1])));
 
         InvestigationEntity investigationEntity = new InvestigationEntity();
         investigationEntity.setName(splitLine[0]);
@@ -105,7 +117,7 @@ public class InputFileParser {
         try {
             return Paths.get(resource.getURI()).toString();
         } catch (IOException e) {
-            throw new RuntimeException("Wrong input file path");
+            throw new InputFileException(e.getMessage());
         }
     }
 }

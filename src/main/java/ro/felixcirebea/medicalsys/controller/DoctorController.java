@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ro.felixcirebea.medicalsys.dto.DoctorDto;
+import ro.felixcirebea.medicalsys.exception.DataMismatchException;
+import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
 import ro.felixcirebea.medicalsys.service.DoctorService;
 import ro.felixcirebea.medicalsys.util.Validator;
 
@@ -20,18 +22,20 @@ public class DoctorController {
     }
 
     @PostMapping("/insert")
-    public ResponseEntity<Long> upsertDoctor(@RequestBody @Valid DoctorDto dto) {
-        return ResponseEntity.ok(doctorService.upsertDoctor(dto));
+    public ResponseEntity<Long> upsertDoctor(@RequestBody @Valid DoctorDto doctorDto) throws DataNotFoundException {
+        return ResponseEntity.ok(doctorService.upsertDoctor(doctorDto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DoctorDto> getDoctorById(@PathVariable(name = "id") String doctorId) {
+    public ResponseEntity<DoctorDto> getDoctorById(@PathVariable(name = "id") String doctorId)
+            throws DataNotFoundException, DataMismatchException {
         Validator.idValidator(doctorId);
         return ResponseEntity.ok(doctorService.getDoctorById(doctorId));
     }
 
     @GetMapping("/by-name")
-    public ResponseEntity<DoctorDto> getDoctorByName(@RequestParam(name = "name") String doctorName) {
+    public ResponseEntity<DoctorDto> getDoctorByName(@RequestParam(name = "name") String doctorName)
+            throws DataNotFoundException {
         return ResponseEntity.ok(doctorService.getDoctorByName(doctorName));
     }
 
@@ -41,13 +45,14 @@ public class DoctorController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Long> deleteDoctorById(@PathVariable(name = "id") String doctorId) {
+    public ResponseEntity<Long> deleteDoctorById(@PathVariable(name = "id") String doctorId) throws DataMismatchException {
         Validator.idValidator(doctorId);
         return ResponseEntity.ok(doctorService.deleteDoctorById(doctorId));
     }
 
     @DeleteMapping("/by-name")
-    public ResponseEntity<Long> deleteDoctorByName(@RequestParam(name = "name") String doctorName) {
+    public ResponseEntity<Long> deleteDoctorByName(@RequestParam(name = "name") String doctorName)
+            throws DataNotFoundException {
         return ResponseEntity.ok(doctorService.deleteDoctorByName(doctorName));
     }
 }
