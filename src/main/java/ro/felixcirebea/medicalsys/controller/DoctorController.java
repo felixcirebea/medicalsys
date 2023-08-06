@@ -29,8 +29,7 @@ public class DoctorController {
     @GetMapping("/{id}")
     public ResponseEntity<DoctorDto> getDoctorById(@PathVariable(name = "id") String doctorId)
             throws DataNotFoundException, DataMismatchException {
-        Validator.idValidator(doctorId);
-        return ResponseEntity.ok(doctorService.getDoctorById(doctorId));
+        return ResponseEntity.ok(doctorService.getDoctorById(Validator.idValidator(doctorId)));
     }
 
     @GetMapping("/by-name")
@@ -46,8 +45,8 @@ public class DoctorController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Long> deleteDoctorById(@PathVariable(name = "id") String doctorId) throws DataMismatchException {
-        Validator.idValidator(doctorId);
-        return ResponseEntity.ok(doctorService.deleteDoctorById(doctorId));
+
+        return ResponseEntity.ok(doctorService.deleteDoctorById(Validator.idValidator(doctorId)));
     }
 
     @DeleteMapping("/by-name")

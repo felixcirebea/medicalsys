@@ -54,8 +54,8 @@ public class DoctorService {
         return doctorRepository.save(doctorEntity).getId();
     }
 
-    public DoctorDto getDoctorById(String doctorId) throws DataNotFoundException {
-        DoctorEntity doctorEntity = doctorRepository.findById(Long.valueOf(doctorId))
+    public DoctorDto getDoctorById(Long doctorId) throws DataNotFoundException {
+        DoctorEntity doctorEntity = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new DataNotFoundException("Wrong ID"));
         return doctorConverter.fromEntityToDto(doctorEntity);
     }
@@ -72,16 +72,16 @@ public class DoctorService {
                 .map(doctorConverter::fromEntityToDto).toList();
     }
 
-    public Long deleteDoctorById(String doctorId) {
-        Optional<DoctorEntity> doctorEntityOptional = doctorRepository.findById(Long.valueOf(doctorId));
+    public Long deleteDoctorById(Long doctorId) {
+        Optional<DoctorEntity> doctorEntityOptional = doctorRepository.findById(doctorId);
         if (doctorEntityOptional.isEmpty()) {
             log.warn(String.format("Can't delete doctor with id %s because it doesn't exist", doctorId));
             infoContributor.incrementFailedDeleteOperations();
-            return Long.valueOf(doctorId);
+            return doctorId;
         }
-        doctorRepository.deleteById(Long.valueOf(doctorId));
+        doctorRepository.deleteById(doctorId);
         log.info(String.format("Doctor with id %s deleted", doctorId));
-        return Long.valueOf(doctorId);
+        return doctorId;
     }
 
     public Long deleteDoctorByName(String doctorName) throws DataNotFoundException {

@@ -4,18 +4,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import ro.felixcirebea.medicalsys.entity.DoctorEntity;
-import ro.felixcirebea.medicalsys.entity.InvestigationEntity;
-import ro.felixcirebea.medicalsys.entity.SpecialtyEntity;
+import ro.felixcirebea.medicalsys.entity.*;
+import ro.felixcirebea.medicalsys.enums.LeaveType;
 import ro.felixcirebea.medicalsys.exception.InputFileException;
-import ro.felixcirebea.medicalsys.repository.DoctorRepository;
-import ro.felixcirebea.medicalsys.repository.InvestigationRepository;
-import ro.felixcirebea.medicalsys.repository.SpecialtyRepository;
+import ro.felixcirebea.medicalsys.repository.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +27,9 @@ public class InputFileParser {
     private final SpecialtyRepository specialtyRepository;
     private final InvestigationRepository investigationRepository;
     private final DoctorRepository doctorRepository;
+    private final WorkingHoursRepository workingHoursRepository;
+    private final HolidayRepository holidayRepository;
+    private final VacationRepository vacationRepository;
 
     @Value("classpath:/input-files/specialties.csv")
 //    @Value("classpath:/input-files/specialtiesdfdsf.csv") - test purpose
@@ -38,12 +41,24 @@ public class InputFileParser {
     @Value("classpath:/input-files/doctors.csv")
     private Resource doctorResource;
 
-    public InputFileParser(SpecialtyRepository specialtyRepository,
-                           InvestigationRepository investigationRepository,
-                           DoctorRepository doctorRepository) {
+    @Value("classpath:/input-files/working-hours.csv")
+    private Resource workingHoursResource;
+
+    @Value("classpath:/input-files/holidays.csv")
+    private Resource holidayResource;
+
+    @Value("classpath:/input-files/vacations.csv")
+    private Resource vacationResource;
+
+    public InputFileParser(SpecialtyRepository specialtyRepository, InvestigationRepository investigationRepository,
+                           DoctorRepository doctorRepository, WorkingHoursRepository workingHoursRepository,
+                           HolidayRepository holidayRepository, VacationRepository vacationRepository) {
         this.specialtyRepository = specialtyRepository;
         this.investigationRepository = investigationRepository;
         this.doctorRepository = doctorRepository;
+        this.workingHoursRepository = workingHoursRepository;
+        this.holidayRepository = holidayRepository;
+        this.vacationRepository = vacationRepository;
     }
 
     public void run() {
@@ -51,6 +66,9 @@ public class InputFileParser {
             populateTable(getPath(specialtyResource), SpecialtyEntity.class);
             populateTable(getPath(investigationResource), InvestigationEntity.class);
             populateTable(getPath(doctorResource), DoctorEntity.class);
+            populateTable(getPath(workingHoursResource), WorkingHoursEntity.class);
+            populateTable(getPath(holidayResource), HolidayEntity.class);
+            populateTable(getPath(vacationResource), VacationEntity.class);
             log.info("DB successfully populated");
         } catch (InputFileException exception) {
             log.error(exception.getMessage());
@@ -66,12 +84,62 @@ public class InputFileParser {
                     case "SpecialtyEntity" -> specialtyRepository.saveAll(generateSpecialtyCollection(line));
                     case "InvestigationEntity" -> investigationRepository.save(generateInvestigationEntity(line));
                     case "DoctorEntity" -> doctorRepository.save(generateDoctorEntity(line));
+                    case "WorkingHoursEntity" -> workingHoursRepository.save(generateWorkingHoursEntity(line));
+                    case "HolidayEntity" -> holidayRepository.save(generateHolidayEntity(line));
+                    case "VacationEntity" -> vacationRepository.save(generateVacationEntity(line));
                     default -> throw new InputFileException("No suitable class found");
                 }
             }
         } catch (IOException e) {
             throw new InputFileException(e.getMessage());
         }
+    }
+
+    private VacationEntity generateVacationEntity(String line) {
+        String[] splitLine = line.split(",");
+
+        DoctorEntity doctorEntity = doctorRepository.findByName(splitLine[0]).orElseThrow(() ->
+                new InputFileException(String.format("Internal error - %s not present in DB", splitLine[0])));
+
+        VacationEntity vacationEntity = new VacationEntity();
+        vacationEntity.setDoctor(doctorEntity);
+        vacationEntity.setVacationStartDate(LocalDate.parse(splitLine[1]));
+        vacationEntity.setVacationEndDate(LocalDate.parse(splitLine[2]));
+        if (vacationEntity.getVacationStartDate().isAfter(vacationEntity.getVacationEndDate())) {
+            throw new InputFileException("Internal error - start date cannot be after end date");
+        }
+        vacationEntity.setType(LeaveType.valueOf(splitLine[3]));
+
+        return vacationEntity;
+    }
+
+    private HolidayEntity generateHolidayEntity(String line) {
+        String[] splitLine = line.split(",");
+
+        HolidayEntity holidayEntity = new HolidayEntity();
+        holidayEntity.setHolidayStartDate(LocalDate.parse(splitLine[0]));
+        holidayEntity.setHolidayEndDate(LocalDate.parse(splitLine[1]));
+        if (holidayEntity.getHolidayStartDate().isAfter(holidayEntity.getHolidayEndDate())) {
+            throw new InputFileException("Internal error - start date cannot be after end date");
+        }
+        holidayEntity.setDescription(splitLine[2]);
+
+        return holidayEntity;
+    }
+
+    private WorkingHoursEntity generateWorkingHoursEntity(String line) {
+        String[] splitLine = line.split(",");
+
+        DoctorEntity doctorEntity = doctorRepository.findByName(splitLine[0]).orElseThrow(() ->
+                new InputFileException(String.format("Internal error - %s not present in DB", splitLine[0])));
+
+        WorkingHoursEntity workingHoursEntity = new WorkingHoursEntity();
+        workingHoursEntity.setDoctor(doctorEntity);
+        workingHoursEntity.setDayOfWeek(DayOfWeek.of(Integer.parseInt(splitLine[1])));
+        workingHoursEntity.setStartWorkingHour(LocalTime.parse(splitLine[2].toUpperCase()));
+        workingHoursEntity.setEndWorkingHour(LocalTime.parse(splitLine[3]));
+
+        return workingHoursEntity;
     }
 
     private DoctorEntity generateDoctorEntity(String line) {
@@ -98,6 +166,7 @@ public class InputFileParser {
         investigationEntity.setName(splitLine[0]);
         investigationEntity.setSpecialty(specialtyEntity);
         investigationEntity.setBasePrice(Double.valueOf(splitLine[2]));
+        investigationEntity.setDuration(Integer.valueOf(splitLine[3]));
 
         return investigationEntity;
     }

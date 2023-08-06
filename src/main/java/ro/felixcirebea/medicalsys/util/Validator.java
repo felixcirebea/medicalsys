@@ -4,10 +4,9 @@ import ro.felixcirebea.medicalsys.exception.DataMismatchException;
 
 public class Validator {
 
-    public static void idValidator(String inputId) throws DataMismatchException {
-        Long id;
+    public static Long idValidator(String inputId) throws DataMismatchException {
         try {
-            id = Long.valueOf(inputId);
+            return Long.valueOf(inputId);
         } catch (NumberFormatException e) {
             throw new DataMismatchException("The given id is not a number");
         }

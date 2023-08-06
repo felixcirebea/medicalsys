@@ -30,8 +30,7 @@ public class InvestigationController {
     @GetMapping("/{id}")
     public ResponseEntity<InvestigationDto> getInvestigationById(@PathVariable(name = "id") String investigationId)
             throws DataNotFoundException, DataMismatchException {
-        Validator.idValidator(investigationId);
-        return ResponseEntity.ok(investigationService.getInvestigationById(investigationId));
+        return ResponseEntity.ok(investigationService.getInvestigationById(Validator.idValidator(investigationId)));
     }
 
     @GetMapping("/get")
@@ -46,15 +45,21 @@ public class InvestigationController {
         return ResponseEntity.ok(investigationService.getInvestigationBySpecialty(specialtyName));
     }
 
+    @GetMapping("/by-duration")
+    public ResponseEntity<List<InvestigationDto>> getInvestigationByDuration(
+            @RequestParam(name = "duration") Integer duration) {
+        return ResponseEntity.ok(investigationService.getInvestigationByDuration(duration));
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<InvestigationDto>> getAllInvestigations() {
         return ResponseEntity.ok(investigationService.getAllInvestigations());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Long> deleteInvestigationById(@PathVariable(name = "id") String investigationId) throws DataMismatchException {
-        Validator.idValidator(investigationId);
-        return ResponseEntity.ok(investigationService.deleteInvestigationById(investigationId));
+    public ResponseEntity<Long> deleteInvestigationById(@PathVariable(name = "id") String investigationId)
+            throws DataMismatchException {
+        return ResponseEntity.ok(investigationService.deleteInvestigationById(Validator.idValidator(investigationId)));
     }
 
     @DeleteMapping("/by-name")

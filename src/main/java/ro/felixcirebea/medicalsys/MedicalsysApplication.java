@@ -8,7 +8,8 @@ import ro.felixcirebea.medicalsys.service.InputFileParser;
 @SpringBootApplication
 public class MedicalsysApplication {
 
-	//TODO in the next commit include input files and also postman test cases
+	//TODO mandatory check and log all the cascading delete operations because they delete multiple rows in different tables
+	//TODO mark delete specialty as risk zone operation or practice soft delete
 
 	public static void main(String[] args) {
 		ApplicationContext run = SpringApplication.run(MedicalsysApplication.class, args);

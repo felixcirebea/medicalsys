@@ -33,8 +33,7 @@ public class SpecialtyController {
     @GetMapping("/{id}")
     public ResponseEntity<String> getSpecialtyById(@PathVariable(name = "id") String specialtyId)
             throws DataNotFoundException, DataMismatchException {
-        Validator.idValidator(specialtyId);
-        return ResponseEntity.ok(specialtyService.getSpecialtyById(specialtyId));
+        return ResponseEntity.ok(specialtyService.getSpecialtyById(Validator.idValidator(specialtyId)));
     }
 
     @GetMapping("/get")
@@ -50,8 +49,7 @@ public class SpecialtyController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Long> deleteById(@PathVariable(name = "id") String specialtyId) throws DataMismatchException {
-        Validator.idValidator(specialtyId);
-        return ResponseEntity.ok(specialtyService.deleteSpecialtyById(specialtyId));
+        return ResponseEntity.ok(specialtyService.deleteSpecialtyById(Validator.idValidator(specialtyId)));
     }
 
     @DeleteMapping("/by-name")

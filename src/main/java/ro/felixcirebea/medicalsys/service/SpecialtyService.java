@@ -41,12 +41,12 @@ public class SpecialtyService {
         SpecialtyEntity specialtyEntity = specialtyRepository.findById(specialtyDto.getId())
                 .orElseThrow(() -> new DataNotFoundException("Wrong ID"));
         specialtyEntity.setName(specialtyDto.getName());
-        log.info(String.format("Specialty with id %s was updated", specialtyDto.getId()));
+        log.info("%s with id %s was updated as follows:" + specialtyDto);
         return specialtyRepository.save(specialtyEntity).getId();
     }
 
-    public String getSpecialtyById(String specialtyId) throws DataNotFoundException {
-        SpecialtyEntity specialtyEntity = specialtyRepository.findById(Long.valueOf(specialtyId))
+    public String getSpecialtyById(Long specialtyId) throws DataNotFoundException {
+        SpecialtyEntity specialtyEntity = specialtyRepository.findById(specialtyId)
                 .orElseThrow(() -> new DataNotFoundException("Wrong ID"));
         return specialtyEntity.getName();
     }
@@ -64,19 +64,16 @@ public class SpecialtyService {
                 .toList();
     }
 
-    //TODO specialty cascade delete should be logged because it deletes investigations and also doctors
-    //TODO mark delete specialty as risk zone operation or practice soft delete
-
-    public Long deleteSpecialtyById(String specialtyId) {
-        Optional<SpecialtyEntity> specialtyEntityOptional = specialtyRepository.findById(Long.valueOf(specialtyId));
+    public Long deleteSpecialtyById(Long specialtyId) {
+        Optional<SpecialtyEntity> specialtyEntityOptional = specialtyRepository.findById(specialtyId);
         if (specialtyEntityOptional.isEmpty()) {
             log.warn(String.format("Can't delete specialty with id %s because it doesn't exist", specialtyId));
             infoContributor.incrementFailedDeleteOperations();
-            return Long.valueOf(specialtyId);
+            return specialtyId;
         }
-        specialtyRepository.deleteById(Long.valueOf(specialtyId));
+        specialtyRepository.deleteById(specialtyId);
         log.info(String.format("Specialty with id %s deleted", specialtyId));
-        return Long.valueOf(specialtyId);
+        return specialtyId;
     }
 
     public Long deleteSpecialtyByName(String specialtyName) throws DataNotFoundException {

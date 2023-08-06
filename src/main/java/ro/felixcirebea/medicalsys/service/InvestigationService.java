@@ -53,6 +53,7 @@ public class InvestigationService {
 
         investigationEntity.setName(investigationDto.getName());
         investigationEntity.setSpecialty(specialtyEntity);
+        investigationEntity.setDuration(investigationDto.getDuration());
         if (investigationDto.getBasePrice() != null) {
             investigationEntity.setBasePrice(investigationDto.getBasePrice());
         }
@@ -61,8 +62,8 @@ public class InvestigationService {
         return investigationRepository.save(investigationEntity).getId();
     }
 
-    public InvestigationDto getInvestigationById(String investigationId) throws DataNotFoundException {
-        InvestigationEntity investigationEntity = investigationRepository.findById(Long.valueOf(investigationId))
+    public InvestigationDto getInvestigationById(Long investigationId) throws DataNotFoundException {
+        InvestigationEntity investigationEntity = investigationRepository.findById(investigationId)
                 .orElseThrow(() -> new DataNotFoundException("Wrong ID"));
         return investigationConverter.fromEntityToDto(investigationEntity);
     }
@@ -80,22 +81,27 @@ public class InvestigationService {
         return specialtyEntity.getInvestigations().stream().map(investigationConverter::fromEntityToDto).toList();
     }
 
+    public List<InvestigationDto> getInvestigationByDuration(Integer duration) {
+        return investigationRepository.findAllByDuration(duration).stream()
+                .map(investigationConverter::fromEntityToDto).toList();
+    }
+
     public List<InvestigationDto> getAllInvestigations() {
         return StreamSupport.stream(investigationRepository.findAll().spliterator(), false)
                 .map(investigationConverter::fromEntityToDto).toList();
     }
 
-    public Long deleteInvestigationById(String investigationId) {
+    public Long deleteInvestigationById(Long investigationId) {
         Optional<InvestigationEntity> investigationEntityOptional = investigationRepository
-                .findById(Long.valueOf(investigationId));
+                .findById(investigationId);
         if (investigationEntityOptional.isEmpty()) {
             log.warn(String.format("Can't delete investigation with id %s because it doesn't exist", investigationId));
             infoContributor.incrementFailedDeleteOperations();
-            return Long.valueOf(investigationId);
+            return investigationId;
         }
-        investigationRepository.deleteById(Long.valueOf(investigationId));
+        investigationRepository.deleteById(investigationId);
         log.info(String.format("Investigation with id %s deleted", investigationId));
-        return Long.valueOf(investigationId);
+        return investigationId;
     }
 
 
@@ -111,4 +117,6 @@ public class InvestigationService {
         investigationRepository.deleteById(investigationEntityOptional.get().getId());
         return investigationEntityOptional.get().getId();
     }
+
+
 }

@@ -11,12 +11,15 @@ import lombok.Data;
 public class DoctorDto {
 
     private Long id;
+
     @NotEmpty(message = "Name cannot be empty")
     @NotBlank(message = "Name cannot be blank")
     private String name;
+
     @NotEmpty(message = "Specialty cannot be empty")
     @NotBlank(message = "Name cannot be blank")
     private String specialty;
+
     @DecimalMin(value = "0.0", inclusive = false)
     private Double priceRate;
 

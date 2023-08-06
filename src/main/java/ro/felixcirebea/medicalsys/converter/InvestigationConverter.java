@@ -14,6 +14,7 @@ public class InvestigationConverter {
 
         investigationEntity.setName(investigationDto.getName());
         investigationEntity.setSpecialty(specialtyEntity);
+        investigationEntity.setDuration(investigationDto.getDuration());
 
         if (investigationDto.getBasePrice() == null) {
             investigationEntity.setBasePrice(50.0);
@@ -30,6 +31,7 @@ public class InvestigationConverter {
                 .name(investigationEntity.getName())
                 .specialty(investigationEntity.getSpecialty().getName())
                 .basePrice(investigationEntity.getBasePrice())
+                .duration(investigationEntity.getDuration())
                 .build();
     }
 }

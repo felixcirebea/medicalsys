@@ -56,6 +56,8 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
     }
 
+//    TODO check why UpsertInvestigation-Insert with blank duration field doesn't throw the expected exception
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
