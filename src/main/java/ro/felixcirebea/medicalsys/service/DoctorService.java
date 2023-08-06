@@ -67,6 +67,12 @@ public class DoctorService {
         return doctorConverter.fromEntityToDto(doctorEntity);
     }
 
+    public List<DoctorDto> getDoctorsBySpecialty(String specialtyName) throws DataNotFoundException {
+        SpecialtyEntity specialtyEntity = specialtyRepository.findByName(specialtyName)
+                .orElseThrow(() -> new DataNotFoundException(String.format("Specialty %s not found", specialtyName)));
+        return specialtyEntity.getDoctors().stream().map(doctorConverter::fromEntityToDto).toList();
+    }
+
     public List<DoctorDto> getAllDoctors() {
         return StreamSupport.stream(doctorRepository.findAll().spliterator(), false)
                 .map(doctorConverter::fromEntityToDto).toList();

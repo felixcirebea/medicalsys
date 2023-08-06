@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import ro.felixcirebea.medicalsys.entity.*;
-import ro.felixcirebea.medicalsys.enums.LeaveType;
+import ro.felixcirebea.medicalsys.enums.VacationType;
 import ro.felixcirebea.medicalsys.exception.InputFileException;
 import ro.felixcirebea.medicalsys.repository.*;
 
@@ -103,12 +103,12 @@ public class InputFileParser {
 
         VacationEntity vacationEntity = new VacationEntity();
         vacationEntity.setDoctor(doctorEntity);
-        vacationEntity.setVacationStartDate(LocalDate.parse(splitLine[1]));
-        vacationEntity.setVacationEndDate(LocalDate.parse(splitLine[2]));
-        if (vacationEntity.getVacationStartDate().isAfter(vacationEntity.getVacationEndDate())) {
+        vacationEntity.setStartDate(LocalDate.parse(splitLine[1]));
+        vacationEntity.setEndDate(LocalDate.parse(splitLine[2]));
+        if (vacationEntity.getStartDate().isAfter(vacationEntity.getEndDate())) {
             throw new InputFileException("Internal error - start date cannot be after end date");
         }
-        vacationEntity.setType(LeaveType.valueOf(splitLine[3]));
+        vacationEntity.setType(VacationType.valueOf(splitLine[3]));
 
         return vacationEntity;
     }
@@ -117,9 +117,9 @@ public class InputFileParser {
         String[] splitLine = line.split(",");
 
         HolidayEntity holidayEntity = new HolidayEntity();
-        holidayEntity.setHolidayStartDate(LocalDate.parse(splitLine[0]));
-        holidayEntity.setHolidayEndDate(LocalDate.parse(splitLine[1]));
-        if (holidayEntity.getHolidayStartDate().isAfter(holidayEntity.getHolidayEndDate())) {
+        holidayEntity.setStartDate(LocalDate.parse(splitLine[0]));
+        holidayEntity.setEndDate(LocalDate.parse(splitLine[1]));
+        if (holidayEntity.getStartDate().isAfter(holidayEntity.getEndDate())) {
             throw new InputFileException("Internal error - start date cannot be after end date");
         }
         holidayEntity.setDescription(splitLine[2]);

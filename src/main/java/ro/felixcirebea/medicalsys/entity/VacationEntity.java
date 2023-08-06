@@ -2,7 +2,7 @@ package ro.felixcirebea.medicalsys.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import ro.felixcirebea.medicalsys.enums.LeaveType;
+import ro.felixcirebea.medicalsys.enums.VacationType;
 
 import java.time.LocalDate;
 
@@ -18,11 +18,11 @@ public class VacationEntity {
     @JoinColumn(name = "doctor_id")
     private DoctorEntity doctor;
 
-    private LocalDate vacationStartDate;
+    private LocalDate startDate;
 
-    private LocalDate vacationEndDate;
+    private LocalDate endDate;
 
     @Enumerated(EnumType.STRING)
-    private LeaveType type;
+    private VacationType type;
 
 }

@@ -1,8 +1,28 @@
 package ro.felixcirebea.medicalsys.util;
 
+import ro.felixcirebea.medicalsys.enums.VacationType;
 import ro.felixcirebea.medicalsys.exception.DataMismatchException;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+
 public class Validator {
+
+    public static VacationType enumValidator(String inputType) throws DataMismatchException {
+        try {
+            return VacationType.valueOf(inputType);
+        } catch (IllegalArgumentException e) {
+            throw new DataMismatchException("The given argument is not valid enum element");
+        }
+    }
+
+    public static LocalDate dateValidator(String inputDate) throws DataMismatchException {
+        try {
+            return LocalDate.parse(inputDate);
+        } catch (DateTimeParseException e) {
+            throw new DataMismatchException("The given date is not valid");
+        }
+    }
 
     public static Long idValidator(String inputId) throws DataMismatchException {
         try {

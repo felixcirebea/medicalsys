@@ -1,6 +1,6 @@
 package ro.felixcirebea.medicalsys.enums;
 
-public enum LeaveType {
+public enum VacationType {
 
     VACATION,
     SICK_LEAVE,

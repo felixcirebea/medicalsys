@@ -38,14 +38,20 @@ public class DoctorController {
         return ResponseEntity.ok(doctorService.getDoctorByName(doctorName));
     }
 
+    @GetMapping("/by-specialty")
+    public ResponseEntity<List<DoctorDto>> getDoctorsBySpecialty(
+            @RequestParam(name = "specialty") String specialtyName) throws DataNotFoundException {
+        return ResponseEntity.ok(doctorService.getDoctorsBySpecialty(specialtyName));
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<DoctorDto>> getAllDoctors() {
         return ResponseEntity.ok(doctorService.getAllDoctors());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Long> deleteDoctorById(@PathVariable(name = "id") String doctorId) throws DataMismatchException {
-
+    public ResponseEntity<Long> deleteDoctorById(@PathVariable(name = "id") String doctorId)
+            throws DataMismatchException {
         return ResponseEntity.ok(doctorService.deleteDoctorById(Validator.idValidator(doctorId)));
     }
 

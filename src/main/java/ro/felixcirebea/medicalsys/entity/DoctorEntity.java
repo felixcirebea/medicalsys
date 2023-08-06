@@ -26,6 +26,6 @@ public class DoctorEntity {
     private List<WorkingHoursEntity> workingHours;
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
-    private List<VacationEntity> paidVacation;
+    private List<VacationEntity> vacation;
 
 }

@@ -16,9 +16,9 @@ public class HolidayEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private LocalDate holidayStartDate;
+    private LocalDate startDate;
 
-    private LocalDate holidayEndDate;
+    private LocalDate endDate;
 
     private String description;
 

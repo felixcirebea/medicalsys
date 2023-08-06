@@ -15,8 +15,8 @@ import java.util.List;
 @RequestMapping("/specialties")
 public class SpecialtyController {
 
-    //TODO logging for successful operations with a predefined type of logging response
-    //TODO try to extract some hardcoded messages as constants
+//    TODO logging for successful operations with a predefined type of logging response
+//    TODO try to extract some hardcoded messages as constants
 
     private final SpecialtyService specialtyService;
 
