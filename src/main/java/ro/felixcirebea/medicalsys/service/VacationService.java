@@ -12,10 +12,12 @@ import ro.felixcirebea.medicalsys.exception.DataMismatchException;
 import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
 import ro.felixcirebea.medicalsys.repository.DoctorRepository;
 import ro.felixcirebea.medicalsys.repository.VacationRepository;
+import ro.felixcirebea.medicalsys.util.Contributor;
 import ro.felixcirebea.medicalsys.util.Validator;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -24,12 +26,14 @@ public class VacationService {
     private final VacationRepository vacationRepository;
     private final DoctorRepository doctorRepository;
     private final VacationConverter vacationConverter;
+    private final Contributor infoContributor;
 
     public VacationService(VacationRepository vacationRepository, DoctorRepository doctorRepository,
-                           VacationConverter vacationConverter) {
+                           VacationConverter vacationConverter, Contributor infoContributor) {
         this.vacationRepository = vacationRepository;
         this.doctorRepository = doctorRepository;
         this.vacationConverter = vacationConverter;
+        this.infoContributor = infoContributor;
     }
 
 
@@ -105,5 +109,35 @@ public class VacationService {
                     .map(vacationConverter::fromEntityToDto)
                     .toList();
         }
+    }
+
+    public Boolean isDateVacation(String doctorName, LocalDate date) throws DataNotFoundException {
+        DoctorEntity doctorEntity = doctorRepository.findByName(doctorName).orElseThrow(() ->
+                new DataNotFoundException(String.format("Doctor with name %s not found", doctorName)));
+        return vacationRepository.isDateBetweenVacation(doctorEntity, date);
+    }
+
+    public Long deleteVacationById(Long vacationId) {
+        Optional<VacationEntity> vacationEntityOptional = vacationRepository.findById(vacationId);
+        if (vacationEntityOptional.isEmpty()) {
+            log.warn(String.format("Can't delete vacation with id %s because it doesn't exist", vacationId));
+            infoContributor.incrementFailedDeleteOperations();
+            return vacationId;
+        }
+        vacationRepository.deleteById(vacationId);
+        log.info(String.format("Vacation with id %s deleted", vacationId));
+        return vacationId;
+    }
+
+    public Long deleteVacationByDoctorAndDate(String doctorName, LocalDate date) throws DataNotFoundException {
+        Optional<DoctorEntity> doctorEntityOptional = doctorRepository.findByName(doctorName);
+        if (doctorEntityOptional.isEmpty()) {
+            infoContributor.incrementFailedDeleteOperations();
+            log.warn(String.format("Can't delete vacation for doctor %s because it doesn't exist", doctorName));
+            throw new DataNotFoundException(String.format("Doctor with name %s not found", doctorName));
+        }
+        vacationRepository.deleteByDoctorAndStartDate(doctorEntityOptional.get(), date);
+        log.info(String.format("Vacation for %s starting %s is deleted", doctorName, date));
+        return doctorEntityOptional.get().getId();
     }
 }

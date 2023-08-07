@@ -10,6 +10,7 @@ import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
 import ro.felixcirebea.medicalsys.service.VacationService;
 import ro.felixcirebea.medicalsys.util.Validator;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -45,4 +46,25 @@ public class VacationController {
         return ResponseEntity.ok(vacationService.getVacationByDoctorAndType(doctorName, vacationType));
     }
 
+    @GetMapping("/is-vacation")
+    public ResponseEntity<Boolean> isVacation(@RequestParam(name = "doctor") String doctorName,
+                                              @RequestParam(name = "date") String date)
+            throws DataMismatchException, DataNotFoundException {
+        LocalDate dateValue = Validator.dateValidator(date);
+        return ResponseEntity.ok(vacationService.isDateVacation(doctorName, dateValue));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Long> deleteById(@PathVariable(name = "id") String inputId) throws DataMismatchException {
+        Long idValue = Validator.idValidator(inputId);
+        return ResponseEntity.ok(vacationService.deleteVacationById(idValue));
+    }
+
+    @DeleteMapping("/by-doctor-and-date")
+    public ResponseEntity<Long> deleteVacationByDoctorAndDate(@RequestParam(name = "doctor") String doctorName,
+                                                       @RequestParam(name = "date") String date)
+            throws DataMismatchException, DataNotFoundException {
+        LocalDate dateValue = Validator.dateValidator(date);
+        return ResponseEntity.ok(vacationService.deleteVacationByDoctorAndDate(doctorName, dateValue));
+    }
 }
