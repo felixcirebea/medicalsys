@@ -2,6 +2,7 @@ package ro.felixcirebea.medicalsys.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -16,13 +17,14 @@ public class WorkingHoursEntity {
 
     @ManyToOne
     @JoinColumn(name = "doctor_id")
+    @ToString.Exclude
     private DoctorEntity doctor;
 
     @Enumerated(EnumType.STRING)
     private DayOfWeek dayOfWeek;
 
-    private LocalTime startWorkingHour;
+    private LocalTime startHour;
 
-    private LocalTime endWorkingHour;
+    private LocalTime endHour;
 
 }

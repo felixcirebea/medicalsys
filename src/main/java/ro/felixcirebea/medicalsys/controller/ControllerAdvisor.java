@@ -26,18 +26,6 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         this.infoContributor = infoContributor;
     }
 
-
-//thrown when trying to persist something than does not respect the db constraints like:
-    //duplicate PKs, violating the unique constraint of a column
-//    @ExceptionHandler(ConstraintViolationException.class)
-//    //It is used to validate data when the transfer between dto and entity is not made
-//    //Validates data for persistence, before saving or updating the db
-//    public ResponseEntity<Object> handleValidationException(Exception ex, WebRequest webRequest) {
-//        String responseBody = "Validation constraint error";
-//        log.warn(String.format("%s: %s"), ex.getMessage(), responseBody);
-//        return handleExceptionInternal(ex, responseBody, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
-//    }
-
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> handleConstraintViolationException(Exception ex, WebRequest webRequest) {
         String responseBody = "Unique constraint violation";

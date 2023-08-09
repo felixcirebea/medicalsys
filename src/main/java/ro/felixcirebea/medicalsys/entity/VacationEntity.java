@@ -2,6 +2,7 @@ package ro.felixcirebea.medicalsys.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import ro.felixcirebea.medicalsys.enums.VacationType;
 
 import java.time.LocalDate;
@@ -16,6 +17,7 @@ public class VacationEntity {
 
     @ManyToOne
     @JoinColumn(name = "doctor_id")
+    @ToString.Exclude
     private DoctorEntity doctor;
 
     private LocalDate startDate;

@@ -136,8 +136,8 @@ public class InputFileParser {
         WorkingHoursEntity workingHoursEntity = new WorkingHoursEntity();
         workingHoursEntity.setDoctor(doctorEntity);
         workingHoursEntity.setDayOfWeek(DayOfWeek.of(Integer.parseInt(splitLine[1])));
-        workingHoursEntity.setStartWorkingHour(LocalTime.parse(splitLine[2].toUpperCase()));
-        workingHoursEntity.setEndWorkingHour(LocalTime.parse(splitLine[3]));
+        workingHoursEntity.setStartHour(LocalTime.parse(splitLine[2].toUpperCase()));
+        workingHoursEntity.setEndHour(LocalTime.parse(splitLine[3]));
 
         return workingHoursEntity;
     }

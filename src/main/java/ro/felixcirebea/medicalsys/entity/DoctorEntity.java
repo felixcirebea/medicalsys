@@ -2,6 +2,7 @@ package ro.felixcirebea.medicalsys.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class DoctorEntity {
 
     @ManyToOne
     @JoinColumn(name = "specialty_id")
+    @ToString.Exclude
     private SpecialtyEntity specialty;
 
     private Double priceRate;
