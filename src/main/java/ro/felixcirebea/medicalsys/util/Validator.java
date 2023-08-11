@@ -3,10 +3,20 @@ package ro.felixcirebea.medicalsys.util;
 import ro.felixcirebea.medicalsys.enums.VacationType;
 import ro.felixcirebea.medicalsys.exception.DataMismatchException;
 
+import java.time.DateTimeException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
 public class Validator {
+
+    public static DayOfWeek dayOfWeekValidator(Integer dayOfWeek) throws DataMismatchException {
+        try {
+            return DayOfWeek.of(dayOfWeek);
+        } catch (DateTimeException e) {
+            throw new DataMismatchException("The given date is not valid");
+        }
+    }
 
     public static VacationType enumValidator(String inputType) throws DataMismatchException {
         try {

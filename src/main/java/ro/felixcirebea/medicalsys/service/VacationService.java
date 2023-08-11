@@ -136,8 +136,14 @@ public class VacationService {
             log.warn(String.format("Can't delete vacation for doctor %s because it doesn't exist", doctorName));
             throw new DataNotFoundException(String.format("Doctor with name %s not found", doctorName));
         }
-        vacationRepository.deleteByDoctorAndStartDate(doctorEntityOptional.get(), date);
-        log.info(String.format("Vacation for %s starting %s is deleted", doctorName, date));
+        Boolean deleteCondition = vacationRepository.existsByDoctorAndStartDate(doctorEntityOptional.get(), date);
+        if (deleteCondition) {
+            vacationRepository.deleteByDoctorAndStartDate(doctorEntityOptional.get(), date);
+            log.info(String.format("Vacation for %s starting %s is deleted", doctorName, date));
+            return doctorEntityOptional.get().getId();
+        }
+        infoContributor.incrementFailedDeleteOperations();
+        log.warn(String.format("Vacation for %s starting %s doesn't exist", doctorName, date));
         return doctorEntityOptional.get().getId();
     }
 }

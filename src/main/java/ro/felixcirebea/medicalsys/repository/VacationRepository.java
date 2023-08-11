@@ -29,6 +29,8 @@ public interface VacationRepository extends CrudRepository<VacationEntity, Long>
     @Query("SELECT COUNT(v) > 0 FROM vacations v WHERE v.doctor = :doctor AND :date BETWEEN v.startDate AND v.endDate")
     Boolean isDateBetweenVacation(@Param("doctor") DoctorEntity doctor, @Param("date") LocalDate date);
 
+    Boolean existsByDoctorAndStartDate(DoctorEntity doctor, LocalDate startDate);
+
     @Transactional
     void deleteByDoctorAndStartDate(DoctorEntity doctor, LocalDate startDate);
 }

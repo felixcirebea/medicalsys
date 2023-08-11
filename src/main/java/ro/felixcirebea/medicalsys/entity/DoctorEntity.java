@@ -30,4 +30,7 @@ public class DoctorEntity {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
     private List<VacationEntity> vacation;
 
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
+    private List<AppointmentEntity> appointments;
+
 }

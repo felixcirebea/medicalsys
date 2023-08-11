@@ -6,10 +6,12 @@ import ro.felixcirebea.medicalsys.converter.WorkingHoursConverter;
 import ro.felixcirebea.medicalsys.dto.WorkingHoursDto;
 import ro.felixcirebea.medicalsys.entity.DoctorEntity;
 import ro.felixcirebea.medicalsys.entity.WorkingHoursEntity;
+import ro.felixcirebea.medicalsys.exception.DataMismatchException;
 import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
 import ro.felixcirebea.medicalsys.repository.DoctorRepository;
 import ro.felixcirebea.medicalsys.repository.WorkingHoursRepository;
 import ro.felixcirebea.medicalsys.util.Contributor;
+import ro.felixcirebea.medicalsys.util.Validator;
 
 import java.time.DayOfWeek;
 import java.util.List;
@@ -61,11 +63,11 @@ public class WorkingHoursService {
     }
 
     public List<WorkingHoursDto> getWorkingHoursByDoctorAndDay(String doctorName, Integer dayOfWeek)
-            throws DataNotFoundException {
+            throws DataNotFoundException, DataMismatchException {
         if (doctorName != null && dayOfWeek != null) {
             DoctorEntity doctorEntity = doctorRepository.findByName(doctorName)
                     .orElseThrow(() -> new DataNotFoundException(String.format("Doctor %s not found", doctorName)));
-            DayOfWeek dayOfWeekValue = DayOfWeek.of(dayOfWeek);
+            DayOfWeek dayOfWeekValue = Validator.dayOfWeekValidator(dayOfWeek);
             return workingHoursRepository.findByDoctorAndDayOfWeek(doctorEntity, dayOfWeekValue).stream()
                     .map(workingHoursConverter::froEntityToDto).toList();
         } else if (doctorName != null) {
@@ -74,7 +76,7 @@ public class WorkingHoursService {
             return workingHoursRepository.findByDoctor(doctorEntity).stream()
                     .map(workingHoursConverter::froEntityToDto).toList();
         } else if (dayOfWeek != null) {
-            DayOfWeek dayOfWeekValue = DayOfWeek.of(dayOfWeek);
+            DayOfWeek dayOfWeekValue = Validator.dayOfWeekValidator(dayOfWeek);
             return workingHoursRepository.findByDayOfWeek(dayOfWeekValue).stream()
                     .map(workingHoursConverter::froEntityToDto).toList();
         } else {
@@ -84,7 +86,7 @@ public class WorkingHoursService {
     }
 
     public Long deleteWorkingHoursByDoctorAndDay(String doctorName, Integer dayOfWeek)
-            throws DataNotFoundException {
+            throws DataNotFoundException, DataMismatchException {
         Optional<DoctorEntity> doctorEntityOptional = doctorRepository.findByName(doctorName);
         if (doctorEntityOptional.isEmpty()) {
             infoContributor.incrementFailedDeleteOperations();
@@ -94,7 +96,7 @@ public class WorkingHoursService {
         }
 
         if (dayOfWeek != null) {
-            DayOfWeek dayOfWeekValue = DayOfWeek.of(dayOfWeek);
+            DayOfWeek dayOfWeekValue = Validator.dayOfWeekValidator(dayOfWeek);
             workingHoursRepository.deleteByDoctorAndDayOfWeek(doctorEntityOptional.get(), dayOfWeekValue);
             return doctorEntityOptional.get().getId();
         }
