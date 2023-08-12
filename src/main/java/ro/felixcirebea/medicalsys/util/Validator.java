@@ -6,9 +6,18 @@ import ro.felixcirebea.medicalsys.exception.DataMismatchException;
 import java.time.DateTimeException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 
 public class Validator {
+
+    public static LocalTime timeValidator(String inputTime) throws DataMismatchException {
+        try {
+            return LocalTime.parse(inputTime);
+        } catch (DateTimeParseException e) {
+            throw new DataMismatchException("The given time is not valid");
+        }
+    }
 
     public static DayOfWeek dayOfWeekValidator(Integer dayOfWeek) throws DataMismatchException {
         try {
@@ -37,7 +46,7 @@ public class Validator {
     public static Long idValidator(String inputId) throws DataMismatchException {
         try {
             return Long.valueOf(inputId);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | NullPointerException e) {
             throw new DataMismatchException("The given id is not a number");
         }
     }

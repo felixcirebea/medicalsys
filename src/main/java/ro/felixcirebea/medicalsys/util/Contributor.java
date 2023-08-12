@@ -13,6 +13,7 @@ public class Contributor implements InfoContributor {
     private Integer numberOfDataNotFoundExceptions = 0;
     private Integer numberOfDataMismatchExceptions = 0;
     private Integer numberOfConstraintViolationExceptions = 0;
+    private Integer numberOfConcurrencyExceptions = 0;
 
     @Override
     public void contribute(Info.Builder builder) {
@@ -20,7 +21,8 @@ public class Contributor implements InfoContributor {
                 Map.of("failed-delete-operations", String.valueOf(failedDeleteOperations),
                         "data-not-found-exceptions", String.valueOf(numberOfDataNotFoundExceptions),
                         "data-mismatch-exceptions", String.valueOf(numberOfDataMismatchExceptions),
-                        "constraint-violation-exceptions", String.valueOf(numberOfConstraintViolationExceptions))
+                        "constraint-violation-exceptions", String.valueOf(numberOfConstraintViolationExceptions),
+                        "concurrency-exceptions", String.valueOf(numberOfConcurrencyExceptions))
         );
     }
 
@@ -35,5 +37,8 @@ public class Contributor implements InfoContributor {
     }
     public void incrementNumberOfConstraintViolationExceptions() {
         this.numberOfConstraintViolationExceptions++;
+    }
+    public void incrementNumberOfConcurrencyExceptions() {
+        this.numberOfConcurrencyExceptions++;
     }
 }

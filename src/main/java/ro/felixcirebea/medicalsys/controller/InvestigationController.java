@@ -10,6 +10,7 @@ import ro.felixcirebea.medicalsys.service.InvestigationService;
 import ro.felixcirebea.medicalsys.util.Validator;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/investigations")
@@ -66,6 +67,13 @@ public class InvestigationController {
     public ResponseEntity<Long> deleteInvestigationByName(
             @RequestParam(name = "investigation") String investigationName) throws DataNotFoundException {
         return ResponseEntity.ok(investigationService.deleteInvestigationByName(investigationName));
+    }
+
+    @GetMapping("/pricing")
+    public ResponseEntity<Map<String, Map<String, Double>>> getInvestigationWithPricing(
+            @RequestParam(name = "doctor") String doctor,
+            @RequestParam(name = "investigation", required = false) String investigation) throws DataNotFoundException {
+        return ResponseEntity.ok(investigationService.getInvestigationWithPricing(doctor, investigation));
     }
 
 }

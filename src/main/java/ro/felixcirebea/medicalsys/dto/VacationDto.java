@@ -24,7 +24,7 @@ public class VacationDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    @NotNull(message = "Start date cannot be null")
+    @NotNull(message = "End date cannot be null")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 

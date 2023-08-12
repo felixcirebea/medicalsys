@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import ro.felixcirebea.medicalsys.exception.ConcurrencyException;
 import ro.felixcirebea.medicalsys.exception.DataMismatchException;
 import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
 import ro.felixcirebea.medicalsys.util.Contributor;
@@ -34,12 +35,13 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, responseBody, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
     }
 
-    @ExceptionHandler({DataNotFoundException.class, DataMismatchException.class})
+    @ExceptionHandler({DataNotFoundException.class, DataMismatchException.class, ConcurrencyException.class})
     public ResponseEntity<Object> handleDataExceptions(Exception ex, WebRequest webRequest) {
         log.error(ex.getMessage());
         switch (ex.getClass().getSimpleName()) {
             case "DataNotFoundException" -> infoContributor.incrementNumberOfDataNotFoundExceptions();
             case "DataMismatchException" -> infoContributor.incrementNumberOfDataMismatchExceptions();
+            case "ConcurrencyException" -> infoContributor.incrementNumberOfConcurrencyExceptions();
         }
         return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
     }
