@@ -22,6 +22,14 @@ import java.util.List;
 @Slf4j
 public class AppointmentService {
 
+    public static final String NOT_FOUND_MSG = "%s not found";
+    public static final String NOT_FOUND_WH_MSG = "Working hours not found for %s";
+    public static final String NOT_AVAILABLE_MSG = "%s not available, please select a different hour";
+    public static final String WRONG_ID_MSG = "Wrong ID";
+    public static final String LOG_SUCCESS_DELETE_MSG = "Appointment: %s for %s deleted";
+    public static final String LOG_FAIL_DELETE_MSG = "Delete of appointment: %s for %s failed - not found";
+    public static final String RETURN_SUCCESS_DELETE_MSG = "Appointment successfully canceled";
+    public static final String RETURN_FAIL_DELETE_MSG = "No such appointments for %s";
     private final DoctorRepository doctorRepository;
     private final InvestigationRepository investigationRepository;
     private final AppointmentRepository appointmentRepository;
@@ -29,9 +37,12 @@ public class AppointmentService {
     private final AppointmentConverter appointmentConverter;
     private final Contributor infoContributor;
 
-    public AppointmentService(DoctorRepository doctorRepository, InvestigationRepository investigationRepository,
-                              AppointmentRepository appointmentRepository, HolidayService holidayService,
-                              AppointmentConverter appointmentConverter, Contributor infoContributor) {
+    public AppointmentService(DoctorRepository doctorRepository,
+                              InvestigationRepository investigationRepository,
+                              AppointmentRepository appointmentRepository,
+                              HolidayService holidayService,
+                              AppointmentConverter appointmentConverter,
+                              Contributor infoContributor) {
         this.doctorRepository = doctorRepository;
         this.investigationRepository = investigationRepository;
         this.appointmentRepository = appointmentRepository;
@@ -40,24 +51,32 @@ public class AppointmentService {
         this.infoContributor = infoContributor;
     }
 
-    public List<LocalTime> getAvailableHours(String doctorName, String investigation, LocalDate desiredDate)
+    public List<LocalTime> getAvailableHours(String doctorName,
+                                             String investigation,
+                                             LocalDate desiredDate)
             throws DataNotFoundException {
         DoctorEntity doctorEntity = doctorRepository.findByName(doctorName)
-                .orElseThrow(() -> new DataNotFoundException(String.format("Doctor %s not found", doctorName)));
+                .orElseThrow(() -> new DataNotFoundException(
+                        String.format(NOT_FOUND_MSG, doctorName)));
 
         InvestigationEntity investigationEntity = investigationRepository.findByName(investigation)
                 .orElseThrow(() -> new DataNotFoundException(
-                        String.format("Investigation with name %s not found", investigation)));
+                        String.format(NOT_FOUND_MSG, investigation)));
 
-        WorkingHoursEntity workingHoursEntity = doctorEntity.getWorkingHours().stream()
-                .filter(workingHours -> workingHours.getDayOfWeek() == desiredDate.getDayOfWeek())
+        WorkingHoursEntity workingHoursEntity = doctorEntity.getWorkingHours()
+                .stream()
+                .filter(workingHours ->
+                        workingHours.getDayOfWeek() == desiredDate.getDayOfWeek())
                 .findFirst()
-                .orElseThrow(() -> new DataNotFoundException(String.format("Not working hours for %s", desiredDate)));
+                .orElseThrow(() -> new DataNotFoundException(
+                        String.format(NOT_FOUND_WH_MSG, desiredDate)));
 
         Boolean isHoliday = holidayService.isDateHoliday(desiredDate);
         List<VacationEntity> vacation = doctorEntity.getVacation();
         boolean isVacation = vacation.stream()
-                .anyMatch(vac -> desiredDate.isAfter(vac.getStartDate()) && desiredDate.isBefore(vac.getEndDate()));
+                .anyMatch(vac ->
+                        desiredDate.isAfter(vac.getStartDate()) &&
+                                desiredDate.isBefore(vac.getEndDate()));
 
         if (isHoliday || isVacation) {
             return Collections.emptyList();
@@ -68,7 +87,8 @@ public class AppointmentService {
         LocalTime startWorkingHour = workingHoursEntity.getStartHour();
         LocalTime endWorkingHour = workingHoursEntity.getEndHour();
 
-        List<AppointmentEntity> appointments = appointmentRepository.findAllByDoctorAndDate(doctorEntity, desiredDate);
+        List<AppointmentEntity> appointments =
+                appointmentRepository.findAllByDoctorAndDate(doctorEntity, desiredDate);
 
         List<LocalTime> availableHours = new ArrayList<>();
         LocalTime currentTime = startWorkingHour;
@@ -79,7 +99,6 @@ public class AppointmentService {
             for (AppointmentEntity appointment : appointments) {
                 LocalTime appointmentStart = appointment.getStartTime();
                 LocalTime appointmentEnd = appointment.getEndTime();
-
                 if (currentTime.isAfter(appointmentStart.minusMinutes(investigationDuration)) &&
                         currentTime.isBefore(appointmentEnd)) {
                     slotAvailable = false;
@@ -90,55 +109,59 @@ public class AppointmentService {
             if (slotAvailable) {
                 availableHours.add(currentTime);
             }
-
             currentTime = currentTime.plusMinutes(30);
         }
-
         return availableHours;
     }
 
-    public Long bookAppointment(AppointmentDto appointmentDto) throws DataNotFoundException, ConcurrencyException {
+    public Long bookAppointment(AppointmentDto appointmentDto)
+            throws DataNotFoundException, ConcurrencyException {
         DoctorEntity doctorEntity = doctorRepository.findByName(appointmentDto.getDoctor())
                 .orElseThrow(() -> new DataNotFoundException(
-                        String.format("Doctor %s not found", appointmentDto.getDoctor())));
+                        String.format(NOT_FOUND_MSG, appointmentDto.getDoctor())));
 
-        InvestigationEntity investigationEntity = investigationRepository.findByName(appointmentDto.getInvestigation())
+        InvestigationEntity investigationEntity =
+                investigationRepository.findByName(appointmentDto.getInvestigation())
                 .orElseThrow(() -> new DataNotFoundException(
-                        String.format("Investigation with name %s not found", appointmentDto.getInvestigation())));
+                        String.format(NOT_FOUND_MSG, appointmentDto.getInvestigation())));
 
         LocalTime clientStartHour = appointmentDto.getStartHour();
         LocalTime clientEndHour = clientStartHour.plusMinutes(investigationEntity.getDuration());
 
-        Boolean notAvailable = appointmentRepository
-                .existsByDoctorDateAndTimeRange(doctorEntity, appointmentDto.getDate(), clientStartHour, clientEndHour);
+        Boolean notAvailable =
+                appointmentRepository.existsByDoctorDateAndTimeRange(
+                        doctorEntity, appointmentDto.getDate(), clientStartHour, clientEndHour);
 
         if (notAvailable) {
             throw new ConcurrencyException(
-                    String.format("%s not available, please select a different hour", clientStartHour));
+                    String.format(NOT_AVAILABLE_MSG, clientStartHour));
         }
 
-        return appointmentRepository.save(
-                appointmentConverter.fromDtoToEntity(appointmentDto, doctorEntity, investigationEntity)).getId();
+        AppointmentEntity entity =
+                appointmentConverter.fromDtoToEntity(
+                        appointmentDto, doctorEntity, investigationEntity);
+        return appointmentRepository.save(entity).getId();
 
     }
 
-    public AppointmentDto getAppointmentById(Long appointmentIdValue) throws DataNotFoundException {
+    public AppointmentDto getAppointmentById(Long appointmentIdValue)
+            throws DataNotFoundException {
         AppointmentEntity appointmentEntity = appointmentRepository.findById(appointmentIdValue)
-                .orElseThrow(() -> new DataNotFoundException("Wrong ID"));
+                .orElseThrow(() -> new DataNotFoundException(WRONG_ID_MSG));
         return appointmentConverter.fromEntityToDto(appointmentEntity);
     }
 
-    public String deleteAppointmentByIdAndName(Long id, String clientName) throws DataNotFoundException {
+    public String deleteAppointmentByIdAndName(Long id, String clientName)
+            throws DataNotFoundException {
         Boolean deleteCondition = appointmentRepository.existsByIdAndClientName(id, clientName);
         if (deleteCondition) {
             appointmentRepository.deleteByIdAndClientName(id, clientName);
-            log.info(String.format("Appointment with id %s for %s deleted", id, clientName));
-            return "Appointment successfully canceled";
+            log.info(String.format(LOG_SUCCESS_DELETE_MSG, id, clientName));
+            return RETURN_SUCCESS_DELETE_MSG;
         } else {
             infoContributor.incrementFailedDeleteOperations();
-            log.warn(String.format(
-                    "Can't delete appointment with id %s for %s. Appointment doesn't exist", id, clientName));
-            throw new DataNotFoundException(String.format("No such appointments for %s", clientName));
+            log.warn(String.format(LOG_FAIL_DELETE_MSG, id, clientName));
+            throw new DataNotFoundException(String.format(RETURN_FAIL_DELETE_MSG, clientName));
         }
     }
 

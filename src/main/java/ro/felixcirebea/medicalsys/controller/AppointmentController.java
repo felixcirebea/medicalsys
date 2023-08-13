@@ -28,18 +28,22 @@ public class AppointmentController {
     public ResponseEntity<List<LocalTime>> getAvailableHours(
             @RequestParam(name = "doctor") String doctorName,
             @RequestParam(name = "investigation") String investigation,
-            @RequestParam(name = "date") LocalDate desiredDate) throws DataNotFoundException {
-        return ResponseEntity.ok(appointmentService.getAvailableHours(doctorName, investigation, desiredDate));
+            @RequestParam(name = "date") LocalDate desiredDate)
+            throws DataNotFoundException {
+        return ResponseEntity.ok(
+                appointmentService.getAvailableHours(doctorName, investigation, desiredDate));
     }
 
     @PostMapping("/book")
-    public ResponseEntity<Long> bookAppointment(@RequestBody @Valid AppointmentDto appointmentDto)
+    public ResponseEntity<Long> bookAppointment(
+            @RequestBody @Valid AppointmentDto appointmentDto)
             throws DataNotFoundException, ConcurrencyException {
         return ResponseEntity.ok(appointmentService.bookAppointment(appointmentDto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AppointmentDto> getAppointmentById(@PathVariable(name = "id") String appointmentId)
+    public ResponseEntity<AppointmentDto> getAppointmentById(
+            @PathVariable(name = "id") String appointmentId)
             throws DataMismatchException, DataNotFoundException {
         Long appointmentIdValue = Validator.idValidator(appointmentId);
         return ResponseEntity.ok(appointmentService.getAppointmentById(appointmentIdValue));
@@ -48,8 +52,10 @@ public class AppointmentController {
     @DeleteMapping("/cancel-book")
     public ResponseEntity<String> deleteAppointmentByIdAndClientName(
             @RequestParam(name = "id") Long id,
-            @RequestParam(name = "clientName") String clientName) throws DataNotFoundException {
-        return ResponseEntity.ok(appointmentService.deleteAppointmentByIdAndName(id, clientName));
+            @RequestParam(name = "clientName") String clientName)
+            throws DataNotFoundException {
+        return ResponseEntity.ok(
+                appointmentService.deleteAppointmentByIdAndName(id, clientName));
     }
 
 

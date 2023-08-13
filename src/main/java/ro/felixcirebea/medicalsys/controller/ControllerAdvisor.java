@@ -1,5 +1,6 @@
 package ro.felixcirebea.medicalsys.controller;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +22,12 @@ import ro.felixcirebea.medicalsys.util.Contributor;
 @Slf4j
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
+    public static final String UNIQUE_CONSTRAINT_VIOLATION = "Unique constraint violation";
+    public static final String DATA_NOT_FOUND_EXCEPTION = "DataNotFoundException";
+    public static final String DATA_MISMATCH_EXCEPTION = "DataMismatchException";
+    public static final String CONCURRENCY_EXCEPTION = "ConcurrencyException";
+    public static final String UNKNOWN_VALIDATION_ERROR = "Unknown validation error.";
+    public static final String VALIDATION_FAILED = "Validation failed: ";
     private final Contributor infoContributor;
 
     public ControllerAdvisor(Contributor infoContributor) {
@@ -28,40 +35,59 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Object> handleConstraintViolationException(Exception ex, WebRequest webRequest) {
-        String responseBody = "Unique constraint violation";
+    public ResponseEntity<Object> handleConstraintViolationException(
+            Exception ex,
+            WebRequest webRequest) {
+
         log.error(ex.getMessage());
         infoContributor.incrementNumberOfConstraintViolationExceptions();
-        return handleExceptionInternal(ex, responseBody, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
+
+        return handleExceptionInternal(
+                ex, UNIQUE_CONSTRAINT_VIOLATION,
+                new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
     }
 
-    @ExceptionHandler({DataNotFoundException.class, DataMismatchException.class, ConcurrencyException.class})
-    public ResponseEntity<Object> handleDataExceptions(Exception ex, WebRequest webRequest) {
+    @ExceptionHandler({
+            DataNotFoundException.class,
+            DataMismatchException.class,
+            ConcurrencyException.class
+    })
+    public ResponseEntity<Object> handleDataExceptions(
+            Exception ex,
+            WebRequest webRequest) {
+
         log.error(ex.getMessage());
         switch (ex.getClass().getSimpleName()) {
-            case "DataNotFoundException" -> infoContributor.incrementNumberOfDataNotFoundExceptions();
-            case "DataMismatchException" -> infoContributor.incrementNumberOfDataMismatchExceptions();
-            case "ConcurrencyException" -> infoContributor.incrementNumberOfConcurrencyExceptions();
+            case DATA_NOT_FOUND_EXCEPTION -> infoContributor.incrementNumberOfDataNotFoundExceptions();
+            case DATA_MISMATCH_EXCEPTION -> infoContributor.incrementNumberOfDataMismatchExceptions();
+            case CONCURRENCY_EXCEPTION -> infoContributor.incrementNumberOfConcurrencyExceptions();
         }
-        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
+
+        return handleExceptionInternal(
+                ex, ex.getMessage(), new HttpHeaders(),
+                HttpStatus.BAD_REQUEST, webRequest);
     }
 
-//    TODO check why UpsertInvestigation-Insert with blank duration field doesn't throw the expected exception
-
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-                                                                  HttpHeaders headers,
-                                                                  HttpStatusCode status,
-                                                                  WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            @NotNull HttpHeaders headers,
+            @NotNull HttpStatusCode status,
+            @NotNull WebRequest request) {
+
         BindingResult bindingResult = ex.getBindingResult();
-        StringBuilder errorMessage = new StringBuilder("Validation failed: ");
+        StringBuilder errorMessage = new StringBuilder(VALIDATION_FAILED);
 
         if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().forEach(err -> errorMessage.append(err.getDefaultMessage()).append("; "));
+            bindingResult.getAllErrors().forEach(err ->
+                    errorMessage.append(err.getDefaultMessage()).append("; "));
         } else {
-            errorMessage.append("Unknown validation error.");
+            errorMessage.append(UNKNOWN_VALIDATION_ERROR);
         }
         log.error(errorMessage + ex.getMessage());
-        return handleExceptionInternal(ex, errorMessage.toString(), headers, status, request);
+
+        return handleExceptionInternal(
+                ex, errorMessage.toString(),
+                headers, status, request);
     }
 }

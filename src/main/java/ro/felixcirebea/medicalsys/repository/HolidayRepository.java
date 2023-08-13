@@ -17,6 +17,4 @@ public interface HolidayRepository extends CrudRepository<HolidayEntity, Long> {
     @Query("SELECT COUNT(h) > 0 FROM holidays h WHERE :date BETWEEN h.startDate AND h.endDate")
     Boolean isDateBetweenHolidays(@Param("date") LocalDate date);
 
-
-
 }

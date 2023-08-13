@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface InvestigationRepository extends CrudRepository<InvestigationEntity, Long> {
 
     Optional<InvestigationEntity> findByName(String name);
+
     List<InvestigationEntity> findAllByDuration(Integer duration);
 
 }

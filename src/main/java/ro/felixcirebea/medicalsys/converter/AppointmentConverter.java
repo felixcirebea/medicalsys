@@ -10,7 +10,8 @@ import ro.felixcirebea.medicalsys.enums.AppointmentStatus;
 @Component
 public class AppointmentConverter {
 
-    public AppointmentEntity fromDtoToEntity(AppointmentDto appointmentDto, DoctorEntity doctorEntity,
+    public AppointmentEntity fromDtoToEntity(AppointmentDto appointmentDto,
+                                             DoctorEntity doctorEntity,
                                              InvestigationEntity investigationEntity) {
         AppointmentEntity appointmentEntity = new AppointmentEntity();
         appointmentEntity.setClientName(appointmentDto.getClientName());
@@ -18,10 +19,14 @@ public class AppointmentConverter {
         appointmentEntity.setInvestigation(investigationEntity);
         appointmentEntity.setDate(appointmentDto.getDate());
         appointmentEntity.setStartTime(appointmentDto.getStartHour());
-        appointmentEntity.setEndTime(appointmentDto.getStartHour().plusMinutes(investigationEntity.getDuration()));
+        appointmentEntity.setEndTime(
+                appointmentDto.getStartHour().plusMinutes(
+                        investigationEntity.getDuration()));
+
         Double price = ((doctorEntity.getPriceRate() / 100) * investigationEntity.getBasePrice()) +
                 investigationEntity.getBasePrice();
         appointmentEntity.setPrice(price);
+
         appointmentEntity.setStatus(AppointmentStatus.NEW);
         return appointmentEntity;
     }

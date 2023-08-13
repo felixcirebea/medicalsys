@@ -19,6 +19,12 @@ import java.util.stream.StreamSupport;
 @Slf4j
 public class DoctorService {
 
+    public static final String NOT_FOUND_MSG = "%s not found";
+    public static final String WRONG_ID_MSG = "Wrong ID";
+    public static final String LOG_UPDATE_MSG = "%s was updated as follows: %s";
+    public static final String LOG_INSERT_MSG = "%s was inserted";
+    public static final String LOG_FAIL_DELETE_MSG = "Delete of doctor: %s failed - not found";
+    public static final String LOG_SUCCESS_DELETE_MSG = "Doctor id: %s deleted";
     private final DoctorRepository doctorRepository;
     private final SpecialtyRepository specialtyRepository;
     private final DoctorConverter doctorConverter;
@@ -26,7 +32,8 @@ public class DoctorService {
 
     public DoctorService(DoctorRepository doctorRepository,
                          SpecialtyRepository specialtyRepository,
-                         DoctorConverter doctorConverter, Contributor infoContributor) {
+                         DoctorConverter doctorConverter,
+                         Contributor infoContributor) {
         this.doctorRepository = doctorRepository;
         this.specialtyRepository = specialtyRepository;
         this.doctorConverter = doctorConverter;
@@ -35,58 +42,62 @@ public class DoctorService {
 
     public Long upsertDoctor(DoctorDto doctorDto) throws DataNotFoundException {
         SpecialtyEntity specialtyEntity = specialtyRepository.findByName(doctorDto.getSpecialty())
-                .orElseThrow(() -> new DataNotFoundException(String.format(
-                        "Specialty %s not found", doctorDto.getSpecialty())));
+                .orElseThrow(() -> new DataNotFoundException(String.format(NOT_FOUND_MSG, doctorDto.getSpecialty())));
         if (doctorDto.getId() != null) {
             return updateDoctor(doctorDto, specialtyEntity);
         }
-        log.info(String.format("Doctor with name %s was saved", doctorDto.getName()));
+
+        log.info(String.format(LOG_INSERT_MSG, doctorDto.getName()));
         return doctorRepository.save(doctorConverter.fromDtoToEntity(doctorDto, specialtyEntity)).getId();
     }
 
-    private Long updateDoctor(DoctorDto doctorDto, SpecialtyEntity specialtyEntity) throws DataNotFoundException {
+    private Long updateDoctor(DoctorDto doctorDto, SpecialtyEntity specialtyEntity)
+            throws DataNotFoundException {
         DoctorEntity doctorEntity = doctorRepository.findById(doctorDto.getId())
-                .orElseThrow(() -> new DataNotFoundException("Wrong ID"));
+                .orElseThrow(() -> new DataNotFoundException(WRONG_ID_MSG));
+
         doctorEntity.setName(doctorDto.getName());
         doctorEntity.setSpecialty(specialtyEntity);
         doctorEntity.setPriceRate(doctorDto.getPriceRate());
-        log.info(String.format("Doctor with id %s was updated", doctorDto.getId()));
+        log.info(String.format(LOG_UPDATE_MSG, doctorDto.getName(), doctorDto));
         return doctorRepository.save(doctorEntity).getId();
     }
 
     public DoctorDto getDoctorById(Long doctorId) throws DataNotFoundException {
         DoctorEntity doctorEntity = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new DataNotFoundException("Wrong ID"));
+                .orElseThrow(() -> new DataNotFoundException(WRONG_ID_MSG));
         return doctorConverter.fromEntityToDto(doctorEntity);
     }
 
     public DoctorDto getDoctorByName(String doctorName) throws DataNotFoundException {
         DoctorEntity doctorEntity = doctorRepository.findByName(doctorName)
-                .orElseThrow(() -> new DataNotFoundException(
-                        String.format("Doctor with name %s not found", doctorName)));
+                .orElseThrow(() -> new DataNotFoundException(String.format(NOT_FOUND_MSG, doctorName)));
         return doctorConverter.fromEntityToDto(doctorEntity);
     }
 
     public List<DoctorDto> getDoctorsBySpecialty(String specialtyName) throws DataNotFoundException {
         SpecialtyEntity specialtyEntity = specialtyRepository.findByName(specialtyName)
-                .orElseThrow(() -> new DataNotFoundException(String.format("Specialty %s not found", specialtyName)));
-        return specialtyEntity.getDoctors().stream().map(doctorConverter::fromEntityToDto).toList();
+                .orElseThrow(() -> new DataNotFoundException(String.format(NOT_FOUND_MSG, specialtyName)));
+        return specialtyEntity.getDoctors().stream()
+                .map(doctorConverter::fromEntityToDto)
+                .toList();
     }
 
     public List<DoctorDto> getAllDoctors() {
         return StreamSupport.stream(doctorRepository.findAll().spliterator(), false)
-                .map(doctorConverter::fromEntityToDto).toList();
+                .map(doctorConverter::fromEntityToDto)
+                .toList();
     }
 
     public Long deleteDoctorById(Long doctorId) {
-        Optional<DoctorEntity> doctorEntityOptional = doctorRepository.findById(doctorId);
-        if (doctorEntityOptional.isEmpty()) {
-            log.warn(String.format("Can't delete doctor with id %s because it doesn't exist", doctorId));
+        boolean deleteCondition = doctorRepository.existsById(doctorId);
+        if (!deleteCondition) {
+            log.warn(String.format(LOG_FAIL_DELETE_MSG, doctorId));
             infoContributor.incrementFailedDeleteOperations();
             return doctorId;
         }
         doctorRepository.deleteById(doctorId);
-        log.info(String.format("Doctor with id %s deleted", doctorId));
+        log.info(String.format(LOG_SUCCESS_DELETE_MSG, doctorId));
         return doctorId;
     }
 
@@ -95,11 +106,12 @@ public class DoctorService {
 
         if (doctorEntityOptional.isEmpty()) {
             infoContributor.incrementFailedDeleteOperations();
-            log.warn(String.format("Can't delete doctor with name %s. Name doesn't exist", doctorName));
-            throw new DataNotFoundException(String.format("Doctor with name %s not found", doctorName));
+            log.warn(String.format(LOG_FAIL_DELETE_MSG, doctorName));
+            throw new DataNotFoundException(String.format(NOT_FOUND_MSG, doctorName));
         }
 
-        doctorRepository.deleteById(doctorEntityOptional.get().getId());
-        return doctorEntityOptional.get().getId();
+        Long doctorId = doctorEntityOptional.get().getId();
+        doctorRepository.deleteById(doctorId);
+        return doctorId;
     }
 }

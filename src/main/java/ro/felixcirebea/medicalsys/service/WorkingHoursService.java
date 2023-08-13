@@ -22,43 +22,58 @@ import java.util.stream.StreamSupport;
 @Slf4j
 public class WorkingHoursService {
 
+    public static final String NOT_FOUND_MSG = "%s not found";
+    public static final String NO_ENTRY_MSG = "No suitable entry found";
+    public static final String LOG_UPDATE_MSG = "Working hours for %s were updated as follows: %s";
+    public static final String LOG_INSERT_MSG = "Working hours for %s were inserted";
+    public static final String LOG_FAIL_DELETE_MSG = "Can't delete working hours for %s failed - not found";
+    public static final String LOG_SUCCESS_DELETE_MSG = "Working hours for %s deleted";
     private final DoctorRepository doctorRepository;
     private final WorkingHoursRepository workingHoursRepository;
     private final WorkingHoursConverter workingHoursConverter;
     private final Contributor infoContributor;
 
-    public WorkingHoursService(DoctorRepository doctorRepository, WorkingHoursRepository workingHoursRepository,
-                               WorkingHoursConverter workingHoursConverter, Contributor infoContributor) {
+    public WorkingHoursService(DoctorRepository doctorRepository,
+                               WorkingHoursRepository workingHoursRepository,
+                               WorkingHoursConverter workingHoursConverter,
+                               Contributor infoContributor) {
         this.doctorRepository = doctorRepository;
         this.workingHoursRepository = workingHoursRepository;
         this.workingHoursConverter = workingHoursConverter;
         this.infoContributor = infoContributor;
     }
 
-    public Long upsertWorkingHours(WorkingHoursDto workingHoursDto) throws DataNotFoundException {
-        DoctorEntity doctorEntity = doctorRepository.findByName(workingHoursDto.getDoctor()).orElseThrow(() ->
-                new DataNotFoundException(String.format("Doctor %s not found", workingHoursDto.getDoctor())));
+    public Long upsertWorkingHours(WorkingHoursDto workingHoursDto)
+            throws DataNotFoundException {
+        DoctorEntity doctorEntity = doctorRepository.findByName(workingHoursDto.getDoctor())
+                .orElseThrow(() -> new DataNotFoundException(
+                        String.format(NOT_FOUND_MSG, workingHoursDto.getDoctor())));
 
         DayOfWeek dayOfWeek = DayOfWeek.of(workingHoursDto.getDayOfWeek());
-
-        Boolean updateCondition = workingHoursRepository.existsByDoctorAndDayOfWeek(doctorEntity, dayOfWeek);
+        Boolean updateCondition =
+                workingHoursRepository.existsByDoctorAndDayOfWeek(doctorEntity, dayOfWeek);
         if (updateCondition) {
             return updateWorkingHours(workingHoursDto, doctorEntity, dayOfWeek);
         }
 
-        log.info(String.format("Working hours for %s were saved", doctorEntity.getName()));
-        return workingHoursRepository
-                .save(workingHoursConverter.fromDtoToEntity(workingHoursDto, doctorEntity)).getId();
+        log.info(String.format(LOG_INSERT_MSG, doctorEntity.getName()));
+        WorkingHoursEntity workingHoursEntity =
+                workingHoursConverter.fromDtoToEntity(workingHoursDto, doctorEntity);
+        return workingHoursRepository.save(workingHoursEntity).getId();
     }
 
-    private Long updateWorkingHours(WorkingHoursDto workingHoursDto, DoctorEntity doctorEntity, DayOfWeek dayOfWeek)
+    private Long updateWorkingHours(WorkingHoursDto workingHoursDto,
+                                    DoctorEntity doctorEntity,
+                                    DayOfWeek dayOfWeek)
             throws DataNotFoundException {
-        WorkingHoursEntity workingHoursEntity = workingHoursRepository.findByDoctorAndDayOfWeek(doctorEntity, dayOfWeek)
-                .orElseThrow(() -> new DataNotFoundException("No suitable entry found"));
+        WorkingHoursEntity workingHoursEntity =
+                workingHoursRepository.findByDoctorAndDayOfWeek(doctorEntity, dayOfWeek)
+                .orElseThrow(() -> new DataNotFoundException(NO_ENTRY_MSG));
+
         workingHoursEntity.setDayOfWeek(dayOfWeek);
         workingHoursEntity.setStartHour(workingHoursDto.getStartHour());
         workingHoursEntity.setEndHour(workingHoursDto.getEndHour());
-        log.info(String.format("Working hours for %s were updated", workingHoursEntity.getDoctor()));
+        log.info(String.format(LOG_UPDATE_MSG, workingHoursEntity.getDoctor(), workingHoursDto));
         return workingHoursRepository.save(workingHoursEntity).getId();
     }
 
@@ -66,42 +81,54 @@ public class WorkingHoursService {
             throws DataNotFoundException, DataMismatchException {
         if (doctorName != null && dayOfWeek != null) {
             DoctorEntity doctorEntity = doctorRepository.findByName(doctorName)
-                    .orElseThrow(() -> new DataNotFoundException(String.format("Doctor %s not found", doctorName)));
+                    .orElseThrow(() -> new DataNotFoundException(
+                            String.format(NOT_FOUND_MSG, doctorName)));
             DayOfWeek dayOfWeekValue = Validator.dayOfWeekValidator(dayOfWeek);
-            return workingHoursRepository.findByDoctorAndDayOfWeek(doctorEntity, dayOfWeekValue).stream()
-                    .map(workingHoursConverter::froEntityToDto).toList();
+
+            return workingHoursRepository.findByDoctorAndDayOfWeek(doctorEntity, dayOfWeekValue)
+                    .stream()
+                    .map(workingHoursConverter::froEntityToDto)
+                    .toList();
         } else if (doctorName != null) {
             DoctorEntity doctorEntity = doctorRepository.findByName(doctorName)
-                    .orElseThrow(() -> new DataNotFoundException(String.format("Doctor %s not found", doctorName)));
-            return workingHoursRepository.findByDoctor(doctorEntity).stream()
-                    .map(workingHoursConverter::froEntityToDto).toList();
+                    .orElseThrow(() -> new DataNotFoundException(
+                            String.format(NOT_FOUND_MSG, doctorName)));
+            return workingHoursRepository.findByDoctor(doctorEntity)
+                    .stream()
+                    .map(workingHoursConverter::froEntityToDto)
+                    .toList();
         } else if (dayOfWeek != null) {
             DayOfWeek dayOfWeekValue = Validator.dayOfWeekValidator(dayOfWeek);
-            return workingHoursRepository.findByDayOfWeek(dayOfWeekValue).stream()
-                    .map(workingHoursConverter::froEntityToDto).toList();
+            return workingHoursRepository.findByDayOfWeek(dayOfWeekValue)
+                    .stream()
+                    .map(workingHoursConverter::froEntityToDto)
+                    .toList();
         } else {
             return StreamSupport.stream(workingHoursRepository.findAll().spliterator(), false)
-                    .map(workingHoursConverter::froEntityToDto).toList();
+                    .map(workingHoursConverter::froEntityToDto)
+                    .toList();
         }
     }
 
     public Long deleteWorkingHoursByDoctorAndDay(String doctorName, Integer dayOfWeek)
             throws DataNotFoundException, DataMismatchException {
         Optional<DoctorEntity> doctorEntityOptional = doctorRepository.findByName(doctorName);
+
         if (doctorEntityOptional.isEmpty()) {
             infoContributor.incrementFailedDeleteOperations();
-            log.warn(String.format(
-                    "Can't delete working hours for doctor with name %s. Doctor doesn't exist", doctorName));
-            throw new DataNotFoundException(String.format("Doctor with name %s not found", doctorName));
+            log.warn(String.format(LOG_FAIL_DELETE_MSG, doctorName));
+            throw new DataNotFoundException(String.format(NOT_FOUND_MSG, doctorName));
         }
 
+        DoctorEntity doctorEntity = doctorEntityOptional.get();
         if (dayOfWeek != null) {
             DayOfWeek dayOfWeekValue = Validator.dayOfWeekValidator(dayOfWeek);
-            workingHoursRepository.deleteByDoctorAndDayOfWeek(doctorEntityOptional.get(), dayOfWeekValue);
-            return doctorEntityOptional.get().getId();
+            workingHoursRepository.deleteByDoctorAndDayOfWeek(doctorEntity, dayOfWeekValue);
+            log.info(String.format(LOG_SUCCESS_DELETE_MSG, doctorEntity.getName()));
+            return doctorEntity.getId();
         }
 
-        workingHoursRepository.deleteByDoctor(doctorEntityOptional.get());
-        return doctorEntityOptional.get().getId();
+        workingHoursRepository.deleteByDoctor(doctorEntity);
+        return doctorEntity.getId();
     }
 }

@@ -24,7 +24,8 @@ public class VacationController {
     }
 
     @PostMapping("/insert")
-    public ResponseEntity<Long> insertVacation(@RequestBody @Valid VacationDto vacationDto)
+    public ResponseEntity<Long> insertVacation(
+            @RequestBody @Valid VacationDto vacationDto)
             throws DataMismatchException, DataNotFoundException {
         return ResponseEntity.ok(vacationService.upsertVacation(vacationDto));
     }
@@ -47,22 +48,26 @@ public class VacationController {
     }
 
     @GetMapping("/is-vacation")
-    public ResponseEntity<Boolean> isVacation(@RequestParam(name = "doctor") String doctorName,
-                                              @RequestParam(name = "date") String date)
+    public ResponseEntity<Boolean> isVacation(
+            @RequestParam(name = "doctor") String doctorName,
+            @RequestParam(name = "date") String date)
             throws DataMismatchException, DataNotFoundException {
         LocalDate dateValue = Validator.dateValidator(date);
         return ResponseEntity.ok(vacationService.isDateVacation(doctorName, dateValue));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Long> deleteById(@PathVariable(name = "id") String inputId) throws DataMismatchException {
+    public ResponseEntity<Long> deleteById(
+            @PathVariable(name = "id") String inputId)
+            throws DataMismatchException {
         Long idValue = Validator.idValidator(inputId);
         return ResponseEntity.ok(vacationService.deleteVacationById(idValue));
     }
 
     @DeleteMapping("/by-doctor-and-date")
-    public ResponseEntity<Long> deleteVacationByDoctorAndDate(@RequestParam(name = "doctor") String doctorName,
-                                                       @RequestParam(name = "date") String date)
+    public ResponseEntity<Long> deleteVacationByDoctorAndDate(
+            @RequestParam(name = "doctor") String doctorName,
+            @RequestParam(name = "date") String date)
             throws DataMismatchException, DataNotFoundException {
         LocalDate dateValue = Validator.dateValidator(date);
         return ResponseEntity.ok(vacationService.deleteVacationByDoctorAndDate(doctorName, dateValue));

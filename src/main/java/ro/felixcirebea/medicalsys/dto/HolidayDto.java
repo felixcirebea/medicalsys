@@ -15,8 +15,6 @@ public class HolidayDto {
 
     private Long id;
 
-    //TODO not throwing exceptions when format doesn't match the pattern
-
     @NotNull(message = "Start date cannot be null")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;

@@ -27,6 +27,22 @@ import java.util.List;
 @Slf4j
 public class InputFileParser {
 
+    public static final String SPECIALTY_ENTITY = "SpecialtyEntity";
+    public static final String INVESTIGATION_ENTITY = "InvestigationEntity";
+    public static final String DOCTOR_ENTITY = "DoctorEntity";
+    public static final String WORKING_HOURS_ENTITY = "WorkingHoursEntity";
+    public static final String HOLIDAY_ENTITY = "HolidayEntity";
+    public static final String VACATION_ENTITY = "VacationEntity";
+    public static final String APPOINTMENT_ENTITY = "AppointmentEntity";
+    public static final String NO_CLASS_FOUND_MSG = "No suitable class found";
+    public static final String LOG_DB_SUCCESS_MSG = "DB successfully populated";
+    public static final String INTERNAL_ERROR_NOT_FOUND_MSG = "Internal error - %s not present in DB";
+    public static final String INTERNAL_ERROR_IS_HOLIDAY_MSG = "Internal error - %s is holiday";
+    public static final String INTERNAL_ERROR_IS_VAC_MSG = "Internal error - for %s doctor %s is in vacation";
+    public static final String INTERNAL_ERROR_IS_OVERLAP_MSG =
+            "Internal error - appointment for %s, in %s at %s is overlapping";
+    public static final String INTERNAL_ERROR_DATE_OVERLAP_MSG =
+            "Internal error - start date cannot be after end date";
     private final SpecialtyRepository specialtyRepository;
     private final InvestigationRepository investigationRepository;
     private final DoctorRepository doctorRepository;
@@ -56,9 +72,12 @@ public class InputFileParser {
     @Value("classpath:/input-files/appointments.csv")
     private Resource appointmentResource;
 
-    public InputFileParser(SpecialtyRepository specialtyRepository, InvestigationRepository investigationRepository,
-                           DoctorRepository doctorRepository, WorkingHoursRepository workingHoursRepository,
-                           HolidayRepository holidayRepository, VacationRepository vacationRepository,
+    public InputFileParser(SpecialtyRepository specialtyRepository,
+                           InvestigationRepository investigationRepository,
+                           DoctorRepository doctorRepository,
+                           WorkingHoursRepository workingHoursRepository,
+                           HolidayRepository holidayRepository,
+                           VacationRepository vacationRepository,
                            AppointmentRepository appointmentRepository) {
         this.specialtyRepository = specialtyRepository;
         this.investigationRepository = investigationRepository;
@@ -78,26 +97,34 @@ public class InputFileParser {
             populateTable(getPath(holidayResource), HolidayEntity.class);
             populateTable(getPath(vacationResource), VacationEntity.class);
             populateTable(getPath(appointmentResource), AppointmentEntity.class);
-            log.info("DB successfully populated");
+            log.info(LOG_DB_SUCCESS_MSG);
         } catch (InputFileException exception) {
             log.error(exception.getMessage());
             System.exit(1);
         }
     }
 
-    private <T> void populateTable(String filePath, Class<T> clazz) throws DataMismatchException {
+    private <T> void populateTable(String filePath, Class<T> clazz)
+            throws DataMismatchException {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 switch (clazz.getSimpleName()) {
-                    case "SpecialtyEntity" -> specialtyRepository.saveAll(generateSpecialtyCollection(line));
-                    case "InvestigationEntity" -> investigationRepository.save(generateInvestigationEntity(line));
-                    case "DoctorEntity" -> doctorRepository.save(generateDoctorEntity(line));
-                    case "WorkingHoursEntity" -> workingHoursRepository.save(generateWorkingHoursEntity(line));
-                    case "HolidayEntity" -> holidayRepository.save(generateHolidayEntity(line));
-                    case "VacationEntity" -> vacationRepository.save(generateVacationEntity(line));
-                    case "AppointmentEntity" -> appointmentRepository.save(generateAppointmentEntity(line));
-                    default -> throw new InputFileException("No suitable class found");
+                    case SPECIALTY_ENTITY ->
+                            specialtyRepository.saveAll(generateSpecialtyCollection(line));
+                    case INVESTIGATION_ENTITY ->
+                            investigationRepository.save(generateInvestigationEntity(line));
+                    case DOCTOR_ENTITY ->
+                            doctorRepository.save(generateDoctorEntity(line));
+                    case WORKING_HOURS_ENTITY ->
+                            workingHoursRepository.save(generateWorkingHoursEntity(line));
+                    case HOLIDAY_ENTITY ->
+                            holidayRepository.save(generateHolidayEntity(line));
+                    case VACATION_ENTITY ->
+                            vacationRepository.save(generateVacationEntity(line));
+                    case APPOINTMENT_ENTITY ->
+                            appointmentRepository.save(generateAppointmentEntity(line));
+                    default -> throw new InputFileException(NO_CLASS_FOUND_MSG);
                 }
             }
         } catch (IOException e) {
@@ -105,37 +132,45 @@ public class InputFileParser {
         }
     }
 
-    private AppointmentEntity generateAppointmentEntity(String line) throws DataMismatchException {
+    private AppointmentEntity generateAppointmentEntity(String line)
+            throws DataMismatchException {
+
         String[] splitLine = line.split(",");
 
-        DoctorEntity doctorEntity = doctorRepository.findByName(splitLine[1])
+        DoctorEntity doctorEntity =
+                doctorRepository.findByName(splitLine[1])
                 .orElseThrow(() -> new InputFileException(
-                        String.format("Internal error - %s not present in DB", splitLine[1])));
+                        String.format(INTERNAL_ERROR_NOT_FOUND_MSG, splitLine[1])));
 
-        InvestigationEntity investigationEntity = investigationRepository.findByName(splitLine[2])
+        InvestigationEntity investigationEntity =
+                investigationRepository.findByName(splitLine[2])
                 .orElseThrow(() -> new InputFileException(
-                        String.format("Internal error - %s not present in DB", splitLine[2])));
+                        String.format(INTERNAL_ERROR_NOT_FOUND_MSG, splitLine[2])));
 
         LocalDate dateValue = Validator.dateValidator(splitLine[3]);
         Boolean isHoliday = holidayRepository.isDateBetweenHolidays(dateValue);
         if (isHoliday) {
-            throw new InputFileException(String.format("Internal error - %s is holiday", splitLine[3]));
+            throw new InputFileException(
+                    String.format(INTERNAL_ERROR_IS_HOLIDAY_MSG, splitLine[3]));
         }
 
         Boolean isVacation = vacationRepository.isDateBetweenVacation(doctorEntity, dateValue);
         if (isVacation) {
-            throw new InputFileException(String.format(
-                    "Internal error - for %s doctor %s is in vacation", splitLine[3], doctorEntity.getName()));
+            throw new InputFileException(
+                    String.format(INTERNAL_ERROR_IS_VAC_MSG, splitLine[3], doctorEntity.getName()));
         }
 
         LocalTime startHour = Validator.timeValidator(splitLine[4]);
         LocalTime endHour = startHour.plusMinutes(investigationEntity.getDuration());
-        Boolean isOverlapping = appointmentRepository.existsByDoctorDateAndTimeRange(
-                doctorEntity, dateValue, startHour, endHour);
+        Boolean isOverlapping =
+                appointmentRepository.existsByDoctorDateAndTimeRange(
+                        doctorEntity, dateValue, startHour, endHour);
         if (isOverlapping) {
-            throw new InputFileException(String.format(
-                    "Internal error - appointment for %s, in %s at %s is overlapping",
-                    doctorEntity.getName(), dateValue, startHour));
+            throw new InputFileException(
+                    String.format(
+                            INTERNAL_ERROR_IS_OVERLAP_MSG, doctorEntity.getName(),
+                            dateValue, startHour)
+            );
         }
 
         Double basePrice = investigationEntity.getBasePrice();
@@ -155,58 +190,82 @@ public class InputFileParser {
         return appointmentEntity;
     }
 
-    private VacationEntity generateVacationEntity(String line) {
+    private VacationEntity generateVacationEntity(String line)
+            throws DataMismatchException {
+
         String[] splitLine = line.split(",");
 
         DoctorEntity doctorEntity = doctorRepository.findByName(splitLine[0]).orElseThrow(() ->
-                new InputFileException(String.format("Internal error - %s not present in DB", splitLine[0])));
+                new InputFileException(String.format(INTERNAL_ERROR_NOT_FOUND_MSG, splitLine[0])));
 
         VacationEntity vacationEntity = new VacationEntity();
         vacationEntity.setDoctor(doctorEntity);
-        vacationEntity.setStartDate(LocalDate.parse(splitLine[1]));
-        vacationEntity.setEndDate(LocalDate.parse(splitLine[2]));
-        if (vacationEntity.getStartDate().isAfter(vacationEntity.getEndDate())) {
-            throw new InputFileException("Internal error - start date cannot be after end date");
+
+        LocalDate startDate = Validator.dateValidator(splitLine[1]);
+        LocalDate endDate = Validator.dateValidator(splitLine[2]);
+        vacationEntity.setStartDate(startDate);
+        vacationEntity.setEndDate(endDate);
+
+        if (startDate.isAfter(endDate)) {
+            throw new InputFileException(INTERNAL_ERROR_DATE_OVERLAP_MSG);
         }
-        vacationEntity.setType(VacationType.valueOf(splitLine[3]));
+
+        VacationType vacationType = Validator.enumValidator(splitLine[3]);
+        vacationEntity.setType(vacationType);
 
         return vacationEntity;
     }
 
-    private HolidayEntity generateHolidayEntity(String line) {
+    private HolidayEntity generateHolidayEntity(String line)
+            throws DataMismatchException {
+
         String[] splitLine = line.split(",");
 
         HolidayEntity holidayEntity = new HolidayEntity();
-        holidayEntity.setStartDate(LocalDate.parse(splitLine[0]));
-        holidayEntity.setEndDate(LocalDate.parse(splitLine[1]));
-        if (holidayEntity.getStartDate().isAfter(holidayEntity.getEndDate())) {
-            throw new InputFileException("Internal error - start date cannot be after end date");
+
+        LocalDate startDate = Validator.dateValidator(splitLine[0]);
+        LocalDate endDate = Validator.dateValidator(splitLine[1]);
+        holidayEntity.setStartDate(startDate);
+        holidayEntity.setEndDate(endDate);
+
+        if (startDate.isAfter(endDate)) {
+            throw new InputFileException(INTERNAL_ERROR_DATE_OVERLAP_MSG);
         }
         holidayEntity.setDescription(splitLine[2]);
 
         return holidayEntity;
     }
 
-    private WorkingHoursEntity generateWorkingHoursEntity(String line) {
+    private WorkingHoursEntity generateWorkingHoursEntity(String line)
+            throws DataMismatchException {
+
         String[] splitLine = line.split(",");
 
-        DoctorEntity doctorEntity = doctorRepository.findByName(splitLine[0]).orElseThrow(() ->
-                new InputFileException(String.format("Internal error - %s not present in DB", splitLine[0])));
+        DoctorEntity doctorEntity = doctorRepository.findByName(splitLine[0])
+                .orElseThrow(() -> new InputFileException(
+                        String.format(INTERNAL_ERROR_NOT_FOUND_MSG, splitLine[0])));
 
         WorkingHoursEntity workingHoursEntity = new WorkingHoursEntity();
         workingHoursEntity.setDoctor(doctorEntity);
-        workingHoursEntity.setDayOfWeek(DayOfWeek.of(Integer.parseInt(splitLine[1])));
-        workingHoursEntity.setStartHour(LocalTime.parse(splitLine[2].toUpperCase()));
-        workingHoursEntity.setEndHour(LocalTime.parse(splitLine[3]));
+
+        DayOfWeek dayOfWeek = Validator.dayOfWeekValidator(Integer.parseInt(splitLine[1]));
+        workingHoursEntity.setDayOfWeek(dayOfWeek);
+
+        LocalTime startHour = Validator.timeValidator(splitLine[2]);
+        LocalTime endHour = Validator.timeValidator(splitLine[3]);
+        workingHoursEntity.setStartHour(startHour);
+        workingHoursEntity.setEndHour(endHour);
 
         return workingHoursEntity;
     }
 
     private DoctorEntity generateDoctorEntity(String line) {
+
         String[] splitLine = line.split(",");
 
-        SpecialtyEntity specialtyEntity = specialtyRepository.findByName(splitLine[1]).orElseThrow(() ->
-                new InputFileException(String.format("Internal error - %s not present in DB", splitLine[1])));
+        SpecialtyEntity specialtyEntity = specialtyRepository.findByName(splitLine[1])
+                .orElseThrow(() -> new InputFileException(
+                        String.format(INTERNAL_ERROR_NOT_FOUND_MSG, splitLine[1])));
 
         DoctorEntity doctorEntity = new DoctorEntity();
         doctorEntity.setName(splitLine[0]);
@@ -217,10 +276,12 @@ public class InputFileParser {
     }
 
     private InvestigationEntity generateInvestigationEntity(String line) {
+
         String[] splitLine = line.split(",");
 
-        SpecialtyEntity specialtyEntity = specialtyRepository.findByName(splitLine[1]).orElseThrow(() ->
-                new InputFileException(String.format("Internal error - %s not present in DB", splitLine[1])));
+        SpecialtyEntity specialtyEntity = specialtyRepository.findByName(splitLine[1])
+                .orElseThrow(() -> new InputFileException(
+                        String.format(INTERNAL_ERROR_NOT_FOUND_MSG, splitLine[1])));
 
         InvestigationEntity investigationEntity = new InvestigationEntity();
         investigationEntity.setName(splitLine[0]);
@@ -232,6 +293,7 @@ public class InputFileParser {
     }
 
     private List<SpecialtyEntity> generateSpecialtyCollection(String line) {
+
         String[] splitLine = line.split(",");
         List<SpecialtyEntity> returnList = new ArrayList<>();
         Arrays.stream(splitLine).forEach(string -> {

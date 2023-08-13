@@ -23,26 +23,31 @@ public class InvestigationController {
     }
 
     @PostMapping("/insert")
-    public ResponseEntity<Long> upsertInvestigation(@RequestBody @Valid InvestigationDto investigationDto)
+    public ResponseEntity<Long> upsertInvestigation(
+            @RequestBody @Valid InvestigationDto investigationDto)
             throws DataNotFoundException {
         return ResponseEntity.ok(investigationService.upsertInvestigation(investigationDto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<InvestigationDto> getInvestigationById(@PathVariable(name = "id") String investigationId)
+    public ResponseEntity<InvestigationDto> getInvestigationById(
+            @PathVariable(name = "id") String investigationId)
             throws DataNotFoundException, DataMismatchException {
-        return ResponseEntity.ok(investigationService.getInvestigationById(Validator.idValidator(investigationId)));
+        Long idValue = Validator.idValidator(investigationId);
+        return ResponseEntity.ok(investigationService.getInvestigationById(idValue));
     }
 
     @GetMapping("/get")
     public ResponseEntity<InvestigationDto> getInvestigationByName(
-            @RequestParam(name = "name") String investigationName) throws DataNotFoundException {
+            @RequestParam(name = "name") String investigationName)
+            throws DataNotFoundException {
         return ResponseEntity.ok(investigationService.getInvestigationByName(investigationName));
     }
 
     @GetMapping("/by-specialty")
     public ResponseEntity<List<InvestigationDto>> getInvestigationBySpecialty(
-            @RequestParam(name = "specialty") String specialtyName) throws DataNotFoundException {
+            @RequestParam(name = "specialty") String specialtyName)
+            throws DataNotFoundException {
         return ResponseEntity.ok(investigationService.getInvestigationBySpecialty(specialtyName));
     }
 
@@ -58,21 +63,25 @@ public class InvestigationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Long> deleteInvestigationById(@PathVariable(name = "id") String investigationId)
+    public ResponseEntity<Long> deleteInvestigationById(
+            @PathVariable(name = "id") String investigationId)
             throws DataMismatchException {
-        return ResponseEntity.ok(investigationService.deleteInvestigationById(Validator.idValidator(investigationId)));
+        Long idValue = Validator.idValidator(investigationId);
+        return ResponseEntity.ok(investigationService.deleteInvestigationById(idValue));
     }
 
     @DeleteMapping("/by-name")
     public ResponseEntity<Long> deleteInvestigationByName(
-            @RequestParam(name = "investigation") String investigationName) throws DataNotFoundException {
+            @RequestParam(name = "investigation") String investigationName)
+            throws DataNotFoundException {
         return ResponseEntity.ok(investigationService.deleteInvestigationByName(investigationName));
     }
 
     @GetMapping("/pricing")
     public ResponseEntity<Map<String, Map<String, Double>>> getInvestigationWithPricing(
             @RequestParam(name = "doctor") String doctor,
-            @RequestParam(name = "investigation", required = false) String investigation) throws DataNotFoundException {
+            @RequestParam(name = "investigation", required = false) String investigation)
+            throws DataNotFoundException {
         return ResponseEntity.ok(investigationService.getInvestigationWithPricing(doctor, investigation));
     }
 

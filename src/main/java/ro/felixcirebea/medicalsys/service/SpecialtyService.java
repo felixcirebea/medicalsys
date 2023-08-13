@@ -17,6 +17,12 @@ import java.util.stream.StreamSupport;
 @Slf4j
 public class SpecialtyService {
 
+    public static final String WRONG_ID_MSG = "Wrong ID";
+    public static final String NOT_FOUND_MSG = "%s not found";
+    public static final String LOG_INSERT_MSG = "%s was inserted";
+    public static final String LOG_UPDATE_MSG = "%s was updated as follows: %s";
+    public static final String LOG_FAIL_DELETE_MSG = "Delete of specialty: %s failed - not found";
+    public static final String LOG_SUCCESS_DELETE_MSG = "Specialty id: %s deleted";
     private final SpecialtyRepository specialtyRepository;
     private final SpecialtyConverter specialtyConverter;
     private final Contributor infoContributor;
@@ -33,28 +39,29 @@ public class SpecialtyService {
         if (specialtyDto.getId() != null) {
             return updateSpecialty(specialtyDto);
         }
-        log.info(String.format("Specialty with name %s was saved", specialtyDto.getName()));
+
+        log.info(String.format(LOG_INSERT_MSG, specialtyDto.getName()));
         return specialtyRepository.save(specialtyConverter.fromDtoToEntity(specialtyDto)).getId();
     }
 
     private Long updateSpecialty(SpecialtyDto specialtyDto) throws DataNotFoundException {
         SpecialtyEntity specialtyEntity = specialtyRepository.findById(specialtyDto.getId())
-                .orElseThrow(() -> new DataNotFoundException("Wrong ID"));
+                .orElseThrow(() -> new DataNotFoundException(WRONG_ID_MSG));
+
         specialtyEntity.setName(specialtyDto.getName());
-        log.info("%s with id %s was updated as follows:" + specialtyDto);
+        log.info(String.format(LOG_UPDATE_MSG, specialtyDto.getName(), specialtyDto));
         return specialtyRepository.save(specialtyEntity).getId();
     }
 
     public String getSpecialtyById(Long specialtyId) throws DataNotFoundException {
         SpecialtyEntity specialtyEntity = specialtyRepository.findById(specialtyId)
-                .orElseThrow(() -> new DataNotFoundException("Wrong ID"));
+                .orElseThrow(() -> new DataNotFoundException(WRONG_ID_MSG));
         return specialtyEntity.getName();
     }
 
     public String getSpecialtyByName(String specialtyName) throws DataNotFoundException {
         SpecialtyEntity specialtyEntity = specialtyRepository.findByName(specialtyName)
-                .orElseThrow(() -> new DataNotFoundException(
-                        String.format("Specialty with name %s not found", specialtyName)));
+                .orElseThrow(() -> new DataNotFoundException(String.format(NOT_FOUND_MSG, specialtyName)));
         return specialtyEntity.getName();
     }
 
@@ -65,14 +72,15 @@ public class SpecialtyService {
     }
 
     public Long deleteSpecialtyById(Long specialtyId) {
-        Optional<SpecialtyEntity> specialtyEntityOptional = specialtyRepository.findById(specialtyId);
-        if (specialtyEntityOptional.isEmpty()) {
-            log.warn(String.format("Can't delete specialty with id %s because it doesn't exist", specialtyId));
+        boolean deleteCondition = specialtyRepository.existsById(specialtyId);
+        if (!deleteCondition) {
+            log.warn(String.format(LOG_FAIL_DELETE_MSG, specialtyId));
             infoContributor.incrementFailedDeleteOperations();
             return specialtyId;
         }
+
         specialtyRepository.deleteById(specialtyId);
-        log.info(String.format("Specialty with id %s deleted", specialtyId));
+        log.info(String.format(LOG_SUCCESS_DELETE_MSG, specialtyId));
         return specialtyId;
     }
 
@@ -81,11 +89,13 @@ public class SpecialtyService {
 
         if (specialtyEntityOptional.isEmpty()) {
             infoContributor.incrementFailedDeleteOperations();
-            throw new DataNotFoundException(String.format("Specialty with name %s not found", specialtyName));
+            log.warn(String.format(LOG_FAIL_DELETE_MSG, specialtyName));
+            throw new DataNotFoundException(String.format(NOT_FOUND_MSG, specialtyName));
         }
 
-        specialtyRepository.deleteById(specialtyEntityOptional.get().getId());
-        return specialtyEntityOptional.get().getId();
+        Long specialtyId = specialtyEntityOptional.get().getId();
+        specialtyRepository.deleteById(specialtyId);
+        return specialtyId;
     }
 
 }

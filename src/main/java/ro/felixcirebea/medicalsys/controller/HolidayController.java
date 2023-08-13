@@ -9,6 +9,7 @@ import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
 import ro.felixcirebea.medicalsys.service.HolidayService;
 import ro.felixcirebea.medicalsys.util.Validator;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -22,19 +23,24 @@ public class HolidayController {
     }
 
     @PostMapping("/insert")
-    public ResponseEntity<Long> upsertHoliday(@RequestBody @Valid HolidayDto holidayDto) throws DataNotFoundException {
+    public ResponseEntity<Long> upsertHoliday(
+            @RequestBody @Valid HolidayDto holidayDto)
+            throws DataNotFoundException {
         return ResponseEntity.ok(holidayService.upsertHoliday(holidayDto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<HolidayDto> getHolidayById(@PathVariable(name = "id") String holidayId)
+    public ResponseEntity<HolidayDto> getHolidayById(
+            @PathVariable(name = "id") String holidayId)
             throws DataMismatchException, DataNotFoundException {
-        return ResponseEntity.ok(holidayService.getHolidayById(Validator.idValidator(holidayId)));
+        Long idValue = Validator.idValidator(holidayId);
+        return ResponseEntity.ok(holidayService.getHolidayById(idValue));
     }
 
     @GetMapping("/by-description")
     public ResponseEntity<HolidayDto> getHolidayByDescription(
-            @RequestParam(name = "description") String holidayDescription) throws DataNotFoundException {
+            @RequestParam(name = "description") String holidayDescription)
+            throws DataNotFoundException {
         return ResponseEntity.ok(holidayService.getHolidayByDescription(holidayDescription));
     }
 
@@ -44,19 +50,23 @@ public class HolidayController {
     }
 
     @GetMapping("/is-holiday")
-    public ResponseEntity<Boolean> isHoliday(@RequestParam(name = "date") String inputDate)
+    public ResponseEntity<Boolean> isHoliday(
+            @RequestParam(name = "date") String inputDate)
             throws DataMismatchException {
-        return ResponseEntity.ok(holidayService.isDateHoliday(Validator.dateValidator(inputDate)));
+        LocalDate idValue = Validator.dateValidator(inputDate);
+        return ResponseEntity.ok(holidayService.isDateHoliday(idValue));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Long> deleteHolidayById(@PathVariable(name = "id") String inputId)
+    public ResponseEntity<Long> deleteHolidayById(
+            @PathVariable(name = "id") String inputId)
             throws DataMismatchException {
         return ResponseEntity.ok(holidayService.deleteHolidayById(Validator.idValidator(inputId)));
     }
 
     @DeleteMapping("/by-description")
-    public ResponseEntity<Long> deleteHolidayByDescription(@RequestParam(name = "description") String description)
+    public ResponseEntity<Long> deleteHolidayByDescription(
+            @RequestParam(name = "description") String description)
             throws DataNotFoundException {
         return ResponseEntity.ok(holidayService.deleteHolidayByDescription(description));
     }

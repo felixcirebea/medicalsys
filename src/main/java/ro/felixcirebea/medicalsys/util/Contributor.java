@@ -18,26 +18,36 @@ public class Contributor implements InfoContributor {
     @Override
     public void contribute(Info.Builder builder) {
         builder.withDetail("operations-monitor",
-                Map.of("failed-delete-operations", String.valueOf(failedDeleteOperations),
-                        "data-not-found-exceptions", String.valueOf(numberOfDataNotFoundExceptions),
-                        "data-mismatch-exceptions", String.valueOf(numberOfDataMismatchExceptions),
-                        "constraint-violation-exceptions", String.valueOf(numberOfConstraintViolationExceptions),
-                        "concurrency-exceptions", String.valueOf(numberOfConcurrencyExceptions))
+                Map.of(
+                        "failed-delete-operations",
+                        String.valueOf(failedDeleteOperations),
+                        "data-not-found-exceptions",
+                        String.valueOf(numberOfDataNotFoundExceptions),
+                        "data-mismatch-exceptions",
+                        String.valueOf(numberOfDataMismatchExceptions),
+                        "constraint-violation-exceptions",
+                        String.valueOf(numberOfConstraintViolationExceptions),
+                        "concurrency-exceptions",
+                        String.valueOf(numberOfConcurrencyExceptions))
         );
     }
 
     public void incrementFailedDeleteOperations() {
         this.failedDeleteOperations++;
     }
+
     public void incrementNumberOfDataNotFoundExceptions() {
         this.numberOfDataNotFoundExceptions++;
     }
+
     public void incrementNumberOfDataMismatchExceptions() {
         this.numberOfDataMismatchExceptions++;
     }
+
     public void incrementNumberOfConstraintViolationExceptions() {
         this.numberOfConstraintViolationExceptions++;
     }
+
     public void incrementNumberOfConcurrencyExceptions() {
         this.numberOfConcurrencyExceptions++;
     }
