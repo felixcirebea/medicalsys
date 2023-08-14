@@ -16,7 +16,7 @@ public class HolidayDto {
     private Long id;
 
     @NotNull(message = "Start date cannot be null")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate startDate;
 
     @NotNull(message = "Start date cannot be null")

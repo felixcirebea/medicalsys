@@ -1,0 +1,4270 @@
+{
+	"info": {
+		"_postman_id": "cf391607-e42f-4c67-a96b-1768638c9f11",
+		"name": "Medical-System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25064341"
+	},
+	"item": [
+		{
+			"name": "Specialty",
+			"item": [
+				{
+					"name": "UpsertSpecialty-Insert",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Neurology\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/specialties/insert",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"specialties",
+								"insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpsertSpecialty-Update",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"5\",\r\n    \"name\": \"Neurosurgery\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/specialties/insert",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"specialties",
+								"insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetSpecialtyById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/specialties/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"specialties",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetSpecialtyByName",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/specialties/get?name=Cardiology",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"specialties",
+								"get"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Cardiology"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllSpecialties",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/specialties/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"specialties",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteSpecialtyById",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/specialties/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"specialties",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteSpecialtyByName",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/specialties/by-name?name=Diabetes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"specialties",
+								"by-name"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Diabetes"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Investigation",
+			"item": [
+				{
+					"name": "UpsertInvestigation-Insert",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Emergency surgery control\",\r\n    \"specialty\": \"Surgery\",\r\n    \"basePrice\": 150,\r\n    \"duration\": 180\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/investigations/insert",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"investigations",
+								"insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpsertInvestigation-Update",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 31,\r\n    \"name\": \"Neurology emergency control\",\r\n    \"specialty\": \"Cardiology\",\r\n    \"basePrice\": 175,\r\n    \"duration\": 250\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/investigations/insert",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"investigations",
+								"insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetInvestigationById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/investigations/31",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"investigations",
+								"31"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetInvestigationByName",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/investigations/get?name=Propofol%20anesthesia",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"investigations",
+								"get"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Propofol%20anesthesia"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetInvestigationsBySpecialty",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/investigations/by-specialty?specialty=Dermatology",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"investigations",
+								"by-specialty"
+							],
+							"query": [
+								{
+									"key": "specialty",
+									"value": "Dermatology"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetInvestigationByDuration",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/investigations/by-duration?duration=60",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"investigations",
+								"by-duration"
+							],
+							"query": [
+								{
+									"key": "duration",
+									"value": "60"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllInvestigations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/investigations/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"investigations",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteInvestigationById",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/investigations/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"investigations",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteInvestigationByName",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/investigations/by-name?investigation=Surgery%20control",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"investigations",
+								"by-name"
+							],
+							"query": [
+								{
+									"key": "investigation",
+									"value": "Surgery%20control"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetInvestigationWithPricing",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/investigations/pricing?doctor=Andreea%20Anastasiu&investigation=Pre-anesthetic%20consult",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"investigations",
+								"pricing"
+							],
+							"query": [
+								{
+									"key": "doctor",
+									"value": "Andreea%20Anastasiu"
+								},
+								{
+									"key": "investigation",
+									"value": "Pre-anesthetic%20consult"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Doctor",
+			"item": [
+				{
+					"name": "UpsertDoctor-Insert",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Cirebea Felix\",\r\n    \"specialty\": \"Surgery\",\r\n    \"priceRate\": 10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/doctors/insert",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"doctors",
+								"insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpsertDoctor-Update",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 8,\r\n    \"name\": \"Cirebea Felix-Raul\",\r\n    \"specialty\": \"Surgery\",\r\n    \"priceRate\": 50\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/doctors/insert",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"doctors",
+								"insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetDoctorById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/doctors/10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"doctors",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetDoctorByName",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/doctors/by-name?name=Rodica%20Bacruban",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"doctors",
+								"by-name"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Rodica%20Bacruban"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetDoctorsBySpecialty",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/doctors/by-specialty?specialty=Cardiology",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"doctors",
+								"by-specialty"
+							],
+							"query": [
+								{
+									"key": "specialty",
+									"value": "Cardiology"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllDoctors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/doctors/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"doctors",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteDoctorById",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/doctors/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"doctors",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteDoctorByName",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/doctors/by-name?name=Patrick%20Danciu",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"doctors",
+								"by-name"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Patrick%20Danciu"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Holiday",
+			"item": [
+				{
+					"name": "UpsertHoliday-Insert",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"startDate\": \"2023-10-15\",\r\n    \"endDate\": \"2023-10-20\",\r\n    \"description\": \"Test holiday\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/holidays/insert",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"holidays",
+								"insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpsertHoliday-Update",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 10,\r\n    \"startDate\": \"2023-10-19\",\r\n    \"endDate\": \"2023-10-20\",\r\n    \"description\": \"Test holiday\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/holidays/insert",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"holidays",
+								"insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetHolidayById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/holidays/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"holidays",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetHolidayByDescription",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/holidays/by-description?description=Adormirea%20Maicii%20Domnului",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"holidays",
+								"by-description"
+							],
+							"query": [
+								{
+									"key": "description",
+									"value": "Adormirea%20Maicii%20Domnului"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllHolidays",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/holidays/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"holidays",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "IsDateHoliday",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/holidays/is-holiday?date=2023-08-15",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"holidays",
+								"is-holiday"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2023-08-15"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteHolidayById",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/holidays/9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"holidays",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteHolidayByDescription",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/holidays/by-description?description=Ziua%20Muncii",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"holidays",
+								"by-description"
+							],
+							"query": [
+								{
+									"key": "description",
+									"value": "Ziua%20Muncii"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Vacation",
+			"item": [
+				{
+					"name": "UpsertVacation-Insert",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"doctor\": \"Catrinel Deji\",\r\n    \"startDate\": \"2023-10-13\",\r\n    \"endDate\": \"2023-10-17\",\r\n    \"type\": \"VACATION\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/vacations/insert",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"vacations",
+								"insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CancelVacation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/vacations/update-status?doctor=Catrinel%20Deji&start-date=2023-02-13",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"vacations",
+								"update-status"
+							],
+							"query": [
+								{
+									"key": "doctor",
+									"value": "Catrinel%20Deji"
+								},
+								{
+									"key": "start-date",
+									"value": "2023-02-13"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetVacationByDoctor",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/vacations/by-doctor-and-dates?doctor=Catrinel%20Deji",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"vacations",
+								"by-doctor-and-dates"
+							],
+							"query": [
+								{
+									"key": "doctor",
+									"value": "Catrinel%20Deji"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetVacationByDoctorAndDates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/vacations/by-doctor-and-dates?doctor=Catrinel%20Deji&start-date=2023-02-01&end-date=2023-10-25",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"vacations",
+								"by-doctor-and-dates"
+							],
+							"query": [
+								{
+									"key": "doctor",
+									"value": "Catrinel%20Deji"
+								},
+								{
+									"key": "start-date",
+									"value": "2023-02-01"
+								},
+								{
+									"key": "end-date",
+									"value": "2023-10-25"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetVacationByDoctorAndType",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/vacations/by-doctor-and-type?doctor=Catrinel%20Deji&type=VACATION",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"vacations",
+								"by-doctor-and-type"
+							],
+							"query": [
+								{
+									"key": "doctor",
+									"value": "Catrinel%20Deji"
+								},
+								{
+									"key": "type",
+									"value": "VACATION"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "IsDateVacation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/vacations/is-vacation?doctor=Catrinel%20Deji&date=2023-02-15",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"vacations",
+								"is-vacation"
+							],
+							"query": [
+								{
+									"key": "doctor",
+									"value": "Catrinel%20Deji"
+								},
+								{
+									"key": "date",
+									"value": "2023-02-15"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetVacationByDoctorAndStatus",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/vacations/by-doctor-and-status?doctor=Catrinel%20Deji&status=PLANNED",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"vacations",
+								"by-doctor-and-status"
+							],
+							"query": [
+								{
+									"key": "doctor",
+									"value": "Catrinel%20Deji"
+								},
+								{
+									"key": "status",
+									"value": "PLANNED"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "WorkingHours",
+			"item": [
+				{
+					"name": "UpsertWorkingHours-Insert/Update",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"doctor\": \"Catrinel Deji\",\r\n    \"dayOfWeek\": 3,\r\n    \"startHour\": \"12:00\",\r\n    \"endHour\": \"20:00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/working-hours/insert",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"working-hours",
+								"insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetWorkingHoursByDoctorAndDay",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/working-hours/by-doctor-and-day?doctor=Catrinel%20Deji&day=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"working-hours",
+								"by-doctor-and-day"
+							],
+							"query": [
+								{
+									"key": "doctor",
+									"value": "Catrinel%20Deji"
+								},
+								{
+									"key": "day",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteWorkingHoursByDoctorAndDay",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/working-hours/by-doctor-and-day?doctor=Catrinel%20Deji&day=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"working-hours",
+								"by-doctor-and-day"
+							],
+							"query": [
+								{
+									"key": "doctor",
+									"value": "Catrinel%20Deji"
+								},
+								{
+									"key": "day",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Appointment",
+			"item": [
+				{
+					"name": "GetAvailableHoursByDocInvDate",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/appointments/available-hours?doctor=Catrinel%20Deji&investigation=Allergology%20control&date=2023-08-10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"appointments",
+								"available-hours"
+							],
+							"query": [
+								{
+									"key": "doctor",
+									"value": "Catrinel%20Deji"
+								},
+								{
+									"key": "investigation",
+									"value": "Allergology%20control"
+								},
+								{
+									"key": "date",
+									"value": "2023-08-10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BookAppoinment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"clientName\": \"Cirebea Felix\",\r\n    \"doctor\":\"Catrinel Deji\",\r\n    \"investigation\":\"Allergology analyses interpretation\",\r\n    \"date\":\"2023-08-10\",\r\n    \"startHour\":\"10:30\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/appointments/book",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"appointments",
+								"book"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAppointmentById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/appointments/33",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"appointments",
+								"33"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CancelBookByIdAndName",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/appointments/cancel-book?id=33&clientName=Cirebea%20Felix",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"appointments",
+								"cancel-book"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "33"
+								},
+								{
+									"key": "clientName",
+									"value": "Cirebea%20Felix"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Test-Cases",
+			"item": [
+				{
+					"name": "Wrong-Input",
+					"item": [
+						{
+							"name": "Specialty",
+							"item": [
+								{
+									"name": "UpsertSpecialty-Update-WrongID",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": \"10\",\r\n    \"name\": \"Neurosurgery\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/specialties/insert",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"specialties",
+												"insert"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetSpecialtyById-WrongID",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/specialties/5",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"specialties",
+												"5"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetSpecialtyByName-WrongName",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/specialties/get?name=Test%20specialty",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"specialties",
+												"get"
+											],
+											"query": [
+												{
+													"key": "name",
+													"value": "Test%20specialty"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "DeleteSpecialtyById-WrongID",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/specialties/10",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"specialties",
+												"10"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "DeleteSpecialtyByName-WrongName",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/specialties/by-name?name=Test%20specilaty",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"specialties",
+												"by-name"
+											],
+											"query": [
+												{
+													"key": "name",
+													"value": "Test%20specilaty"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Investigation",
+							"item": [
+								{
+									"name": "UpsertInvestigation-Insert-WrongSpec",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Neurology control\",\r\n    \"specialty\": \"Neurosurgery\",\r\n    \"basePrice\": 150,\r\n    \"duration\": 30\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/investigations/insert",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"investigations",
+												"insert"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "UpsertInvestigation-Update-WrongID",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 50,\r\n    \"name\": \"Neurology emergency control\",\r\n    \"specialty\": \"Cardiology\",\r\n    \"basePrice\": 175,\r\n    \"duration\": 500\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/investigations/insert",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"investigations",
+												"insert"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetInvestigationById-WrongID",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/investigations/50",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"investigations",
+												"50"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetInvestigationByName-WrongName",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/investigations/get?name=Test%20investigation",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"investigations",
+												"get"
+											],
+											"query": [
+												{
+													"key": "name",
+													"value": "Test%20investigation"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetInvestigationBySpecialty-WrongSpec",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/investigations/by-specialty?specialty=Test%20specialty",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"investigations",
+												"by-specialty"
+											],
+											"query": [
+												{
+													"key": "specialty",
+													"value": "Test%20specialty"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetInvestigationByDuration-DurNotInt",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/investigations/by-duration?duration=asd",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"investigations",
+												"by-duration"
+											],
+											"query": [
+												{
+													"key": "duration",
+													"value": "asd"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "DeleteInvestigationById-WrongID",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/investigations/50",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"investigations",
+												"50"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "DeleteInvestigationByName-WrongName",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/investigations/by-name?investigation=Test%20investigation",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"investigations",
+												"by-name"
+											],
+											"query": [
+												{
+													"key": "investigation",
+													"value": "Test%20investigation"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetInvestigationWithPricing-WrongDoc/Inv",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/investigations/pricing?doctor=Test%20doctor&investigation=Pre-anesthetic%20consult",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"investigations",
+												"pricing"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Test%20doctor"
+												},
+												{
+													"key": "investigation",
+													"value": "Pre-anesthetic%20consult"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Doctor",
+							"item": [
+								{
+									"name": "UpsertDoctor-Insert-WrongSpec",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Cirebea Felix\",\r\n    \"specialty\": \"Neurourgery\",\r\n    \"priceRate\": 10\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/doctors/insert",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"doctors",
+												"insert"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "UpsertDoctor-Update-WrongID",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 50,\r\n    \"name\": \"Cirebea Felix\",\r\n    \"specialty\": \"Surgery\",\r\n    \"priceRate\": 50\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/doctors/insert",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"doctors",
+												"insert"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetDoctorById-WrongID",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/doctors/50",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"doctors",
+												"50"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetDoctorByName-WrongName",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/doctors/by-name?name=Cirebea%20Felix",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"doctors",
+												"by-name"
+											],
+											"query": [
+												{
+													"key": "name",
+													"value": "Cirebea%20Felix"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetDoctorsBySpecialty-WrongSpec",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/doctors/by-specialty?specialty=Test%20specialty",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"doctors",
+												"by-specialty"
+											],
+											"query": [
+												{
+													"key": "specialty",
+													"value": "Test%20specialty"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "DeleteDoctorById-WrongID",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/doctors/50",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"doctors",
+												"50"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "DeleteDoctorByName-WrongName",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/doctors/by-name?name=Cirebea%20Felix",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"doctors",
+												"by-name"
+											],
+											"query": [
+												{
+													"key": "name",
+													"value": "Cirebea%20Felix"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Holiday",
+							"item": [
+								{
+									"name": "UpsertHoliday-Insert-WrongDate",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"startDate\": \"15-10-2023\",\r\n    \"endDate\": \"2023-10-20\",\r\n    \"description\": \"Test holiday\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/holidays/insert",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"holidays",
+												"insert"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "UpsertHoliday-Update-WrongId",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"id\": 11,\r\n    \"startDate\": \"2023-10-19\",\r\n    \"endDate\": \"2023-10-20\",\r\n    \"description\": \"Test holiday\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/holidays/insert",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"holidays",
+												"insert"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetHolidayById-WrongId",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/holidays/11",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"holidays",
+												"11"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetHolidayByDescription-WrongDescription",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/holidays/by-description?description=Test%20Holiday",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"holidays",
+												"by-description"
+											],
+											"query": [
+												{
+													"key": "description",
+													"value": "Test%20Holiday"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "IsDateHoliday-WrongDate",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/holidays/is-holiday?date=2023-08-32",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"holidays",
+												"is-holiday"
+											],
+											"query": [
+												{
+													"key": "date",
+													"value": "2023-08-32"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "DeleteHolidayById-WrongId",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/holidays/11",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"holidays",
+												"11"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "DeleteHolidayByDescription-WrongDescription",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/holidays/by-description?description=Test%20Holiday",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"holidays",
+												"by-description"
+											],
+											"query": [
+												{
+													"key": "description",
+													"value": "Test%20Holiday"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Vacation",
+							"item": [
+								{
+									"name": "UpsertVacation-Insert-WrongDoc",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"doctor\": \"Test doctor\",\r\n    \"startDate\": \"2023-10-15\",\r\n    \"endDate\": \"2023-10-20\",\r\n    \"type\": \"SICK_LEAVE\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/vacations/insert",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"vacations",
+												"insert"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "CancelVacation-WrongDate",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/vacations/update-status?doctor=Catrinel%20Deji&start-date=2023-02-10",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"vacations",
+												"update-status"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Catrinel%20Deji"
+												},
+												{
+													"key": "start-date",
+													"value": "2023-02-10"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetVacationByDoctorAndDates-WrongDoctor",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/vacations/by-doctor-and-dates?doctor=Test%20Doctor",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"vacations",
+												"by-doctor-and-dates"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Test%20Doctor"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetVacationByDoctorAndDates-WrongDates",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/vacations/by-doctor-and-dates?doctor=Catrinel%20Deji&start-date=2023-03-14&end-date=2023-03-15",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"vacations",
+												"by-doctor-and-dates"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Catrinel%20Deji"
+												},
+												{
+													"key": "start-date",
+													"value": "2023-03-14"
+												},
+												{
+													"key": "end-date",
+													"value": "2023-03-15"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetVacationByDoctorAndType-WrongDoctor",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/vacations/by-doctor-and-type?doctor=Test%20Doctor&type=VACATION",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"vacations",
+												"by-doctor-and-type"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Test%20Doctor"
+												},
+												{
+													"key": "type",
+													"value": "VACATION"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetVacationByDoctorAndType-WrongType",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/vacations/by-doctor-and-type?doctor=Catrinel%20Deji&type=TEST",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"vacations",
+												"by-doctor-and-type"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Catrinel%20Deji"
+												},
+												{
+													"key": "type",
+													"value": "TEST"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "IsDateVacation-WrongDoctor",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/vacations/is-vacation?doctor=Test%20Doctor&date=2023-02-15",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"vacations",
+												"is-vacation"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Test%20Doctor"
+												},
+												{
+													"key": "date",
+													"value": "2023-02-15"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "IsDateVacation-WrongDate",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/vacations/is-vacation?doctor=Catrinel%20Deji&date=15-02-2023",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"vacations",
+												"is-vacation"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Catrinel%20Deji"
+												},
+												{
+													"key": "date",
+													"value": "15-02-2023"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetVacationByDoctorAndStatus-WrongDoctor",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/vacations/by-doctor-and-status?doctor=Test%20Doctor&status=PLANNED",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"vacations",
+												"by-doctor-and-status"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Test%20Doctor"
+												},
+												{
+													"key": "status",
+													"value": "PLANNED"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetVacationByDoctorAndStatus-WrongStatus",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/vacations/by-doctor-and-status?doctor=Catrinel%20Deji&status=TEST",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"vacations",
+												"by-doctor-and-status"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Catrinel%20Deji"
+												},
+												{
+													"key": "status",
+													"value": "TEST"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "WorkingHours",
+							"item": [
+								{
+									"name": "UpsertWorkingHours-WrongBody",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"doctor\": \"Catrinel Deji\",\r\n    \"dayOfWeek\": 6,\r\n    \"startHour\": \"12:00\",\r\n    \"endHour\": \"20:00\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/working-hours/insert",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"working-hours",
+												"insert"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetWorkingHoursByDoctorAndDay-WrongDoctor",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/working-hours/by-doctor-and-day?doctor=Test%20Doctor&day=2",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"working-hours",
+												"by-doctor-and-day"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Test%20Doctor"
+												},
+												{
+													"key": "day",
+													"value": "2"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetWorkingHoursByDoctorAndDay-WrongDay",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/working-hours/by-doctor-and-day?doctor=Catrinel%20Deji&day=8",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"working-hours",
+												"by-doctor-and-day"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Catrinel%20Deji"
+												},
+												{
+													"key": "day",
+													"value": "8"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "DeleteWorkingHoursByDoctorAndDay-WrongDoctor",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/working-hours/by-doctor-and-day?doctor=Test%20Doctor&day=2",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"working-hours",
+												"by-doctor-and-day"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Test%20Doctor"
+												},
+												{
+													"key": "day",
+													"value": "2"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "DeleteWorkingHoursByDoctorAndDay-WrongDay",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/working-hours/by-doctor-and-day?doctor=Catrinel%20Deji&day=8",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"working-hours",
+												"by-doctor-and-day"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Catrinel%20Deji"
+												},
+												{
+													"key": "day",
+													"value": "8"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Appointment",
+							"item": [
+								{
+									"name": "GetAvailableHoursByDocInvDate-WrongDoctor",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/appointments/available-hours?doctor=Test%20Doctor&investigation=Allergology%20control&date=2023-08-10",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"appointments",
+												"available-hours"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Test%20Doctor"
+												},
+												{
+													"key": "investigation",
+													"value": "Allergology%20control"
+												},
+												{
+													"key": "date",
+													"value": "2023-08-10"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetAvailableHoursByDocInvDate-WrongInv",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/appointments/available-hours?doctor=Catrinel%20Deji&investigation=Test%20investigation&date=2023-08-10",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"appointments",
+												"available-hours"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Catrinel%20Deji"
+												},
+												{
+													"key": "investigation",
+													"value": "Test%20investigation"
+												},
+												{
+													"key": "date",
+													"value": "2023-08-10"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetAvailableHoursByDocInvDate-WrongDate",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/appointments/available-hours?doctor=Catrinel%20Deji&investigation=Allergology%20control&date=10-08-2023",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"appointments",
+												"available-hours"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Catrinel%20Deji"
+												},
+												{
+													"key": "investigation",
+													"value": "Allergology%20control"
+												},
+												{
+													"key": "date",
+													"value": "10-08-2023"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetAvailableHoursByDocInvDate-DateHoliday",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/appointments/available-hours?doctor=Catrinel%20Deji&investigation=Allergology%20control&date=2023-08-15",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"appointments",
+												"available-hours"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Catrinel%20Deji"
+												},
+												{
+													"key": "investigation",
+													"value": "Allergology%20control"
+												},
+												{
+													"key": "date",
+													"value": "2023-08-15"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetAvailableHoursByDocInvDate-DateVacation",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/appointments/available-hours?doctor=Catrinel%20Deji&investigation=Allergology%20control&date=2023-02-14",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"appointments",
+												"available-hours"
+											],
+											"query": [
+												{
+													"key": "doctor",
+													"value": "Catrinel%20Deji"
+												},
+												{
+													"key": "investigation",
+													"value": "Allergology%20control"
+												},
+												{
+													"key": "date",
+													"value": "2023-02-14"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "BookAppoinment-WrongDoctor",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"clientName\": \"Cirebea Felix\",\r\n    \"doctor\":\"Test doctor\",\r\n    \"investigation\":\"Allergology analyses interpretation\",\r\n    \"date\":\"2023-08-10\",\r\n    \"startHour\":\"10:30\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/appointments/book",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"appointments",
+												"book"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "BookAppoinment-WrongInv",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"clientName\": \"Cirebea Felix\",\r\n    \"doctor\":\"Catrinel Deji\",\r\n    \"investigation\":\"Test investigation\",\r\n    \"date\":\"2023-08-10\",\r\n    \"startHour\":\"10:30\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/appointments/book",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"appointments",
+												"book"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "BookAppoinment-WrongDate",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"clientName\": \"Cirebea Felix\",\r\n    \"doctor\":\"Catrinel Deji\",\r\n    \"investigation\":\"Allergology analyses interpretation\",\r\n    \"date\":\"10-08-2023\",\r\n    \"startHour\":\"10:30\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/appointments/book",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"appointments",
+												"book"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetAppointmentById-WrongId",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/appointments/50",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"appointments",
+												"50"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "CancelBookByIdAndName-WrongId",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/appointments/cancel-book?id=50&clientName=Cirebea%20Felix",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"appointments",
+												"cancel-book"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "50"
+												},
+												{
+													"key": "clientName",
+													"value": "Cirebea%20Felix"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "CancelBookByIdAndName-WrongName",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/appointments/cancel-book?id=33&clientName=Test%20name",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"appointments",
+												"cancel-book"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "33"
+												},
+												{
+													"key": "clientName",
+													"value": "Test%20name"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "ConstraintViolation",
+					"item": [
+						{
+							"name": "Request",
+							"item": [
+								{
+									"name": "Specialty",
+									"item": [
+										{
+											"name": "UpsertSpecialty-Insert-MissName",
+											"request": {
+												"method": "POST",
+												"header": [],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"name\": \"\"\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "http://localhost:8080/specialties/insert",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"specialties",
+														"insert"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "UpsertSpecialty-Update-MissName",
+											"request": {
+												"method": "POST",
+												"header": [],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"\"\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "http://localhost:8080/specialties/insert",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"specialties",
+														"insert"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetSpecialtyById-NoIdAsPath",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/specialties/",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"specialties",
+														""
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetSpecialtyById-IdNotLong",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/specialties/test",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"specialties",
+														"test"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetSpecialtyByName-NoParam",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/specialties/get",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"specialties",
+														"get"
+													],
+													"query": [
+														{
+															"key": "name",
+															"value": "Surgery",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "DeleteSpecialtyById-NoIdAsPath",
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/specialties/",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"specialties",
+														""
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "DeleteSpecialtyById-IdNotLong",
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/specialties/test",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"specialties",
+														"test"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "DeleteSpecialtyByName-NoParam",
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/specialties/by-name",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"specialties",
+														"by-name"
+													],
+													"query": [
+														{
+															"key": "name",
+															"value": "Surgery",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										}
+									]
+								},
+								{
+									"name": "Investigation",
+									"item": [
+										{
+											"name": "UpsertInvestigation-Insert-MissName/Spec",
+											"request": {
+												"method": "POST",
+												"header": [],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"name\": \"\",\r\n    \"specialty\": \"\",\r\n    \"basePrice\": 150,\r\n    \"duration\": 90\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "http://localhost:8080/investigations/insert",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"investigations",
+														"insert"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "UpsertInvestigation-Update-MissName/Spec",
+											"request": {
+												"method": "POST",
+												"header": [],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"id\": 34,\r\n    \"name\": \"\",\r\n    \"specialty\": \"\",\r\n    \"basePrice\": 175,\r\n    \"duration\": 90\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "http://localhost:8080/investigations/insert",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"investigations",
+														"insert"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetInvestigationById-NoIdAsPath",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/investigations/",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"investigations",
+														""
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetInvestigationById-IdNotLong",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/investigations/test",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"investigations",
+														"test"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetInvestigationByName-NoParam",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/investigations/get",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"investigations",
+														"get"
+													],
+													"query": [
+														{
+															"key": "name",
+															"value": "Propofol%20anesthesia",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetInvestigationBySpecialty-NoParam",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/investigations/by-specialty",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"investigations",
+														"by-specialty"
+													],
+													"query": [
+														{
+															"key": "specialty",
+															"value": "Dermatology",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetInvestigationByDuration-NoParam",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/investigations/by-duration",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"investigations",
+														"by-duration"
+													],
+													"query": [
+														{
+															"key": "duration",
+															"value": "asdad",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "DeleteInvestigationById-NoIdAsPath",
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/investigations/",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"investigations",
+														""
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "DeleteInvestigationById-IdNotLong",
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/investigations/test",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"investigations",
+														"test"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "DeleteInvestigationByName-NoParam",
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/investigations/by-name",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"investigations",
+														"by-name"
+													],
+													"query": [
+														{
+															"key": "investigation",
+															"value": "Surgery%20control",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetInvestigationWithPricing-NoParam",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/investigations/pricing",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"investigations",
+														"pricing"
+													],
+													"query": [
+														{
+															"key": "doctor",
+															"value": "Test%20doctor",
+															"disabled": true
+														},
+														{
+															"key": "investigation",
+															"value": "Pre-anesthetic%20consult",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										}
+									]
+								},
+								{
+									"name": "Doctor",
+									"item": [
+										{
+											"name": "UpsertDoctor-Insert-MissName/Spec",
+											"request": {
+												"method": "POST",
+												"header": [],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"name\": \"\",\r\n    \"specialty\": \"\",\r\n    \"priceRate\": 0\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "http://localhost:8080/doctors/insert",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"doctors",
+														"insert"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "UpsertDoctor-Update-MissName/Spec",
+											"request": {
+												"method": "POST",
+												"header": [],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"id\": 8,\r\n    \"name\": \"\",\r\n    \"specialty\": \"\",\r\n    \"priceRate\": 0\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "http://localhost:8080/doctors/insert",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"doctors",
+														"insert"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetDoctorById-NoIdAsPath",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/doctors/",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"doctors",
+														""
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetDoctorById-IdNotLong",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/doctors/test",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"doctors",
+														"test"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetDoctorByName-NoParam",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/doctors/by-name",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"doctors",
+														"by-name"
+													],
+													"query": [
+														{
+															"key": "name",
+															"value": "Rodica%20Bacruban",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetDoctorsBySpecialty-NoParam",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/doctors/by-specialty",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"doctors",
+														"by-specialty"
+													],
+													"query": [
+														{
+															"key": "specialty",
+															"value": "Test%20specialty",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "DeleteDoctorById-NoIdAsPath",
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/doctors/",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"doctors",
+														""
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "DeleteDoctorById-IdNotLong",
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/doctors/test",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"doctors",
+														"test"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "DeleteDoctorByName-NoParam",
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/doctors/by-name",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"doctors",
+														"by-name"
+													],
+													"query": [
+														{
+															"key": "name",
+															"value": "Patrick%20Danciu",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										}
+									]
+								},
+								{
+									"name": "Holiday",
+									"item": [
+										{
+											"name": "UpsertHoliday-Insert-MissBody",
+											"request": {
+												"method": "POST",
+												"header": [],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"startDate\": \"2023-10-19\",\r\n    \"endDate\": \"2023-10-19\",\r\n    \"description\": \"\"\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "http://localhost:8080/holidays/insert",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"holidays",
+														"insert"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "UpsertHoliday-Update-MissBody",
+											"request": {
+												"method": "POST",
+												"header": [],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"id\": 11,\r\n    \"startDate\": \"2023-10-19\",\r\n    \"endDate\": \"2023-10-20\",\r\n    \"description\": \"\"\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "http://localhost:8080/holidays/insert",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"holidays",
+														"insert"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetHolidayById-NoIdAsPath",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/holidays/",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"holidays",
+														""
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetHolidayById-IdNotLong",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/holidays/test",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"holidays",
+														"test"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetHolidayByDescription-NoParam",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/holidays/by-description",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"holidays",
+														"by-description"
+													],
+													"query": [
+														{
+															"key": "description",
+															"value": "Test%20Holiday",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "IsDateHoliday-NoParam",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/holidays/is-holiday",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"holidays",
+														"is-holiday"
+													],
+													"query": [
+														{
+															"key": "date",
+															"value": "2023-08-32",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "DeleteHolidayById-NoIdAsPath",
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/holidays/",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"holidays",
+														""
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "DeleteHolidayById-IdNotLong",
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/holidays/test",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"holidays",
+														"test"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "DeleteHolidayByDescription-NoParam",
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/holidays/by-description",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"holidays",
+														"by-description"
+													],
+													"query": [
+														{
+															"key": "description",
+															"value": "Test%20Holiday",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										}
+									]
+								},
+								{
+									"name": "Vacation",
+									"item": [
+										{
+											"name": "UpsertVacation-Insert-MissBody",
+											"request": {
+												"method": "POST",
+												"header": [],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"doctor\": \"Catrinel Deji\",\r\n    \"startDate\": \"2023-10-15\",\r\n    \"endDate\": \"2023-10-20\",\r\n    \"type\": \"\"\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "http://localhost:8080/vacations/insert",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"vacations",
+														"insert"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "CancelVacation-NoParam",
+											"request": {
+												"method": "POST",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/vacations/update-status",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"vacations",
+														"update-status"
+													],
+													"query": [
+														{
+															"key": "doctor",
+															"value": "Catrinel%20Deji",
+															"disabled": true
+														},
+														{
+															"key": "start-date",
+															"value": "2023-02-10",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetVacationByDoctor-NoParam",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/vacations/by-doctor-and-dates",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"vacations",
+														"by-doctor-and-dates"
+													],
+													"query": [
+														{
+															"key": "doctor",
+															"value": "Catrinel%20Deji",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetVacationByDoctorAndDates-NoParam",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/vacations/by-doctor-and-dates",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"vacations",
+														"by-doctor-and-dates"
+													],
+													"query": [
+														{
+															"key": "doctor",
+															"value": "Catrinel%20Deji",
+															"disabled": true
+														},
+														{
+															"key": "start-date",
+															"value": "01-02-2023",
+															"disabled": true
+														},
+														{
+															"key": "end-date",
+															"value": "2023-03-15",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetVacationByDoctorAndType-NoParam",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/vacations/by-doctor-and-type",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"vacations",
+														"by-doctor-and-type"
+													],
+													"query": [
+														{
+															"key": "doctor",
+															"value": "Catrinel%20Deji",
+															"disabled": true
+														},
+														{
+															"key": "type",
+															"value": "VACATION",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "IsDateVacation-NoParam",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/vacations/is-vacation",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"vacations",
+														"is-vacation"
+													],
+													"query": [
+														{
+															"key": "doctor",
+															"value": "Test%20Doctor",
+															"disabled": true
+														},
+														{
+															"key": "date",
+															"value": "2023-02-15",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetVacationByDoctorAndStatus-NoParam",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/vacations/by-doctor-and-status",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"vacations",
+														"by-doctor-and-status"
+													],
+													"query": [
+														{
+															"key": "doctor",
+															"value": "Catrinel%20Deji",
+															"disabled": true
+														},
+														{
+															"key": "status",
+															"value": "PLANNED",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										}
+									]
+								},
+								{
+									"name": "WorkingHours",
+									"item": [
+										{
+											"name": "UpsertWorkingHours-Insert/Update-MissBody",
+											"request": {
+												"method": "POST",
+												"header": [],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"doctor\": \"\",\r\n    \"dayOfWeek\": 3,\r\n    \"startHour\": \"12:00\",\r\n    \"endHour\": \"20:00\"\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "http://localhost:8080/working-hours/insert",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"working-hours",
+														"insert"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "DeleteWorkingHoursByDoctorAndDay-NoParam",
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/working-hours/by-doctor-and-day",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"working-hours",
+														"by-doctor-and-day"
+													],
+													"query": [
+														{
+															"key": "doctor",
+															"value": "Test%20Doctor",
+															"disabled": true
+														},
+														{
+															"key": "day",
+															"value": "2",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										}
+									]
+								},
+								{
+									"name": "Appointment",
+									"item": [
+										{
+											"name": "GetAvailableHoursByDocInvDate-NoParam",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/appointments/available-hours",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"appointments",
+														"available-hours"
+													],
+													"query": [
+														{
+															"key": "doctor",
+															"value": "Test%20Doctor",
+															"disabled": true
+														},
+														{
+															"key": "investigation",
+															"value": "Allergology%20control",
+															"disabled": true
+														},
+														{
+															"key": "date",
+															"value": "2023-08-10",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "BookAppoinment-MissBody",
+											"request": {
+												"method": "POST",
+												"header": [],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"clientName\": \"\",\r\n    \"doctor\":\"\",\r\n    \"investigation\":\"\",\r\n    \"date\":\"\",\r\n    \"startHour\":\"\"\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "http://localhost:8080/appointments/book",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"appointments",
+														"book"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetAppointmentById-NoIdAsPath",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/appointments/",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"appointments",
+														""
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "GetAppointmentById-IdNotLong",
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/appointments/test",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"appointments",
+														"test"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "CancelBookByIdAndName-NoParam",
+											"request": {
+												"method": "POST",
+												"header": [],
+												"url": {
+													"raw": "http://localhost:8080/appointments/cancel-book",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "8080",
+													"path": [
+														"appointments",
+														"cancel-book"
+													],
+													"query": [
+														{
+															"key": "id",
+															"value": "33",
+															"disabled": true
+														},
+														{
+															"key": "clientName",
+															"value": "Cirebea%20Felix",
+															"disabled": true
+														}
+													]
+												}
+											},
+											"response": []
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "DB",
+							"item": [
+								{
+									"name": "UpsertSpecialty-Insert-NotUnique",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Allergology\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/specialties/insert",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"specialties",
+												"insert"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "UpsertInvestigation-Insert-NotUnique",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Lumbar puncture\",\r\n    \"specialty\": \"Cardiology\",\r\n    \"basePrice\": 150,\r\n    \"duration\": 90\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/investigations/insert",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"investigations",
+												"insert"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "UpsertDoctor-Insert-NotUnique",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Patrick Danciu\",\r\n    \"specialty\": \"Surgery\",\r\n    \"priceRate\": 10\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8080/doctors/insert",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"doctors",
+												"insert"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}

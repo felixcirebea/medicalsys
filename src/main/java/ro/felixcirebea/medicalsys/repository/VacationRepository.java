@@ -33,4 +33,10 @@ public interface VacationRepository extends CrudRepository<VacationEntity, Long>
     Optional<VacationEntity> findByDoctorAndStartDate(DoctorEntity doctor, LocalDate startDate);
 
     List<VacationEntity> findAllByDoctorAndStatus(DoctorEntity doctor, VacationStatus status);
+
+    @Query("SELECT COUNT(v) > 0 FROM vacations v WHERE :startDate BETWEEN v.startDate AND v.endDate " +
+            "OR :endDate BETWEEN v.startDate AND v.endDate")
+    Boolean existsByDateBetweenDates(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 }

@@ -28,7 +28,8 @@ public class VacationService {
     public static final String WRONG_ID_MSG = "Wrong ID";
     public static final String LOG_UPDATE_MSG = "%s vacation starting %s canceled";
     public static final String LOG_INSERT_MSG = "Vacation for doctor %s was inserted";
-    public static final String VACATION_DATE_ERROR_MSG = "Can't cancel vacations from the past";
+    public static final String VACATION_DATE_ERROR_MSG = "Can't operate vacations from the past";
+    public static final String VACATION_PLANNED_MSG = "Vacation already planned for %s - %s";
     private final VacationRepository vacationRepository;
     private final DoctorRepository doctorRepository;
     private final VacationConverter vacationConverter;
@@ -53,6 +54,17 @@ public class VacationService {
         if (vacationDto.getStartDate().isBefore(infoContributor.getCurrentDate())) {
             throw new ConcurrencyException(VACATION_DATE_ERROR_MSG);
         }
+
+        Boolean notInsertCondition =
+                vacationRepository.existsByDateBetweenDates(
+                        vacationDto.getStartDate(), vacationDto.getEndDate());
+        if (notInsertCondition) {
+            throw new ConcurrencyException(
+                    String.format(VACATION_PLANNED_MSG,
+                            vacationDto.getStartDate(),
+                            vacationDto.getEndDate()));
+        }
+
         log.info(String.format(LOG_INSERT_MSG, doctorEntity.getName()));
         return vacationRepository.save(
                 vacationConverter.fromDtoToEntity(vacationDto, doctorEntity)).getId();
@@ -72,7 +84,8 @@ public class VacationService {
 
         VacationEntity vacationEntity =
                 vacationRepository.findByDoctorAndStartDate(doctorEntity, startDateValue)
-                        .orElseThrow(() -> new DataNotFoundException(WRONG_ID_MSG));
+                        .orElseThrow(() -> new DataNotFoundException(
+                                String.format(NOT_FOUND_MSG, "Vacation")));
 
         vacationEntity.setStatus(VacationStatus.CANCELED);
 

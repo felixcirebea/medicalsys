@@ -58,7 +58,11 @@ public class AppointmentService {
     public List<LocalTime> getAvailableHours(String doctorName,
                                              String investigation,
                                              LocalDate desiredDate)
-            throws DataNotFoundException {
+            throws DataNotFoundException, ConcurrencyException {
+        if (desiredDate.isBefore(infoContributor.getCurrentDate())) {
+            throw new ConcurrencyException(DATE_ERROR_MSG);
+        }
+
         DoctorEntity doctorEntity =
                 doctorRepository.findByNameAndIsActive(doctorName, true)
                 .orElseThrow(() -> new DataNotFoundException(
@@ -165,7 +169,7 @@ public class AppointmentService {
     public String cancelAppointmentByIdAndName(Long id, String clientName)
             throws DataNotFoundException {
         Optional<AppointmentEntity> appointmentEntityOptional =
-                appointmentRepository.findByIdAndClientName(id, clientName);
+                appointmentRepository.findByIdAndClientNameAndStatus(id, clientName, AppointmentStatus.NEW);
 
         if (appointmentEntityOptional.isEmpty()) {
             infoContributor.incrementFailedDeleteOperations();

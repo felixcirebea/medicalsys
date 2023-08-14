@@ -29,7 +29,7 @@ public class AppointmentController {
             @RequestParam(name = "doctor") String doctorName,
             @RequestParam(name = "investigation") String investigation,
             @RequestParam(name = "date") LocalDate desiredDate)
-            throws DataNotFoundException {
+            throws DataNotFoundException, ConcurrencyException {
         return ResponseEntity.ok(
                 appointmentService.getAvailableHours(doctorName, investigation, desiredDate));
     }

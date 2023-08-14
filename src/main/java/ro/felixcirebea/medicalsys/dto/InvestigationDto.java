@@ -21,6 +21,7 @@ public class InvestigationDto {
     @NotBlank(message = "Specialty cannot be blank")
     private String specialty;
 
+    @Min(value = 150, message = "The minimum price is 150")
     private Double basePrice;
 
     @NotNull(message = "Duration cannot be empty")

@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ro.felixcirebea.medicalsys.entity.AppointmentEntity;
 import ro.felixcirebea.medicalsys.entity.DoctorEntity;
+import ro.felixcirebea.medicalsys.enums.AppointmentStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -27,7 +28,7 @@ public interface AppointmentRepository extends CrudRepository<AppointmentEntity,
                                            @Param("startTime") LocalTime startTime,
                                            @Param("endTime") LocalTime endTime);
 
-    Optional<AppointmentEntity> findByIdAndClientName(Long id, String clientName);
+    Optional<AppointmentEntity> findByIdAndClientNameAndStatus(Long id, String clientName, AppointmentStatus status);
 
     List<AppointmentEntity> findAllByDoctor(DoctorEntity doctor);
 

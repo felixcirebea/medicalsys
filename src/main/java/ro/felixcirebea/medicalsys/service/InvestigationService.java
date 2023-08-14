@@ -71,16 +71,14 @@ public class InvestigationService {
         InvestigationEntity investigationEntity =
                 investigationRepository.findByIdAndIsActive(investigationDto.getId(), true)
                 .orElseThrow(() -> new DataNotFoundException(WRONG_ID_MSG));
+        String nameToLog = investigationEntity.getName();
 
         investigationEntity.setName(investigationDto.getName());
         investigationEntity.setSpecialty(specialtyEntity);
         investigationEntity.setDuration(investigationDto.getDuration());
+        investigationEntity.setBasePrice(investigationDto.getBasePrice());
 
-        if (investigationDto.getBasePrice() != null) {
-            investigationEntity.setBasePrice(investigationDto.getBasePrice());
-        }
-
-        log.info(String.format(LOG_UPDATE_MSG, investigationDto.getName(), investigationDto));
+        log.info(String.format(LOG_UPDATE_MSG, nameToLog, investigationDto));
         return investigationRepository.save(investigationEntity).getId();
     }
 

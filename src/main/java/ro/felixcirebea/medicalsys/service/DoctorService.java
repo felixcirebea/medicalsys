@@ -6,6 +6,7 @@ import ro.felixcirebea.medicalsys.converter.DoctorConverter;
 import ro.felixcirebea.medicalsys.dto.DoctorDto;
 import ro.felixcirebea.medicalsys.entity.DoctorEntity;
 import ro.felixcirebea.medicalsys.entity.SpecialtyEntity;
+import ro.felixcirebea.medicalsys.enums.VacationStatus;
 import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
 import ro.felixcirebea.medicalsys.repository.DoctorRepository;
 import ro.felixcirebea.medicalsys.repository.SpecialtyRepository;
@@ -29,15 +30,21 @@ public class DoctorService {
     private final SpecialtyRepository specialtyRepository;
     private final DoctorConverter doctorConverter;
     private final Contributor infoContributor;
+    private final WorkingHoursService workingHoursService;
+    private final AppointmentService appointmentService;
 
     public DoctorService(DoctorRepository doctorRepository,
                          SpecialtyRepository specialtyRepository,
                          DoctorConverter doctorConverter,
-                         Contributor infoContributor) {
+                         Contributor infoContributor,
+                         WorkingHoursService workingHoursService,
+                         AppointmentService appointmentService) {
         this.doctorRepository = doctorRepository;
         this.specialtyRepository = specialtyRepository;
         this.doctorConverter = doctorConverter;
         this.infoContributor = infoContributor;
+        this.workingHoursService = workingHoursService;
+        this.appointmentService = appointmentService;
     }
 
     public Long upsertDoctor(DoctorDto doctorDto)
@@ -59,11 +66,12 @@ public class DoctorService {
         DoctorEntity doctorEntity =
                 doctorRepository.findByIdAndIsActive(doctorDto.getId(), true)
                         .orElseThrow(() -> new DataNotFoundException(WRONG_ID_MSG));
+        String nameToLog = doctorEntity.getName();
 
         doctorEntity.setName(doctorDto.getName());
         doctorEntity.setSpecialty(specialtyEntity);
         doctorEntity.setPriceRate(doctorDto.getPriceRate());
-        log.info(String.format(LOG_UPDATE_MSG, doctorDto.getName(), doctorDto));
+        log.info(String.format(LOG_UPDATE_MSG, nameToLog, doctorDto));
         return doctorRepository.save(doctorEntity).getId();
     }
 
@@ -113,6 +121,9 @@ public class DoctorService {
         if (doctorEntity == null) {
             return doctorId;
         }
+
+        cascadeSoftDelete(doctorEntity);
+
         return doctorRepository.save(doctorEntity).getId();
     }
 
@@ -125,6 +136,16 @@ public class DoctorService {
                 doctorName, doctorEntityOptional, doctorRepository,
                 LOG_FAIL_DELETE_MSG, LOG_SUCCESS_DELETE_MSG, NOT_FOUND_MSG, infoContributor);
 
+        cascadeSoftDelete(doctorEntity);
+
         return doctorRepository.save(doctorEntity).getId();
+    }
+
+    private void cascadeSoftDelete(DoctorEntity doctorEntity) {
+        doctorEntity.getVacation().stream()
+                .filter(vac -> !vac.getStatus().equals(VacationStatus.DONE))
+                .forEach(undoneVac -> undoneVac.setStatus(VacationStatus.CANCELED));
+        log.info(workingHoursService.deleteAllWorkingHoursForDoctor(doctorEntity));
+        log.info(appointmentService.cancelAllAppointmentForDoctor(doctorEntity));
     }
 }

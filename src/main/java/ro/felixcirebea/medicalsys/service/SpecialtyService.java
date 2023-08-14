@@ -65,9 +65,10 @@ public class SpecialtyService {
         SpecialtyEntity specialtyEntity =
                 specialtyRepository.findByIdAndIsActive(specialtyDto.getId(), true)
                 .orElseThrow(() -> new DataNotFoundException(WRONG_ID_MSG));
+        String nameToLog = specialtyEntity.getName();
 
         specialtyEntity.setName(specialtyDto.getName());
-        log.info(String.format(LOG_UPDATE_MSG, specialtyDto.getName(), specialtyDto));
+        log.info(String.format(LOG_UPDATE_MSG, nameToLog, specialtyDto));
         return specialtyRepository.save(specialtyEntity).getId();
     }
 
