@@ -7,14 +7,19 @@ import org.springframework.stereotype.Repository;
 import ro.felixcirebea.medicalsys.entity.HolidayEntity;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface HolidayRepository extends CrudRepository<HolidayEntity, Long> {
 
-    Optional<HolidayEntity> findByDescription(String description);
+    Optional<HolidayEntity> findByIdAndIsActive(Long id, boolean isActive);
 
-    @Query("SELECT COUNT(h) > 0 FROM holidays h WHERE :date BETWEEN h.startDate AND h.endDate")
+    Optional<HolidayEntity> findByDescriptionAndIsActive(String description, boolean isActive);
+
+    @Query("SELECT COUNT(h) > 0 FROM holidays h WHERE h.isActive = true AND :date BETWEEN h.startDate AND h.endDate")
     Boolean isDateBetweenHolidays(@Param("date") LocalDate date);
+
+    List<HolidayEntity> findAllByIsActive(boolean isActive);
 
 }

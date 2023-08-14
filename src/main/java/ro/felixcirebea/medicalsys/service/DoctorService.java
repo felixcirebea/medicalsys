@@ -10,10 +10,10 @@ import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
 import ro.felixcirebea.medicalsys.repository.DoctorRepository;
 import ro.felixcirebea.medicalsys.repository.SpecialtyRepository;
 import ro.felixcirebea.medicalsys.util.Contributor;
+import ro.felixcirebea.medicalsys.util.DeleteUtility;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 @Service
 @Slf4j
@@ -24,7 +24,7 @@ public class DoctorService {
     public static final String LOG_UPDATE_MSG = "%s was updated as follows: %s";
     public static final String LOG_INSERT_MSG = "%s was inserted";
     public static final String LOG_FAIL_DELETE_MSG = "Delete of doctor: %s failed - not found";
-    public static final String LOG_SUCCESS_DELETE_MSG = "Doctor id: %s deleted";
+    public static final String LOG_SUCCESS_DELETE_MSG = "Doctor: %s deleted";
     private final DoctorRepository doctorRepository;
     private final SpecialtyRepository specialtyRepository;
     private final DoctorConverter doctorConverter;
@@ -40,9 +40,12 @@ public class DoctorService {
         this.infoContributor = infoContributor;
     }
 
-    public Long upsertDoctor(DoctorDto doctorDto) throws DataNotFoundException {
-        SpecialtyEntity specialtyEntity = specialtyRepository.findByName(doctorDto.getSpecialty())
-                .orElseThrow(() -> new DataNotFoundException(String.format(NOT_FOUND_MSG, doctorDto.getSpecialty())));
+    public Long upsertDoctor(DoctorDto doctorDto)
+            throws DataNotFoundException {
+        SpecialtyEntity specialtyEntity =
+                specialtyRepository.findByNameAndIsActive(doctorDto.getSpecialty(), true)
+                        .orElseThrow(() -> new DataNotFoundException(
+                                String.format(NOT_FOUND_MSG, doctorDto.getSpecialty())));
         if (doctorDto.getId() != null) {
             return updateDoctor(doctorDto, specialtyEntity);
         }
@@ -53,8 +56,9 @@ public class DoctorService {
 
     private Long updateDoctor(DoctorDto doctorDto, SpecialtyEntity specialtyEntity)
             throws DataNotFoundException {
-        DoctorEntity doctorEntity = doctorRepository.findById(doctorDto.getId())
-                .orElseThrow(() -> new DataNotFoundException(WRONG_ID_MSG));
+        DoctorEntity doctorEntity =
+                doctorRepository.findByIdAndIsActive(doctorDto.getId(), true)
+                        .orElseThrow(() -> new DataNotFoundException(WRONG_ID_MSG));
 
         doctorEntity.setName(doctorDto.getName());
         doctorEntity.setSpecialty(specialtyEntity);
@@ -63,55 +67,64 @@ public class DoctorService {
         return doctorRepository.save(doctorEntity).getId();
     }
 
-    public DoctorDto getDoctorById(Long doctorId) throws DataNotFoundException {
-        DoctorEntity doctorEntity = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new DataNotFoundException(WRONG_ID_MSG));
+    public DoctorDto getDoctorById(Long doctorId)
+            throws DataNotFoundException {
+        DoctorEntity doctorEntity =
+                doctorRepository.findByIdAndIsActive(doctorId, true)
+                        .orElseThrow(() -> new DataNotFoundException(WRONG_ID_MSG));
         return doctorConverter.fromEntityToDto(doctorEntity);
     }
 
-    public DoctorDto getDoctorByName(String doctorName) throws DataNotFoundException {
-        DoctorEntity doctorEntity = doctorRepository.findByName(doctorName)
-                .orElseThrow(() -> new DataNotFoundException(String.format(NOT_FOUND_MSG, doctorName)));
+    public DoctorDto getDoctorByName(String doctorName)
+            throws DataNotFoundException {
+        DoctorEntity doctorEntity =
+                doctorRepository.findByNameAndIsActive(doctorName, true)
+                        .orElseThrow(() -> new DataNotFoundException(
+                                String.format(NOT_FOUND_MSG, doctorName)));
         return doctorConverter.fromEntityToDto(doctorEntity);
     }
 
-    public List<DoctorDto> getDoctorsBySpecialty(String specialtyName) throws DataNotFoundException {
-        SpecialtyEntity specialtyEntity = specialtyRepository.findByName(specialtyName)
-                .orElseThrow(() -> new DataNotFoundException(String.format(NOT_FOUND_MSG, specialtyName)));
+    public List<DoctorDto> getDoctorsBySpecialty(String specialtyName)
+            throws DataNotFoundException {
+        SpecialtyEntity specialtyEntity =
+                specialtyRepository.findByNameAndIsActive(specialtyName, true)
+                        .orElseThrow(() -> new DataNotFoundException(
+                                String.format(NOT_FOUND_MSG, specialtyName)));
         return specialtyEntity.getDoctors().stream()
+                .filter(doc -> doc.getIsActive().equals(true))
                 .map(doctorConverter::fromEntityToDto)
                 .toList();
     }
 
     public List<DoctorDto> getAllDoctors() {
-        return StreamSupport.stream(doctorRepository.findAll().spliterator(), false)
+        return doctorRepository.findAllByIsActive(true).stream()
                 .map(doctorConverter::fromEntityToDto)
                 .toList();
     }
 
     public Long deleteDoctorById(Long doctorId) {
-        boolean deleteCondition = doctorRepository.existsById(doctorId);
-        if (!deleteCondition) {
-            log.warn(String.format(LOG_FAIL_DELETE_MSG, doctorId));
-            infoContributor.incrementFailedDeleteOperations();
+        Optional<DoctorEntity> doctorEntityOptional =
+                doctorRepository.findByIdAndIsActive(doctorId, true);
+
+        DoctorEntity doctorEntity = DeleteUtility.softDeleteById(
+                doctorId, doctorEntityOptional,
+                LOG_FAIL_DELETE_MSG, LOG_SUCCESS_DELETE_MSG, infoContributor);
+
+        if (doctorEntity == null) {
             return doctorId;
         }
-        doctorRepository.deleteById(doctorId);
-        log.info(String.format(LOG_SUCCESS_DELETE_MSG, doctorId));
-        return doctorId;
+        return doctorRepository.save(doctorEntity).getId();
     }
 
-    public Long deleteDoctorByName(String doctorName) throws DataNotFoundException {
-        Optional<DoctorEntity> doctorEntityOptional = doctorRepository.findByName(doctorName);
+    public Long deleteDoctorByName(String doctorName)
+            throws DataNotFoundException {
+        Optional<DoctorEntity> doctorEntityOptional =
+                doctorRepository.findByNameAndIsActive(doctorName, true);
 
-        if (doctorEntityOptional.isEmpty()) {
-            infoContributor.incrementFailedDeleteOperations();
-            log.warn(String.format(LOG_FAIL_DELETE_MSG, doctorName));
-            throw new DataNotFoundException(String.format(NOT_FOUND_MSG, doctorName));
-        }
+        DoctorEntity doctorEntity = DeleteUtility.softDeleteByField(
+                doctorName, doctorEntityOptional, doctorRepository,
+                LOG_FAIL_DELETE_MSG, LOG_SUCCESS_DELETE_MSG, NOT_FOUND_MSG, infoContributor);
 
-        Long doctorId = doctorEntityOptional.get().getId();
-        doctorRepository.deleteById(doctorId);
-        return doctorId;
+        return doctorRepository.save(doctorEntity).getId();
     }
 }

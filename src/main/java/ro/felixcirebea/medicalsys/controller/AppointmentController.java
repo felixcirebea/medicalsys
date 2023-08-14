@@ -49,13 +49,13 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentService.getAppointmentById(appointmentIdValue));
     }
 
-    @DeleteMapping("/cancel-book")
+    @PostMapping("/cancel-book")
     public ResponseEntity<String> deleteAppointmentByIdAndClientName(
             @RequestParam(name = "id") Long id,
             @RequestParam(name = "clientName") String clientName)
             throws DataNotFoundException {
         return ResponseEntity.ok(
-                appointmentService.deleteAppointmentByIdAndName(id, clientName));
+                appointmentService.cancelAppointmentByIdAndName(id, clientName));
     }
 
 

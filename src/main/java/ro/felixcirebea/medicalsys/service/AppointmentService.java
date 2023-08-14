@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ro.felixcirebea.medicalsys.converter.AppointmentConverter;
 import ro.felixcirebea.medicalsys.dto.AppointmentDto;
 import ro.felixcirebea.medicalsys.entity.*;
+import ro.felixcirebea.medicalsys.enums.AppointmentStatus;
 import ro.felixcirebea.medicalsys.exception.ConcurrencyException;
 import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
 import ro.felixcirebea.medicalsys.repository.AppointmentRepository;
@@ -17,6 +18,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -26,10 +28,12 @@ public class AppointmentService {
     public static final String NOT_FOUND_WH_MSG = "Working hours not found for %s";
     public static final String NOT_AVAILABLE_MSG = "%s not available, please select a different hour";
     public static final String WRONG_ID_MSG = "Wrong ID";
-    public static final String LOG_SUCCESS_DELETE_MSG = "Appointment: %s for %s deleted";
-    public static final String LOG_FAIL_DELETE_MSG = "Delete of appointment: %s for %s failed - not found";
-    public static final String RETURN_SUCCESS_DELETE_MSG = "Appointment successfully canceled";
-    public static final String RETURN_FAIL_DELETE_MSG = "No such appointments for %s";
+    public static final String LOG_SUCCESS_CANCEL_MSG = "Appointment: %s for %s canceled";
+    public static final String LOG_FAIL_CANCEL_MSG = "Cancel appointment: %s for %s failed - not found";
+    public static final String RETURN_SUCCESS_CANCEL_MSG = "Appointment successfully canceled";
+    public static final String RETURN_FAIL_CANCEL_MSG = "No such appointments for %s";
+    private static final String DATE_ERROR_MSG = "Can't create appointments for dates in the past";
+    public static final String CANCEL_ALL_APPOINTMENTS_MSG = "Appointments for %s canceled";
     private final DoctorRepository doctorRepository;
     private final InvestigationRepository investigationRepository;
     private final AppointmentRepository appointmentRepository;
@@ -55,11 +59,13 @@ public class AppointmentService {
                                              String investigation,
                                              LocalDate desiredDate)
             throws DataNotFoundException {
-        DoctorEntity doctorEntity = doctorRepository.findByName(doctorName)
+        DoctorEntity doctorEntity =
+                doctorRepository.findByNameAndIsActive(doctorName, true)
                 .orElseThrow(() -> new DataNotFoundException(
                         String.format(NOT_FOUND_MSG, doctorName)));
 
-        InvestigationEntity investigationEntity = investigationRepository.findByName(investigation)
+        InvestigationEntity investigationEntity =
+                investigationRepository.findByNameAndIsActive(investigation, true)
                 .orElseThrow(() -> new DataNotFoundException(
                         String.format(NOT_FOUND_MSG, investigation)));
 
@@ -116,12 +122,17 @@ public class AppointmentService {
 
     public Long bookAppointment(AppointmentDto appointmentDto)
             throws DataNotFoundException, ConcurrencyException {
-        DoctorEntity doctorEntity = doctorRepository.findByName(appointmentDto.getDoctor())
+        if (appointmentDto.getDate().isBefore(infoContributor.getCurrentDate())) {
+            throw new ConcurrencyException(DATE_ERROR_MSG);
+        }
+
+        DoctorEntity doctorEntity =
+                doctorRepository.findByNameAndIsActive(appointmentDto.getDoctor(), true)
                 .orElseThrow(() -> new DataNotFoundException(
                         String.format(NOT_FOUND_MSG, appointmentDto.getDoctor())));
 
         InvestigationEntity investigationEntity =
-                investigationRepository.findByName(appointmentDto.getInvestigation())
+                investigationRepository.findByNameAndIsActive(appointmentDto.getInvestigation(), true)
                 .orElseThrow(() -> new DataNotFoundException(
                         String.format(NOT_FOUND_MSG, appointmentDto.getInvestigation())));
 
@@ -151,19 +162,28 @@ public class AppointmentService {
         return appointmentConverter.fromEntityToDto(appointmentEntity);
     }
 
-    public String deleteAppointmentByIdAndName(Long id, String clientName)
+    public String cancelAppointmentByIdAndName(Long id, String clientName)
             throws DataNotFoundException {
-        Boolean deleteCondition = appointmentRepository.existsByIdAndClientName(id, clientName);
-        if (deleteCondition) {
-            appointmentRepository.deleteByIdAndClientName(id, clientName);
-            log.info(String.format(LOG_SUCCESS_DELETE_MSG, id, clientName));
-            return RETURN_SUCCESS_DELETE_MSG;
-        } else {
+        Optional<AppointmentEntity> appointmentEntityOptional =
+                appointmentRepository.findByIdAndClientName(id, clientName);
+
+        if (appointmentEntityOptional.isEmpty()) {
             infoContributor.incrementFailedDeleteOperations();
-            log.warn(String.format(LOG_FAIL_DELETE_MSG, id, clientName));
-            throw new DataNotFoundException(String.format(RETURN_FAIL_DELETE_MSG, clientName));
+            log.warn(String.format(LOG_FAIL_CANCEL_MSG, id, clientName));
+            throw new DataNotFoundException(String.format(RETURN_FAIL_CANCEL_MSG, clientName));
         }
+
+        appointmentEntityOptional.get().setStatus(AppointmentStatus.CANCELED);
+        appointmentRepository.save(appointmentEntityOptional.get());
+        log.info(String.format(LOG_SUCCESS_CANCEL_MSG, id, clientName));
+        return RETURN_SUCCESS_CANCEL_MSG;
     }
 
+    public String cancelAllAppointmentForDoctor(DoctorEntity doctor) {
+        List<AppointmentEntity> appointments = appointmentRepository.findAllByDoctor(doctor);
+        appointments.forEach(book -> book.setStatus(AppointmentStatus.CANCELED));
+        appointmentRepository.saveAll(appointments);
+        return String.format(CANCEL_ALL_APPOINTMENTS_MSG, doctor.getName());
+    }
 
 }

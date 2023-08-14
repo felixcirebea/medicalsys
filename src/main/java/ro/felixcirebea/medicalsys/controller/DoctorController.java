@@ -22,7 +22,8 @@ public class DoctorController {
     }
 
     @PostMapping("/insert")
-    public ResponseEntity<Long> upsertDoctor(@RequestBody @Valid DoctorDto doctorDto)
+    public ResponseEntity<Long> upsertDoctor(
+            @RequestBody @Valid DoctorDto doctorDto)
             throws DataNotFoundException {
         return ResponseEntity.ok(doctorService.upsertDoctor(doctorDto));
     }

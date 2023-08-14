@@ -23,7 +23,7 @@ public class WorkingHoursController {
     @PostMapping("/insert")
     public ResponseEntity<Long> upsertWorkingHours(
             @RequestBody @Valid WorkingHoursDto workingHoursDto)
-            throws DataNotFoundException {
+            throws DataNotFoundException, DataMismatchException {
         return ResponseEntity.ok(workingHoursService.upsertWorkingHours(workingHoursDto));
     }
 

@@ -2,17 +2,16 @@ package ro.felixcirebea.medicalsys.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity(name = "doctors")
 @Data
-public class DoctorEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+@SuppressWarnings("all")
+public class DoctorEntity extends BaseEntity {
 
     @Column(unique = true)
     private String name;
@@ -24,13 +23,13 @@ public class DoctorEntity {
 
     private Double priceRate;
 
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "doctor")
     private List<WorkingHoursEntity> workingHours;
 
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "doctor")
     private List<VacationEntity> vacation;
 
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "doctor")
     private List<AppointmentEntity> appointments;
 
 }

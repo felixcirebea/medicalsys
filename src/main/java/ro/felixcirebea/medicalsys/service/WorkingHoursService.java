@@ -44,12 +44,13 @@ public class WorkingHoursService {
     }
 
     public Long upsertWorkingHours(WorkingHoursDto workingHoursDto)
-            throws DataNotFoundException {
-        DoctorEntity doctorEntity = doctorRepository.findByName(workingHoursDto.getDoctor())
+            throws DataNotFoundException, DataMismatchException {
+        DoctorEntity doctorEntity =
+                doctorRepository.findByNameAndIsActive(workingHoursDto.getDoctor(), true)
                 .orElseThrow(() -> new DataNotFoundException(
                         String.format(NOT_FOUND_MSG, workingHoursDto.getDoctor())));
 
-        DayOfWeek dayOfWeek = DayOfWeek.of(workingHoursDto.getDayOfWeek());
+        DayOfWeek dayOfWeek = Validator.dayOfWeekValidator(workingHoursDto.getDayOfWeek());
         Boolean updateCondition =
                 workingHoursRepository.existsByDoctorAndDayOfWeek(doctorEntity, dayOfWeek);
         if (updateCondition) {
@@ -80,7 +81,8 @@ public class WorkingHoursService {
     public List<WorkingHoursDto> getWorkingHoursByDoctorAndDay(String doctorName, Integer dayOfWeek)
             throws DataNotFoundException, DataMismatchException {
         if (doctorName != null && dayOfWeek != null) {
-            DoctorEntity doctorEntity = doctorRepository.findByName(doctorName)
+            DoctorEntity doctorEntity =
+                    doctorRepository.findByNameAndIsActive(doctorName, true)
                     .orElseThrow(() -> new DataNotFoundException(
                             String.format(NOT_FOUND_MSG, doctorName)));
             DayOfWeek dayOfWeekValue = Validator.dayOfWeekValidator(dayOfWeek);
@@ -90,7 +92,8 @@ public class WorkingHoursService {
                     .map(workingHoursConverter::froEntityToDto)
                     .toList();
         } else if (doctorName != null) {
-            DoctorEntity doctorEntity = doctorRepository.findByName(doctorName)
+            DoctorEntity doctorEntity =
+                    doctorRepository.findByNameAndIsActive(doctorName, true)
                     .orElseThrow(() -> new DataNotFoundException(
                             String.format(NOT_FOUND_MSG, doctorName)));
             return workingHoursRepository.findByDoctor(doctorEntity)
@@ -112,7 +115,8 @@ public class WorkingHoursService {
 
     public Long deleteWorkingHoursByDoctorAndDay(String doctorName, Integer dayOfWeek)
             throws DataNotFoundException, DataMismatchException {
-        Optional<DoctorEntity> doctorEntityOptional = doctorRepository.findByName(doctorName);
+        Optional<DoctorEntity> doctorEntityOptional =
+                doctorRepository.findByNameAndIsActive(doctorName, true);
 
         if (doctorEntityOptional.isEmpty()) {
             infoContributor.incrementFailedDeleteOperations();
@@ -130,5 +134,10 @@ public class WorkingHoursService {
 
         workingHoursRepository.deleteByDoctor(doctorEntity);
         return doctorEntity.getId();
+    }
+
+    public String deleteAllWorkingHoursForDoctor(DoctorEntity doctor) {
+        workingHoursRepository.deleteByDoctor(doctor);
+        return String.format("Working hours for %s deleted", doctor.getName());
     }
 }

@@ -3,12 +3,14 @@ package ro.felixcirebea.medicalsys.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
+import ro.felixcirebea.medicalsys.enums.VacationStatus;
 import ro.felixcirebea.medicalsys.enums.VacationType;
 
 import java.time.LocalDate;
 
 @Entity(name = "vacations")
 @Data
+@SuppressWarnings("all")
 public class VacationEntity {
 
     @Id
@@ -26,5 +28,8 @@ public class VacationEntity {
 
     @Enumerated(EnumType.STRING)
     private VacationType type;
+
+    @Enumerated(EnumType.STRING)
+    private VacationStatus status = VacationStatus.PLANNED;
 
 }

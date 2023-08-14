@@ -61,7 +61,8 @@ public class HolidayController {
     public ResponseEntity<Long> deleteHolidayById(
             @PathVariable(name = "id") String inputId)
             throws DataMismatchException {
-        return ResponseEntity.ok(holidayService.deleteHolidayById(Validator.idValidator(inputId)));
+        Long idValue = Validator.idValidator(inputId);
+        return ResponseEntity.ok(holidayService.deleteHolidayById(idValue));
     }
 
     @DeleteMapping("/by-description")

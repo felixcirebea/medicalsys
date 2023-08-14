@@ -4,13 +4,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import ro.felixcirebea.medicalsys.entity.AppointmentEntity;
 import ro.felixcirebea.medicalsys.entity.DoctorEntity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AppointmentRepository extends CrudRepository<AppointmentEntity, Long> {
@@ -27,9 +27,8 @@ public interface AppointmentRepository extends CrudRepository<AppointmentEntity,
                                            @Param("startTime") LocalTime startTime,
                                            @Param("endTime") LocalTime endTime);
 
-    Boolean existsByIdAndClientName(Long id, String clientName);
+    Optional<AppointmentEntity> findByIdAndClientName(Long id, String clientName);
 
-    @Transactional
-    void deleteByIdAndClientName(Long id, String clientName);
+    List<AppointmentEntity> findAllByDoctor(DoctorEntity doctor);
 
 }

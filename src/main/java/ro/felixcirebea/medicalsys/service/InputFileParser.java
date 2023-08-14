@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import ro.felixcirebea.medicalsys.entity.*;
-import ro.felixcirebea.medicalsys.enums.AppointmentStatus;
 import ro.felixcirebea.medicalsys.enums.VacationType;
 import ro.felixcirebea.medicalsys.exception.DataMismatchException;
 import ro.felixcirebea.medicalsys.exception.InputFileException;
@@ -138,12 +137,12 @@ public class InputFileParser {
         String[] splitLine = line.split(",");
 
         DoctorEntity doctorEntity =
-                doctorRepository.findByName(splitLine[1])
+                doctorRepository.findByNameAndIsActive(splitLine[1], true)
                 .orElseThrow(() -> new InputFileException(
                         String.format(INTERNAL_ERROR_NOT_FOUND_MSG, splitLine[1])));
 
         InvestigationEntity investigationEntity =
-                investigationRepository.findByName(splitLine[2])
+                investigationRepository.findByNameAndIsActive(splitLine[2], true)
                 .orElseThrow(() -> new InputFileException(
                         String.format(INTERNAL_ERROR_NOT_FOUND_MSG, splitLine[2])));
 
@@ -185,7 +184,6 @@ public class InputFileParser {
         appointmentEntity.setStartTime(startHour);
         appointmentEntity.setEndTime(endHour);
         appointmentEntity.setPrice(price);
-        appointmentEntity.setStatus(AppointmentStatus.NEW);
 
         return appointmentEntity;
     }
@@ -195,8 +193,10 @@ public class InputFileParser {
 
         String[] splitLine = line.split(",");
 
-        DoctorEntity doctorEntity = doctorRepository.findByName(splitLine[0]).orElseThrow(() ->
-                new InputFileException(String.format(INTERNAL_ERROR_NOT_FOUND_MSG, splitLine[0])));
+        DoctorEntity doctorEntity =
+                doctorRepository.findByNameAndIsActive(splitLine[0], true)
+                        .orElseThrow(() -> new InputFileException(
+                                String.format(INTERNAL_ERROR_NOT_FOUND_MSG, splitLine[0])));
 
         VacationEntity vacationEntity = new VacationEntity();
         vacationEntity.setDoctor(doctorEntity);
@@ -210,7 +210,7 @@ public class InputFileParser {
             throw new InputFileException(INTERNAL_ERROR_DATE_OVERLAP_MSG);
         }
 
-        VacationType vacationType = Validator.enumValidator(splitLine[3]);
+        VacationType vacationType = Validator.vacationTypeValidator(splitLine[3]);
         vacationEntity.setType(vacationType);
 
         return vacationEntity;
@@ -241,7 +241,7 @@ public class InputFileParser {
 
         String[] splitLine = line.split(",");
 
-        DoctorEntity doctorEntity = doctorRepository.findByName(splitLine[0])
+        DoctorEntity doctorEntity = doctorRepository.findByNameAndIsActive(splitLine[0], true)
                 .orElseThrow(() -> new InputFileException(
                         String.format(INTERNAL_ERROR_NOT_FOUND_MSG, splitLine[0])));
 
@@ -263,7 +263,8 @@ public class InputFileParser {
 
         String[] splitLine = line.split(",");
 
-        SpecialtyEntity specialtyEntity = specialtyRepository.findByName(splitLine[1])
+        SpecialtyEntity specialtyEntity =
+                specialtyRepository.findByNameAndIsActive(splitLine[1], true)
                 .orElseThrow(() -> new InputFileException(
                         String.format(INTERNAL_ERROR_NOT_FOUND_MSG, splitLine[1])));
 
@@ -279,7 +280,8 @@ public class InputFileParser {
 
         String[] splitLine = line.split(",");
 
-        SpecialtyEntity specialtyEntity = specialtyRepository.findByName(splitLine[1])
+        SpecialtyEntity specialtyEntity =
+                specialtyRepository.findByNameAndIsActive(splitLine[1], true)
                 .orElseThrow(() -> new InputFileException(
                         String.format(INTERNAL_ERROR_NOT_FOUND_MSG, splitLine[1])));
 

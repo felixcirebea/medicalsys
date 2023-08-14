@@ -1,20 +1,15 @@
 package ro.felixcirebea.medicalsys.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity(name = "holidays")
 @Data
-public class HolidayEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+public class HolidayEntity extends BaseEntity {
 
     private LocalDate startDate;
 

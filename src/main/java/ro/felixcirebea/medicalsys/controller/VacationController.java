@@ -4,7 +4,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ro.felixcirebea.medicalsys.dto.VacationDto;
+import ro.felixcirebea.medicalsys.enums.VacationStatus;
 import ro.felixcirebea.medicalsys.enums.VacationType;
+import ro.felixcirebea.medicalsys.exception.ConcurrencyException;
 import ro.felixcirebea.medicalsys.exception.DataMismatchException;
 import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
 import ro.felixcirebea.medicalsys.service.VacationService;
@@ -26,8 +28,16 @@ public class VacationController {
     @PostMapping("/insert")
     public ResponseEntity<Long> insertVacation(
             @RequestBody @Valid VacationDto vacationDto)
-            throws DataMismatchException, DataNotFoundException {
-        return ResponseEntity.ok(vacationService.upsertVacation(vacationDto));
+            throws DataMismatchException, DataNotFoundException, ConcurrencyException {
+        return ResponseEntity.ok(vacationService.insertVacation(vacationDto));
+    }
+
+    @PostMapping("/update-status")
+    public ResponseEntity<Long> cancelVacation(
+            @RequestParam(name = "doctor") String doctorName,
+            @RequestParam(name = "start-date") String startDate)
+            throws DataMismatchException, DataNotFoundException, ConcurrencyException {
+        return ResponseEntity.ok(vacationService.cancelVacation(doctorName, startDate));
     }
 
     @GetMapping("/by-doctor-and-dates")
@@ -42,8 +52,9 @@ public class VacationController {
     @GetMapping("/by-doctor-and-type")
     public ResponseEntity<List<VacationDto>> getVacationByDoctorAndType(
             @RequestParam(name = "doctor", required = false) String doctorName,
-            @RequestParam(name = "type") String type) throws DataMismatchException, DataNotFoundException {
-        VacationType vacationType = Validator.enumValidator(type);
+            @RequestParam(name = "type") String type)
+            throws DataMismatchException, DataNotFoundException {
+        VacationType vacationType = Validator.vacationTypeValidator(type);
         return ResponseEntity.ok(vacationService.getVacationByDoctorAndType(doctorName, vacationType));
     }
 
@@ -56,20 +67,12 @@ public class VacationController {
         return ResponseEntity.ok(vacationService.isDateVacation(doctorName, dateValue));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Long> deleteById(
-            @PathVariable(name = "id") String inputId)
-            throws DataMismatchException {
-        Long idValue = Validator.idValidator(inputId);
-        return ResponseEntity.ok(vacationService.deleteVacationById(idValue));
-    }
-
-    @DeleteMapping("/by-doctor-and-date")
-    public ResponseEntity<Long> deleteVacationByDoctorAndDate(
+    @GetMapping("/by-doctor-and-status")
+    public ResponseEntity<List<VacationDto>> getVacationByDoctorAndStatus(
             @RequestParam(name = "doctor") String doctorName,
-            @RequestParam(name = "date") String date)
+            @RequestParam(name = "status") String status)
             throws DataMismatchException, DataNotFoundException {
-        LocalDate dateValue = Validator.dateValidator(date);
-        return ResponseEntity.ok(vacationService.deleteVacationByDoctorAndDate(doctorName, dateValue));
+        VacationStatus statusValue = Validator.vacationStatusValidator(status);
+        return ResponseEntity.ok(vacationService.getVacationByStatus(doctorName, statusValue));
     }
 }

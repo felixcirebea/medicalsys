@@ -10,6 +10,7 @@ import java.time.LocalTime;
 
 @Entity(name = "appointments")
 @Data
+@SuppressWarnings("all")
 public class AppointmentEntity {
 
     @Id
@@ -36,6 +37,6 @@ public class AppointmentEntity {
     private Double price;
 
     @Enumerated(EnumType.STRING)
-    private AppointmentStatus status;
+    private AppointmentStatus status = AppointmentStatus.NEW;
 
 }

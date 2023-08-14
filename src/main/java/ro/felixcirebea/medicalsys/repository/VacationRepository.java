@@ -4,13 +4,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import ro.felixcirebea.medicalsys.entity.DoctorEntity;
 import ro.felixcirebea.medicalsys.entity.VacationEntity;
+import ro.felixcirebea.medicalsys.enums.VacationStatus;
 import ro.felixcirebea.medicalsys.enums.VacationType;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface VacationRepository extends CrudRepository<VacationEntity, Long> {
@@ -29,8 +30,7 @@ public interface VacationRepository extends CrudRepository<VacationEntity, Long>
     @Query("SELECT COUNT(v) > 0 FROM vacations v WHERE v.doctor = :doctor AND :date BETWEEN v.startDate AND v.endDate")
     Boolean isDateBetweenVacation(@Param("doctor") DoctorEntity doctor, @Param("date") LocalDate date);
 
-    Boolean existsByDoctorAndStartDate(DoctorEntity doctor, LocalDate startDate);
+    Optional<VacationEntity> findByDoctorAndStartDate(DoctorEntity doctor, LocalDate startDate);
 
-    @Transactional
-    void deleteByDoctorAndStartDate(DoctorEntity doctor, LocalDate startDate);
+    List<VacationEntity> findAllByDoctorAndStatus(DoctorEntity doctor, VacationStatus status);
 }

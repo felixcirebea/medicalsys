@@ -9,6 +9,7 @@ import java.time.LocalTime;
 
 @Entity(name = "working_hours")
 @Data
+@SuppressWarnings("all")
 public class WorkingHoursEntity {
 
     @Id

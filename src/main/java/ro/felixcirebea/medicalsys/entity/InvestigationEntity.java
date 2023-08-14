@@ -2,15 +2,14 @@ package ro.felixcirebea.medicalsys.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity(name = "investigations")
 @Data
-public class InvestigationEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+@SuppressWarnings("all")
+public class InvestigationEntity extends BaseEntity {
 
     @Column(unique = true)
     private String name;

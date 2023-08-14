@@ -1,5 +1,6 @@
 package ro.felixcirebea.medicalsys.util;
 
+import ro.felixcirebea.medicalsys.enums.VacationStatus;
 import ro.felixcirebea.medicalsys.enums.VacationType;
 import ro.felixcirebea.medicalsys.exception.DataMismatchException;
 
@@ -34,10 +35,19 @@ public class Validator {
         }
     }
 
-    public static VacationType enumValidator(String inputType)
+    public static VacationType vacationTypeValidator(String inputType)
             throws DataMismatchException {
         try {
             return VacationType.valueOf(inputType);
+        } catch (IllegalArgumentException e) {
+            throw new DataMismatchException(INVALID_ENUM_MSG);
+        }
+    }
+
+    public static VacationStatus vacationStatusValidator(String inputType)
+            throws DataMismatchException {
+        try {
+            return VacationStatus.valueOf(inputType);
         } catch (IllegalArgumentException e) {
             throw new DataMismatchException(INVALID_ENUM_MSG);
         }

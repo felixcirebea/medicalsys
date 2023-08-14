@@ -5,7 +5,6 @@ import ro.felixcirebea.medicalsys.dto.AppointmentDto;
 import ro.felixcirebea.medicalsys.entity.AppointmentEntity;
 import ro.felixcirebea.medicalsys.entity.DoctorEntity;
 import ro.felixcirebea.medicalsys.entity.InvestigationEntity;
-import ro.felixcirebea.medicalsys.enums.AppointmentStatus;
 
 @Component
 public class AppointmentConverter {
@@ -26,8 +25,6 @@ public class AppointmentConverter {
         Double price = ((doctorEntity.getPriceRate() / 100) * investigationEntity.getBasePrice()) +
                 investigationEntity.getBasePrice();
         appointmentEntity.setPrice(price);
-
-        appointmentEntity.setStatus(AppointmentStatus.NEW);
         return appointmentEntity;
     }
 

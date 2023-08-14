@@ -9,9 +9,12 @@ import java.util.Optional;
 
 @Repository
 public interface InvestigationRepository extends CrudRepository<InvestigationEntity, Long> {
+    Optional<InvestigationEntity> findByIdAndIsActive(Long id, boolean isActive);
 
-    Optional<InvestigationEntity> findByName(String name);
+    Optional<InvestigationEntity> findByNameAndIsActive(String name, boolean isActive);
 
-    List<InvestigationEntity> findAllByDuration(Integer duration);
+    List<InvestigationEntity> findAllByDurationAndIsActive(Integer duration, boolean isActive);
+
+    List<InvestigationEntity> findAllByIsActive(boolean isActive);
 
 }

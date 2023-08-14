@@ -3,8 +3,8 @@ package ro.felixcirebea.medicalsys.service;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import ro.felixcirebea.medicalsys.dto.InvestigationDto;
 import ro.felixcirebea.medicalsys.converter.InvestigationConverter;
+import ro.felixcirebea.medicalsys.dto.InvestigationDto;
 import ro.felixcirebea.medicalsys.entity.DoctorEntity;
 import ro.felixcirebea.medicalsys.entity.InvestigationEntity;
 import ro.felixcirebea.medicalsys.entity.SpecialtyEntity;
@@ -13,12 +13,12 @@ import ro.felixcirebea.medicalsys.repository.DoctorRepository;
 import ro.felixcirebea.medicalsys.repository.InvestigationRepository;
 import ro.felixcirebea.medicalsys.repository.SpecialtyRepository;
 import ro.felixcirebea.medicalsys.util.Contributor;
+import ro.felixcirebea.medicalsys.util.DeleteUtility;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 @Service
 @Slf4j
@@ -29,7 +29,7 @@ public class InvestigationService {
     public static final String LOG_UPDATE_MSG = "%s was updated as follows: %s";
     public static final String LOG_INSERT_MSG = "%s was inserted";
     public static final String LOG_FAIL_DELETE_MSG = "Delete of investigation: %s failed - not found";
-    public static final String LOG_SUCCESS_DELETE_MSG = "Investigation id: %s deleted";
+    public static final String LOG_SUCCESS_DELETE_MSG = "Investigation: %s deleted";
     private final InvestigationRepository investigationRepository;
     private final SpecialtyRepository specialtyRepository;
     private final InvestigationConverter investigationConverter;
@@ -48,8 +48,10 @@ public class InvestigationService {
         this.doctorRepository = doctorRepository;
     }
 
-    public Long upsertInvestigation(InvestigationDto investigationDto) throws DataNotFoundException {
-        SpecialtyEntity specialtyEntity = specialtyRepository.findByName(investigationDto.getSpecialty())
+    public Long upsertInvestigation(InvestigationDto investigationDto)
+            throws DataNotFoundException {
+        SpecialtyEntity specialtyEntity =
+                specialtyRepository.findByNameAndIsActive(investigationDto.getSpecialty(), true)
                 .orElseThrow(() -> new DataNotFoundException(
                         String.format(NOT_FOUND_MSG, investigationDto.getSpecialty())));
         if (investigationDto.getId() != null) {
@@ -57,18 +59,23 @@ public class InvestigationService {
         }
 
         log.info(String.format(LOG_INSERT_MSG, investigationDto.getName()));
-        return investigationRepository.save(
-                investigationConverter.fromDtoToEntity(investigationDto, specialtyEntity)).getId();
+        return investigationRepository
+                .save(investigationConverter
+                        .fromDtoToEntity(investigationDto, specialtyEntity))
+                .getId();
     }
 
-    private Long updateInvestigation(InvestigationDto investigationDto, SpecialtyEntity specialtyEntity)
+    private Long updateInvestigation(InvestigationDto investigationDto,
+                                     SpecialtyEntity specialtyEntity)
             throws DataNotFoundException {
-        InvestigationEntity investigationEntity = investigationRepository.findById(investigationDto.getId())
+        InvestigationEntity investigationEntity =
+                investigationRepository.findByIdAndIsActive(investigationDto.getId(), true)
                 .orElseThrow(() -> new DataNotFoundException(WRONG_ID_MSG));
 
         investigationEntity.setName(investigationDto.getName());
         investigationEntity.setSpecialty(specialtyEntity);
         investigationEntity.setDuration(investigationDto.getDuration());
+
         if (investigationDto.getBasePrice() != null) {
             investigationEntity.setBasePrice(investigationDto.getBasePrice());
         }
@@ -77,87 +84,104 @@ public class InvestigationService {
         return investigationRepository.save(investigationEntity).getId();
     }
 
-    public InvestigationDto getInvestigationById(Long investigationId) throws DataNotFoundException {
-        InvestigationEntity investigationEntity = investigationRepository.findById(investigationId)
+    public InvestigationDto getInvestigationById(Long investigationId)
+            throws DataNotFoundException {
+        InvestigationEntity investigationEntity =
+                investigationRepository.findByIdAndIsActive(investigationId, true)
                 .orElseThrow(() -> new DataNotFoundException(WRONG_ID_MSG));
         return investigationConverter.fromEntityToDto(investigationEntity);
     }
 
-    public InvestigationDto getInvestigationByName(String investigationName) throws DataNotFoundException {
-        InvestigationEntity investigationEntity = investigationRepository.findByName(investigationName)
-                .orElseThrow(() -> new DataNotFoundException(String.format(NOT_FOUND_MSG, investigationName)));
+    public InvestigationDto getInvestigationByName(String investigationName)
+            throws DataNotFoundException {
+        InvestigationEntity investigationEntity =
+                investigationRepository.findByNameAndIsActive(investigationName, true)
+                .orElseThrow(() -> new DataNotFoundException(
+                        String.format(NOT_FOUND_MSG, investigationName)));
         return investigationConverter.fromEntityToDto(investigationEntity);
     }
 
-    public List<InvestigationDto> getInvestigationBySpecialty(String specialtyName) throws DataNotFoundException {
-        SpecialtyEntity specialtyEntity = specialtyRepository.findByName(specialtyName)
-                .orElseThrow(() -> new DataNotFoundException(String.format(NOT_FOUND_MSG, specialtyName)));
+    public List<InvestigationDto> getInvestigationBySpecialty(String specialtyName)
+            throws DataNotFoundException {
+        SpecialtyEntity specialtyEntity =
+                specialtyRepository.findByNameAndIsActive(specialtyName, true)
+                .orElseThrow(() -> new DataNotFoundException(
+                        String.format(NOT_FOUND_MSG, specialtyName)));
         return specialtyEntity.getInvestigations().stream()
+                .filter(inv -> inv.getIsActive().equals(true))
                 .map(investigationConverter::fromEntityToDto)
                 .toList();
     }
 
     public List<InvestigationDto> getInvestigationByDuration(Integer duration) {
-        return investigationRepository.findAllByDuration(duration).stream()
+        return investigationRepository.findAllByDurationAndIsActive(duration, true)
+                .stream()
                 .map(investigationConverter::fromEntityToDto)
                 .toList();
     }
 
     public List<InvestigationDto> getAllInvestigations() {
-        return StreamSupport.stream(investigationRepository.findAll().spliterator(), false)
+        return investigationRepository.findAllByIsActive(true).stream()
                 .map(investigationConverter::fromEntityToDto)
                 .toList();
     }
 
     public Long deleteInvestigationById(Long investigationId) {
-        boolean deleteCondition = investigationRepository.existsById(investigationId);
-        if (!deleteCondition) {
-            log.warn(String.format(LOG_FAIL_DELETE_MSG, investigationId));
-            infoContributor.incrementFailedDeleteOperations();
+        Optional<InvestigationEntity> investigationEntityOptional =
+                investigationRepository.findByIdAndIsActive(investigationId, true);
+
+        InvestigationEntity doctorEntity = DeleteUtility.softDeleteById(
+                investigationId, investigationEntityOptional,
+                LOG_FAIL_DELETE_MSG, LOG_SUCCESS_DELETE_MSG, infoContributor);
+
+        if (doctorEntity == null) {
             return investigationId;
         }
-        investigationRepository.deleteById(investigationId);
-        log.info(String.format(LOG_SUCCESS_DELETE_MSG, investigationId));
-        return investigationId;
+        return investigationRepository.save(doctorEntity).getId();
     }
 
 
-    public Long deleteInvestigationByName(String investigationName) throws DataNotFoundException {
-        Optional<InvestigationEntity> investigationEntityOptional = investigationRepository
-                .findByName(investigationName);
-
-        if (investigationEntityOptional.isEmpty()) {
-            infoContributor.incrementFailedDeleteOperations();
-            log.warn(String.format(LOG_FAIL_DELETE_MSG, investigationName));
-            throw new DataNotFoundException(String.format(NOT_FOUND_MSG, investigationName));
-        }
-
-        Long doctorId = investigationEntityOptional.get().getId();
-        investigationRepository.deleteById(doctorId);
-        return doctorId;
-    }
-
-    public Map<String, Map<String, Double>> getInvestigationWithPricing(String doctorName, String investigationName)
+    public Long deleteInvestigationByName(String investigationName)
             throws DataNotFoundException {
-        DoctorEntity doctorEntity = doctorRepository.findByName(doctorName)
-                .orElseThrow(() -> new DataNotFoundException(String.format(NOT_FOUND_MSG, doctorName)));
+        Optional<InvestigationEntity> investigationEntityOptional =
+                investigationRepository.findByNameAndIsActive(investigationName, true);
+
+        InvestigationEntity investigationEntity = DeleteUtility.softDeleteByField(
+                investigationName, investigationEntityOptional, investigationRepository,
+                LOG_FAIL_DELETE_MSG, LOG_SUCCESS_DELETE_MSG, NOT_FOUND_MSG, infoContributor);
+
+        return investigationRepository.save(investigationEntity).getId();
+    }
+
+    public Map<String, Map<String, Double>> getInvestigationWithPricing(
+            String doctorName, String investigationName)
+            throws DataNotFoundException {
+        DoctorEntity doctorEntity =
+                doctorRepository.findByNameAndIsActive(doctorName, true)
+                .orElseThrow(() -> new DataNotFoundException(
+                        String.format(NOT_FOUND_MSG, doctorName)));
         Double doctorPriceRate = doctorEntity.getPriceRate();
 
         Map<String, Map<String, Double>> returnCollection = new HashMap<>();
         Map<String, Double> innerCollection = new HashMap<>();
 
         if (investigationName == null || StringUtils.isBlank(investigationName)) {
-            doctorEntity.getSpecialty().getInvestigations().forEach(investigation -> {
-                Double basePrice = investigation.getBasePrice();
+            doctorEntity.getSpecialty().getInvestigations().stream()
+                    .filter(inv -> inv.getIsActive().equals(true))
+                    .forEach(inv -> {
+                Double basePrice = inv.getBasePrice();
                 Double price = basePrice + (doctorPriceRate / 100) * basePrice;
-                innerCollection.put(investigation.getName(), price);
+                innerCollection.put(inv.getName(), price);
             });
+
             returnCollection.put(doctorName, innerCollection);
             return returnCollection;
         }
 
-        InvestigationEntity investigationEntity = investigationRepository.findByName(investigationName)
-                .orElseThrow(() -> new DataNotFoundException(String.format(NOT_FOUND_MSG, investigationName)));
+        InvestigationEntity investigationEntity =
+                investigationRepository.findByNameAndIsActive(investigationName, true)
+                .orElseThrow(() -> new DataNotFoundException(
+                        String.format(NOT_FOUND_MSG, investigationName)));
         Double basePrice = investigationEntity.getBasePrice();
         Double price = basePrice + ((doctorPriceRate / 100) * basePrice);
 
