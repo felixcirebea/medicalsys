@@ -33,6 +33,7 @@ public class SpecialtyService {
     private final WorkingHoursService workingHoursService;
     private final AppointmentService appointmentService;
     private final Contributor infoContributor;
+    private final DeleteUtility deleteUtility;
 
     public SpecialtyService(SpecialtyRepository specialtyRepository,
                             SpecialtyConverter specialtyConverter,
@@ -40,7 +41,8 @@ public class SpecialtyService {
                             InvestigationRepository investigationRepository,
                             WorkingHoursService workingHoursService,
                             AppointmentService appointmentService,
-                            Contributor infoContributor) {
+                            Contributor infoContributor,
+                            DeleteUtility deleteUtility) {
         this.specialtyRepository = specialtyRepository;
         this.specialtyConverter = specialtyConverter;
         this.doctorRepository = doctorRepository;
@@ -48,6 +50,7 @@ public class SpecialtyService {
         this.workingHoursService = workingHoursService;
         this.appointmentService = appointmentService;
         this.infoContributor = infoContributor;
+        this.deleteUtility = deleteUtility;
     }
 
     public Long upsertSpecialty(SpecialtyDto specialtyDto)
@@ -99,7 +102,7 @@ public class SpecialtyService {
         Optional<SpecialtyEntity> specialtyEntityOptional =
                 specialtyRepository.findByIdAndIsActive(specialtyId, true);
 
-        SpecialtyEntity specialtyEntity = DeleteUtility.softDeleteById(
+        SpecialtyEntity specialtyEntity = deleteUtility.softDeleteById(
                 specialtyId, specialtyEntityOptional,
                 LOG_FAIL_DELETE_MSG, LOG_SUCCESS_DELETE_MSG, infoContributor);
 
@@ -107,7 +110,7 @@ public class SpecialtyService {
             return specialtyId;
         }
 
-        DeleteUtility.softCascadeDelete(specialtyEntity, workingHoursService, appointmentService,
+        deleteUtility.softCascadeDelete(specialtyEntity, workingHoursService, appointmentService,
                 doctorRepository, investigationRepository, LOG_SUCCESS_CASCADE_DELETE_MSG);
 
         return specialtyRepository.save(specialtyEntity).getId();
@@ -118,11 +121,11 @@ public class SpecialtyService {
         Optional<SpecialtyEntity> specialtyEntityOptional =
                 specialtyRepository.findByNameAndIsActive(specialtyName, true);
 
-        SpecialtyEntity specialtyEntity = DeleteUtility.softDeleteByField(
+        SpecialtyEntity specialtyEntity = deleteUtility.softDeleteByField(
                 specialtyName, specialtyEntityOptional, specialtyRepository,
                 LOG_FAIL_DELETE_MSG, LOG_SUCCESS_DELETE_MSG, NOT_FOUND_MSG, infoContributor);
 
-        DeleteUtility.softCascadeDelete(specialtyEntity, workingHoursService, appointmentService,
+        deleteUtility.softCascadeDelete(specialtyEntity, workingHoursService, appointmentService,
                 doctorRepository, investigationRepository, LOG_SUCCESS_CASCADE_DELETE_MSG);
 
         return specialtyRepository.save(specialtyEntity).getId();

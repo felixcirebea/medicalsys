@@ -32,19 +32,22 @@ public class DoctorService {
     private final Contributor infoContributor;
     private final WorkingHoursService workingHoursService;
     private final AppointmentService appointmentService;
+    private final DeleteUtility deleteUtility;
 
     public DoctorService(DoctorRepository doctorRepository,
                          SpecialtyRepository specialtyRepository,
                          DoctorConverter doctorConverter,
                          Contributor infoContributor,
                          WorkingHoursService workingHoursService,
-                         AppointmentService appointmentService) {
+                         AppointmentService appointmentService,
+                         DeleteUtility deleteUtility) {
         this.doctorRepository = doctorRepository;
         this.specialtyRepository = specialtyRepository;
         this.doctorConverter = doctorConverter;
         this.infoContributor = infoContributor;
         this.workingHoursService = workingHoursService;
         this.appointmentService = appointmentService;
+        this.deleteUtility = deleteUtility;
     }
 
     public Long upsertDoctor(DoctorDto doctorDto)
@@ -114,7 +117,7 @@ public class DoctorService {
         Optional<DoctorEntity> doctorEntityOptional =
                 doctorRepository.findByIdAndIsActive(doctorId, true);
 
-        DoctorEntity doctorEntity = DeleteUtility.softDeleteById(
+        DoctorEntity doctorEntity = deleteUtility.softDeleteById(
                 doctorId, doctorEntityOptional,
                 LOG_FAIL_DELETE_MSG, LOG_SUCCESS_DELETE_MSG, infoContributor);
 
@@ -132,7 +135,7 @@ public class DoctorService {
         Optional<DoctorEntity> doctorEntityOptional =
                 doctorRepository.findByNameAndIsActive(doctorName, true);
 
-        DoctorEntity doctorEntity = DeleteUtility.softDeleteByField(
+        DoctorEntity doctorEntity = deleteUtility.softDeleteByField(
                 doctorName, doctorEntityOptional, doctorRepository,
                 LOG_FAIL_DELETE_MSG, LOG_SUCCESS_DELETE_MSG, NOT_FOUND_MSG, infoContributor);
 

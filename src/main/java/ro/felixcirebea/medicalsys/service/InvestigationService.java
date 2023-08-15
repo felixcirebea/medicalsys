@@ -14,6 +14,7 @@ import ro.felixcirebea.medicalsys.repository.InvestigationRepository;
 import ro.felixcirebea.medicalsys.repository.SpecialtyRepository;
 import ro.felixcirebea.medicalsys.util.Contributor;
 import ro.felixcirebea.medicalsys.util.DeleteUtility;
+import ro.felixcirebea.medicalsys.util.DeleteUtilityImpl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,17 +36,20 @@ public class InvestigationService {
     private final InvestigationConverter investigationConverter;
     private final Contributor infoContributor;
     private final DoctorRepository doctorRepository;
+    private final DeleteUtility deleteUtility;
 
     public InvestigationService(InvestigationRepository investigationRepository,
                                 SpecialtyRepository specialtyRepository,
                                 InvestigationConverter investigationConverter,
                                 Contributor infoContributor,
-                                DoctorRepository doctorRepository) {
+                                DoctorRepository doctorRepository,
+                                DeleteUtility deleteUtility) {
         this.investigationRepository = investigationRepository;
         this.specialtyRepository = specialtyRepository;
         this.investigationConverter = investigationConverter;
         this.infoContributor = infoContributor;
         this.doctorRepository = doctorRepository;
+        this.deleteUtility = deleteUtility;
     }
 
     public Long upsertInvestigation(InvestigationDto investigationDto)
@@ -128,7 +132,7 @@ public class InvestigationService {
         Optional<InvestigationEntity> investigationEntityOptional =
                 investigationRepository.findByIdAndIsActive(investigationId, true);
 
-        InvestigationEntity doctorEntity = DeleteUtility.softDeleteById(
+        InvestigationEntity doctorEntity = deleteUtility.softDeleteById(
                 investigationId, investigationEntityOptional,
                 LOG_FAIL_DELETE_MSG, LOG_SUCCESS_DELETE_MSG, infoContributor);
 
@@ -144,7 +148,7 @@ public class InvestigationService {
         Optional<InvestigationEntity> investigationEntityOptional =
                 investigationRepository.findByNameAndIsActive(investigationName, true);
 
-        InvestigationEntity investigationEntity = DeleteUtility.softDeleteByField(
+        InvestigationEntity investigationEntity = deleteUtility.softDeleteByField(
                 investigationName, investigationEntityOptional, investigationRepository,
                 LOG_FAIL_DELETE_MSG, LOG_SUCCESS_DELETE_MSG, NOT_FOUND_MSG, infoContributor);
 

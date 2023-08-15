@@ -27,13 +27,16 @@ public class HolidayService {
     private final HolidayRepository holidayRepository;
     private final HolidayConverter holidayConverter;
     private final Contributor infoContributor;
+    private final DeleteUtility deleteUtility;
 
     public HolidayService(HolidayRepository holidayRepository,
                           HolidayConverter holidayConverter,
-                          Contributor infoContributor) {
+                          Contributor infoContributor,
+                          DeleteUtility deleteUtility) {
         this.holidayRepository = holidayRepository;
         this.holidayConverter = holidayConverter;
         this.infoContributor = infoContributor;
+        this.deleteUtility = deleteUtility;
     }
 
     public Long upsertHoliday(HolidayDto holidayDto)
@@ -91,7 +94,7 @@ public class HolidayService {
         Optional<HolidayEntity> holidayEntityOptional =
                 holidayRepository.findByIdAndIsActive(holidayId, true);
 
-        HolidayEntity holidayEntity = DeleteUtility.softDeleteById(
+        HolidayEntity holidayEntity = deleteUtility.softDeleteById(
                 holidayId, holidayEntityOptional,
                 LOG_FAIL_DELETE_MSG, LOG_SUCCESS_DELETE_MSG, infoContributor);
 
@@ -106,7 +109,7 @@ public class HolidayService {
         Optional<HolidayEntity> holidayEntityOptional =
                 holidayRepository.findByDescriptionAndIsActive(description, true);
 
-        HolidayEntity holidayEntity = DeleteUtility.softDeleteByField(
+        HolidayEntity holidayEntity = deleteUtility.softDeleteByField(
                 description, holidayEntityOptional, holidayRepository,
                 LOG_FAIL_DELETE_MSG, LOG_SUCCESS_DELETE_MSG, NOT_FOUND_MSG, infoContributor);
 
