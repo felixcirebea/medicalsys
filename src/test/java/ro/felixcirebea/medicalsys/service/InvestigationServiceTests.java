@@ -621,7 +621,7 @@ public class InvestigationServiceTests {
     }
 
     @Test
-    public void testGetInvestigationWithPricing_whenInvNotValid_thenThrowException() throws DataNotFoundException {
+    public void testGetInvestigationWithPricing_whenInvNotValid_thenThrowException() {
         //Arrange
         final Long id = 1L;
         final String doctorName = "TestDoctor";
@@ -645,7 +645,7 @@ public class InvestigationServiceTests {
     }
 
     @Test
-    public void testGetInvestigationWithPricing_whenDocNotValid_thenThrowException() throws DataNotFoundException {
+    public void testGetInvestigationWithPricing_whenDocNotValid_thenThrowException() {
         //Arrange
         final String doctorName = "FakeDoctor";
         final String investigationName = "TestInvestigation";
