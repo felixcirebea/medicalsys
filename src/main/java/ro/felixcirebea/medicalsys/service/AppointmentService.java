@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class AppointmentService {
+public class  AppointmentService {
 
     public static final String NOT_FOUND_MSG = "%s not found";
     public static final String NOT_FOUND_WH_MSG = "Working hours not found for %s";
@@ -103,7 +103,7 @@ public class AppointmentService {
         List<LocalTime> availableHours = new ArrayList<>();
         LocalTime currentTime = startWorkingHour;
 
-        while (currentTime.isBefore(endWorkingHour.minusMinutes(investigationDuration))) {
+        while (!currentTime.isAfter(endWorkingHour.minusMinutes(investigationDuration))) {
             boolean slotAvailable = true;
 
             for (AppointmentEntity appointment : appointments) {
