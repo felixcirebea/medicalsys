@@ -20,7 +20,7 @@ public class WorkingHoursConverter {
         return workingHoursEntity;
     }
 
-    public WorkingHoursDto froEntityToDto(WorkingHoursEntity workingHoursEntity) {
+    public WorkingHoursDto fromEntityToDto(WorkingHoursEntity workingHoursEntity) {
         return WorkingHoursDto.builder()
                 .id(workingHoursEntity.getId())
                 .doctor(workingHoursEntity.getDoctor().getName())

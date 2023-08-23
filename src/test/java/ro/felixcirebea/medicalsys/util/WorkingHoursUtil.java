@@ -1,5 +1,6 @@
 package ro.felixcirebea.medicalsys.util;
 
+import ro.felixcirebea.medicalsys.dto.WorkingHoursDto;
 import ro.felixcirebea.medicalsys.entity.DoctorEntity;
 import ro.felixcirebea.medicalsys.entity.WorkingHoursEntity;
 
@@ -21,6 +22,15 @@ public class WorkingHoursUtil {
         workingHoursEntity.setEndHour(END_HOUR);
 
         return workingHoursEntity;
+    }
+
+    public static WorkingHoursDto createWorkingHoursDto(Integer dayOfWeek) {
+        return WorkingHoursDto.builder()
+                .doctor(DOCTOR.getName())
+                .dayOfWeek(dayOfWeek)
+                .startHour(START_HOUR)
+                .endHour(END_HOUR)
+                .build();
     }
 
 }

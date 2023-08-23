@@ -89,7 +89,7 @@ public class WorkingHoursService {
 
             return workingHoursRepository.findByDoctorAndDayOfWeek(doctorEntity, dayOfWeekValue)
                     .stream()
-                    .map(workingHoursConverter::froEntityToDto)
+                    .map(workingHoursConverter::fromEntityToDto)
                     .toList();
         } else if (doctorName != null) {
             DoctorEntity doctorEntity =
@@ -98,17 +98,17 @@ public class WorkingHoursService {
                             String.format(NOT_FOUND_MSG, doctorName)));
             return workingHoursRepository.findByDoctor(doctorEntity)
                     .stream()
-                    .map(workingHoursConverter::froEntityToDto)
+                    .map(workingHoursConverter::fromEntityToDto)
                     .toList();
         } else if (dayOfWeek != null) {
             DayOfWeek dayOfWeekValue = Validator.dayOfWeekValidator(dayOfWeek);
             return workingHoursRepository.findByDayOfWeek(dayOfWeekValue)
                     .stream()
-                    .map(workingHoursConverter::froEntityToDto)
+                    .map(workingHoursConverter::fromEntityToDto)
                     .toList();
         } else {
             return StreamSupport.stream(workingHoursRepository.findAll().spliterator(), false)
-                    .map(workingHoursConverter::froEntityToDto)
+                    .map(workingHoursConverter::fromEntityToDto)
                     .toList();
         }
     }
