@@ -7,7 +7,7 @@ import ro.felixcirebea.medicalsys.dto.DoctorDto;
 import ro.felixcirebea.medicalsys.exception.DataMismatchException;
 import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
 import ro.felixcirebea.medicalsys.service.DoctorService;
-import ro.felixcirebea.medicalsys.util.Validator;
+import ro.felixcirebea.medicalsys.helper.Validator;
 
 import java.util.List;
 

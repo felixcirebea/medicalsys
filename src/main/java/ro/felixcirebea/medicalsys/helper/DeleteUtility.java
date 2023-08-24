@@ -1,4 +1,4 @@
-package ro.felixcirebea.medicalsys.util;
+package ro.felixcirebea.medicalsys.helper;
 
 import org.springframework.data.repository.CrudRepository;
 import ro.felixcirebea.medicalsys.entity.BaseEntity;
@@ -17,7 +17,7 @@ public interface DeleteUtility {
                                             String failLogMessage, String successLogMessage,
                                             Contributor infoContributor);
 
-    <T> T softDeleteByField(String field,
+    <T extends BaseEntity> T softDeleteByField(String field,
                             Optional<T> entityOptional,
                             CrudRepository<T, Long> repository,
                             String failLogMessage,

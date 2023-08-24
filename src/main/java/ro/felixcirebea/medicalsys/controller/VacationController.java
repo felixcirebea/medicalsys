@@ -10,7 +10,7 @@ import ro.felixcirebea.medicalsys.exception.ConcurrencyException;
 import ro.felixcirebea.medicalsys.exception.DataMismatchException;
 import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
 import ro.felixcirebea.medicalsys.service.VacationService;
-import ro.felixcirebea.medicalsys.util.Validator;
+import ro.felixcirebea.medicalsys.helper.Validator;
 
 import java.time.LocalDate;
 import java.util.List;

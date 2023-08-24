@@ -9,6 +9,8 @@ import ro.felixcirebea.medicalsys.entity.SpecialtyEntity;
 @Component
 public class InvestigationConverter {
 
+    private static final double DEFAULT_BASE_PRICE = 50D;
+
     public InvestigationEntity fromDtoToEntity(InvestigationDto investigationDto, SpecialtyEntity specialtyEntity) {
         InvestigationEntity investigationEntity = new InvestigationEntity();
 
@@ -17,7 +19,7 @@ public class InvestigationConverter {
         investigationEntity.setDuration(investigationDto.getDuration());
 
         if (investigationDto.getBasePrice() == null) {
-            investigationEntity.setBasePrice(50.0);
+            investigationEntity.setBasePrice(DEFAULT_BASE_PRICE);
         } else {
             investigationEntity.setBasePrice(investigationDto.getBasePrice());
         }

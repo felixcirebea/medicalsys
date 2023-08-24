@@ -1,4 +1,4 @@
-package ro.felixcirebea.medicalsys.util;
+package ro.felixcirebea.medicalsys.helper;
 
 import lombok.Getter;
 import org.springframework.boot.actuate.info.Info;

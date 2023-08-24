@@ -4,13 +4,11 @@ import org.springframework.stereotype.Component;
 import ro.felixcirebea.medicalsys.dto.VacationDto;
 import ro.felixcirebea.medicalsys.entity.DoctorEntity;
 import ro.felixcirebea.medicalsys.entity.VacationEntity;
-import ro.felixcirebea.medicalsys.exception.DataMismatchException;
 
 @Component
 public class VacationConverter {
 
-    public VacationEntity fromDtoToEntity(VacationDto vacationDto, DoctorEntity doctorEntity)
-            throws DataMismatchException {
+    public VacationEntity fromDtoToEntity(VacationDto vacationDto, DoctorEntity doctorEntity) {
         VacationEntity vacationEntity = new VacationEntity();
         vacationEntity.setDoctor(doctorEntity);
         vacationEntity.setStartDate(vacationDto.getStartDate());

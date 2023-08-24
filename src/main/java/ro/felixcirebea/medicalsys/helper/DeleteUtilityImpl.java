@@ -1,4 +1,4 @@
-package ro.felixcirebea.medicalsys.util;
+package ro.felixcirebea.medicalsys.helper;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.CrudRepository;
@@ -38,13 +38,13 @@ public class DeleteUtilityImpl implements DeleteUtility {
         return entityOptional.get();
     }
 
-    public <T> T softDeleteByField(String field,
-                                          Optional<T> entityOptional,
-                                          CrudRepository<T, Long> repository,
-                                          String failLogMessage,
-                                          String successLogMessage,
-                                          String exceptionMessage,
-                                          Contributor infoContributor)
+    public <T extends BaseEntity> T softDeleteByField(String field,
+                                   Optional<T> entityOptional,
+                                   CrudRepository<T, Long> repository,
+                                   String failLogMessage,
+                                   String successLogMessage,
+                                   String exceptionMessage,
+                                   Contributor infoContributor)
             throws DataNotFoundException {
 
         if (entityOptional.isEmpty()) {
@@ -54,23 +54,19 @@ public class DeleteUtilityImpl implements DeleteUtility {
         }
 
         T entity = entityOptional.get();
-        if (entity instanceof BaseEntity) {
-            ((BaseEntity) entity).setIsActive(false);
-            repository.save(entity);
-        } else {
-            repository.delete(entity);
-        }
+        entity.setIsActive(false);
+        repository.save(entity);
 
         log.info(String.format(successLogMessage, field));
         return entity;
     }
 
     public void softCascadeDelete(SpecialtyEntity specialtyEntity,
-                                         WorkingHoursService workingHoursService,
-                                         AppointmentService appointmentService,
-                                         DoctorRepository doctorRepository,
-                                         InvestigationRepository investigationRepository,
-                                         String logSuccessMessage) {
+                                  WorkingHoursService workingHoursService,
+                                  AppointmentService appointmentService,
+                                  DoctorRepository doctorRepository,
+                                  InvestigationRepository investigationRepository,
+                                  String logSuccessMessage) {
         List<DoctorEntity> doctors = specialtyEntity.getDoctors();
         doctors.forEach(doc -> {
             doc.setIsActive(false);

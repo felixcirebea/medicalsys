@@ -9,7 +9,7 @@ import ro.felixcirebea.medicalsys.enums.VacationType;
 import ro.felixcirebea.medicalsys.exception.DataMismatchException;
 import ro.felixcirebea.medicalsys.exception.InputFileException;
 import ro.felixcirebea.medicalsys.repository.*;
-import ro.felixcirebea.medicalsys.util.Validator;
+import ro.felixcirebea.medicalsys.helper.Validator;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

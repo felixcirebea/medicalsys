@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import ro.felixcirebea.medicalsys.exception.ConcurrencyException;
 import ro.felixcirebea.medicalsys.exception.DataMismatchException;
 import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
-import ro.felixcirebea.medicalsys.util.Contributor;
+import ro.felixcirebea.medicalsys.helper.Contributor;
 
 @ControllerAdvice
 @Slf4j

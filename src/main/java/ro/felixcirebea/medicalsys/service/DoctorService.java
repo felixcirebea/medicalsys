@@ -10,8 +10,8 @@ import ro.felixcirebea.medicalsys.enums.VacationStatus;
 import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
 import ro.felixcirebea.medicalsys.repository.DoctorRepository;
 import ro.felixcirebea.medicalsys.repository.SpecialtyRepository;
-import ro.felixcirebea.medicalsys.util.Contributor;
-import ro.felixcirebea.medicalsys.util.DeleteUtility;
+import ro.felixcirebea.medicalsys.helper.Contributor;
+import ro.felixcirebea.medicalsys.helper.DeleteUtility;
 
 import java.util.List;
 import java.util.Optional;

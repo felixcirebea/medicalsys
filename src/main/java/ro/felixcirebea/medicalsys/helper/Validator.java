@@ -1,4 +1,4 @@
-package ro.felixcirebea.medicalsys.util;
+package ro.felixcirebea.medicalsys.helper;
 
 import ro.felixcirebea.medicalsys.enums.VacationStatus;
 import ro.felixcirebea.medicalsys.enums.VacationType;
