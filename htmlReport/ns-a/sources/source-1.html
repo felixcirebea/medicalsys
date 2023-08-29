@@ -1,0 +1,112 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > AppointmentRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ro.felixcirebea.medicalsys.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: AppointmentRepository (ro.felixcirebea.medicalsys.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">AppointmentRepository$MockitoMock$xWR4kglL</td>
+  </tr>
+  <tr>
+    <td class="name">AppointmentRepository$MockitoMock$xWR4kglL$auxiliary$6UYT8Nm1</td>
+  </tr>
+  <tr>
+    <td class="name">AppointmentRepository$MockitoMock$xWR4kglL$auxiliary$e27DXYWe</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ro.felixcirebea.medicalsys.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.CrudRepository;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import ro.felixcirebea.medicalsys.entity.AppointmentEntity;
+&nbsp;import ro.felixcirebea.medicalsys.entity.DoctorEntity;
+&nbsp;import ro.felixcirebea.medicalsys.enums.AppointmentStatus;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.LocalTime;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface AppointmentRepository extends CrudRepository&lt;AppointmentEntity, Long&gt; {
+&nbsp;
+&nbsp;    List&lt;AppointmentEntity&gt; findAllByDoctorAndDate(DoctorEntity doctor, LocalDate date);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT CASE WHEN COUNT(a) &gt; 0 THEN true ELSE false END &quot; +
+&nbsp;            &quot;FROM appointments a WHERE a.doctor = :doctor &quot; +
+&nbsp;            &quot;AND a.date = :date &quot; +
+&nbsp;            &quot;AND a.startTime &lt; :endTime &quot; +
+&nbsp;            &quot;AND a.endTime &gt; :startTime&quot;)
+&nbsp;    Boolean existsByDoctorDateAndTimeRange(@Param(&quot;doctor&quot;) DoctorEntity doctor,
+&nbsp;                                           @Param(&quot;date&quot;) LocalDate date,
+&nbsp;                                           @Param(&quot;startTime&quot;) LocalTime startTime,
+&nbsp;                                           @Param(&quot;endTime&quot;) LocalTime endTime);
+&nbsp;
+&nbsp;    Optional&lt;AppointmentEntity&gt; findByIdAndClientNameAndStatus(Long id, String clientName, AppointmentStatus status);
+&nbsp;
+&nbsp;    List&lt;AppointmentEntity&gt; findAllByDoctor(DoctorEntity doctor);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-08-29 22:12</div>
+</div>
+</body>
+</html>

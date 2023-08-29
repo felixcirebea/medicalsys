@@ -1,0 +1,172 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > Contributor</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ro.felixcirebea.medicalsys.helper</a>
+</div>
+
+<h1>Coverage Summary for Class: Contributor (ro.felixcirebea.medicalsys.helper)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Contributor</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (7/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    59.1%
+  </span>
+  <span class="absValue">
+    (13/22)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ro.felixcirebea.medicalsys.helper;
+&nbsp;
+&nbsp;import lombok.Getter;
+&nbsp;import org.springframework.boot.actuate.info.Info;
+&nbsp;import org.springframework.boot.actuate.info.InfoContributor;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;@Component
+&nbsp;@Getter
+<b class="fc">&nbsp;public class Contributor implements InfoContributor {</b>
+&nbsp;
+<b class="fc">&nbsp;    private LocalDate currentDate = LocalDate.of(2023, 1, 1);</b>
+<b class="fc">&nbsp;    private Integer failedDeleteOperations = 0;</b>
+<b class="fc">&nbsp;    private Integer numberOfDataNotFoundExceptions = 0;</b>
+<b class="fc">&nbsp;    private Integer numberOfDataMismatchExceptions = 0;</b>
+<b class="fc">&nbsp;    private Integer numberOfConstraintViolationExceptions = 0;</b>
+<b class="fc">&nbsp;    private Integer numberOfConcurrencyExceptions = 0;</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void contribute(Info.Builder builder) {
+<b class="nc">&nbsp;        Map&lt;String, Object&gt; generalInfoMap = Map.of(&quot;current-date&quot;, currentDate);</b>
+<b class="nc">&nbsp;        Map&lt;String, Object&gt; operationsMonitorMap = Map.of(</b>
+&nbsp;                &quot;failed-delete-operations&quot;,
+<b class="nc">&nbsp;                String.valueOf(failedDeleteOperations),</b>
+&nbsp;                &quot;data-not-found-exceptions&quot;,
+<b class="nc">&nbsp;                String.valueOf(numberOfDataNotFoundExceptions),</b>
+&nbsp;                &quot;data-mismatch-exceptions&quot;,
+<b class="nc">&nbsp;                String.valueOf(numberOfDataMismatchExceptions),</b>
+&nbsp;                &quot;constraint-violation-exceptions&quot;,
+<b class="nc">&nbsp;                String.valueOf(numberOfConstraintViolationExceptions),</b>
+&nbsp;                &quot;concurrency-exceptions&quot;,
+<b class="nc">&nbsp;                String.valueOf(numberOfConcurrencyExceptions));</b>
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;String, Map&lt;String, Object&gt;&gt; builderMap = Map.of(</b>
+&nbsp;                &quot;general-information&quot;, generalInfoMap,
+&nbsp;                &quot;operations-monitor&quot;, operationsMonitorMap);
+&nbsp;
+<b class="nc">&nbsp;        builder.withDetails(Map.of(&quot;app-health&quot;, builderMap));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void incrementFailedDeleteOperations() {
+<b class="fc">&nbsp;        this.failedDeleteOperations++;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void incrementNumberOfDataNotFoundExceptions() {
+<b class="fc">&nbsp;        this.numberOfDataNotFoundExceptions++;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void incrementNumberOfDataMismatchExceptions() {
+<b class="fc">&nbsp;        this.numberOfDataMismatchExceptions++;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void incrementNumberOfConstraintViolationExceptions() {
+<b class="fc">&nbsp;        this.numberOfConstraintViolationExceptions++;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void incrementNumberOfConcurrencyExceptions() {
+<b class="fc">&nbsp;        this.numberOfConcurrencyExceptions++;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void incrementCurrentDate() {
+<b class="fc">&nbsp;        this.currentDate = currentDate.plusDays(1);</b>
+&nbsp;    }
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-08-29 22:12</div>
+</div>
+</body>
+</html>

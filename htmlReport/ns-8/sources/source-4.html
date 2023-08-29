@@ -1,0 +1,111 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > DeleteUtility</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ro.felixcirebea.medicalsys.helper</a>
+</div>
+
+<h1>Coverage Summary for Class: DeleteUtility (ro.felixcirebea.medicalsys.helper)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">DeleteUtility$MockitoMock$Gj8qMReQ</td>
+  </tr>
+  <tr>
+    <td class="name">DeleteUtility$MockitoMock$Gj8qMReQ$auxiliary$I6QJlJW4</td>
+  </tr>
+  <tr>
+    <td class="name">DeleteUtility$MockitoMock$Gj8qMReQ$auxiliary$l71Rcemd</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ro.felixcirebea.medicalsys.helper;
+&nbsp;
+&nbsp;import org.springframework.data.repository.CrudRepository;
+&nbsp;import ro.felixcirebea.medicalsys.entity.BaseEntity;
+&nbsp;import ro.felixcirebea.medicalsys.entity.SpecialtyEntity;
+&nbsp;import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
+&nbsp;import ro.felixcirebea.medicalsys.repository.DoctorRepository;
+&nbsp;import ro.felixcirebea.medicalsys.repository.InvestigationRepository;
+&nbsp;import ro.felixcirebea.medicalsys.service.AppointmentService;
+&nbsp;import ro.felixcirebea.medicalsys.service.WorkingHoursService;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@SuppressWarnings(&quot;all&quot;)
+&nbsp;public interface DeleteUtility {
+&nbsp;    &lt;T extends BaseEntity&gt; T softDeleteById(Long id, Optional&lt;T&gt; entityOptional,
+&nbsp;                                            String failLogMessage, String successLogMessage,
+&nbsp;                                            Contributor infoContributor);
+&nbsp;
+&nbsp;    &lt;T extends BaseEntity&gt; T softDeleteByField(String field,
+&nbsp;                            Optional&lt;T&gt; entityOptional,
+&nbsp;                            CrudRepository&lt;T, Long&gt; repository,
+&nbsp;                            String failLogMessage,
+&nbsp;                            String successLogMessage,
+&nbsp;                            String exceptionMessage,
+&nbsp;                            Contributor infoContributor) throws DataNotFoundException;
+&nbsp;
+&nbsp;    public void softCascadeDelete(SpecialtyEntity specialtyEntity,
+&nbsp;                                  WorkingHoursService workingHoursService,
+&nbsp;                                  AppointmentService appointmentService,
+&nbsp;                                  DoctorRepository doctorRepository,
+&nbsp;                                  InvestigationRepository investigationRepository,
+&nbsp;                                  String logSuccessMessage);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-08-29 22:12</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,193 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > DeleteUtilityImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ro.felixcirebea.medicalsys.helper</a>
+</div>
+
+<h1>Coverage Summary for Class: DeleteUtilityImpl (ro.felixcirebea.medicalsys.helper)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DeleteUtilityImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (32/32)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ro.felixcirebea.medicalsys.helper;
+&nbsp;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.data.repository.CrudRepository;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import ro.felixcirebea.medicalsys.entity.BaseEntity;
+&nbsp;import ro.felixcirebea.medicalsys.entity.DoctorEntity;
+&nbsp;import ro.felixcirebea.medicalsys.entity.InvestigationEntity;
+&nbsp;import ro.felixcirebea.medicalsys.entity.SpecialtyEntity;
+&nbsp;import ro.felixcirebea.medicalsys.enums.VacationStatus;
+&nbsp;import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
+&nbsp;import ro.felixcirebea.medicalsys.repository.DoctorRepository;
+&nbsp;import ro.felixcirebea.medicalsys.repository.InvestigationRepository;
+&nbsp;import ro.felixcirebea.medicalsys.service.AppointmentService;
+&nbsp;import ro.felixcirebea.medicalsys.service.WorkingHoursService;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@SuppressWarnings(&quot;all&quot;)
+&nbsp;@Component
+<b class="fc">&nbsp;public class DeleteUtilityImpl implements DeleteUtility {</b>
+&nbsp;
+&nbsp;    public &lt;T extends BaseEntity&gt; T softDeleteById(Long id,
+&nbsp;                                                   Optional&lt;T&gt; entityOptional,
+&nbsp;                                                   String failLogMessage,
+&nbsp;                                                   String successLogMessage,
+&nbsp;                                                   Contributor infoContributor) {
+<b class="fc">&nbsp;        if (entityOptional.isEmpty()) {</b>
+<b class="fc">&nbsp;            log.warn(String.format(failLogMessage, id));</b>
+<b class="fc">&nbsp;            infoContributor.incrementFailedDeleteOperations();</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        entityOptional.get().setIsActive(false);</b>
+<b class="fc">&nbsp;        log.info(String.format(successLogMessage, id));</b>
+<b class="fc">&nbsp;        return entityOptional.get();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public &lt;T extends BaseEntity&gt; T softDeleteByField(String field,
+&nbsp;                                   Optional&lt;T&gt; entityOptional,
+&nbsp;                                   CrudRepository&lt;T, Long&gt; repository,
+&nbsp;                                   String failLogMessage,
+&nbsp;                                   String successLogMessage,
+&nbsp;                                   String exceptionMessage,
+&nbsp;                                   Contributor infoContributor)
+&nbsp;            throws DataNotFoundException {
+&nbsp;
+<b class="fc">&nbsp;        if (entityOptional.isEmpty()) {</b>
+<b class="fc">&nbsp;            infoContributor.incrementFailedDeleteOperations();</b>
+<b class="fc">&nbsp;            log.warn(String.format(failLogMessage, field));</b>
+<b class="fc">&nbsp;            throw new DataNotFoundException(String.format(exceptionMessage, field));</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        T entity = entityOptional.get();</b>
+<b class="fc">&nbsp;        entity.setIsActive(false);</b>
+<b class="fc">&nbsp;        repository.save(entity);</b>
+&nbsp;
+<b class="fc">&nbsp;        log.info(String.format(successLogMessage, field));</b>
+<b class="fc">&nbsp;        return entity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void softCascadeDelete(SpecialtyEntity specialtyEntity,
+&nbsp;                                  WorkingHoursService workingHoursService,
+&nbsp;                                  AppointmentService appointmentService,
+&nbsp;                                  DoctorRepository doctorRepository,
+&nbsp;                                  InvestigationRepository investigationRepository,
+&nbsp;                                  String logSuccessMessage) {
+<b class="fc">&nbsp;        List&lt;DoctorEntity&gt; doctors = specialtyEntity.getDoctors();</b>
+<b class="fc">&nbsp;        doctors.forEach(doc -&gt; {</b>
+<b class="fc">&nbsp;            doc.setIsActive(false);</b>
+<b class="fc">&nbsp;            doc.getVacation().stream()</b>
+<b class="fc">&nbsp;                    .filter(vac -&gt; !vac.getStatus().equals(VacationStatus.DONE))</b>
+<b class="fc">&nbsp;                    .forEach(undoneVac -&gt; undoneVac.setStatus(VacationStatus.CANCELED));</b>
+<b class="fc">&nbsp;            log.info(workingHoursService.deleteAllWorkingHoursForDoctor(doc));</b>
+<b class="fc">&nbsp;            log.info(appointmentService.cancelAllAppointmentForDoctor(doc));</b>
+&nbsp;        });
+&nbsp;
+<b class="fc">&nbsp;        doctorRepository.saveAll(doctors);</b>
+<b class="fc">&nbsp;        log.info(String.format(logSuccessMessage, doctors));</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;InvestigationEntity&gt; investigations = specialtyEntity.getInvestigations();</b>
+<b class="fc">&nbsp;        investigations.forEach(inv -&gt; inv.setIsActive(false));</b>
+<b class="fc">&nbsp;        investigationRepository.saveAll(investigations);</b>
+<b class="fc">&nbsp;        log.info(String.format(logSuccessMessage, doctors));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-08-29 22:12</div>
+</div>
+</body>
+</html>
