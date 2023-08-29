@@ -17,6 +17,11 @@ import java.time.LocalTime;
 
 public class AppointmentConverterTests {
 
+    public static final Long ID = 1L;
+    public static final LocalDate DATE = LocalDate.of(2023, 1, 1);
+    public static final LocalTime START_TIME = LocalTime.of(8, 0);
+    public static final LocalTime END_TIME = LocalTime.of(8, 30);
+
     private AppointmentConverter appointmentConverter;
 
     private AppointmentEntity inputEntity;
@@ -29,18 +34,13 @@ public class AppointmentConverterTests {
 
     @BeforeEach
     public void setUp() {
-        Long id = 1L;
-        LocalDate date = LocalDate.of(2023, 1, 1);
-        LocalTime startTime = LocalTime.of(8, 0);
-        LocalTime endTime = LocalTime.of(8, 30);
-
-        doctorEntity = DoctorUtil.createDoctorEntity(id);
-        investigationEntity = InvestigationUtil.createInvestigationEntity(id);
+        doctorEntity = DoctorUtil.createDoctorEntity(ID);
+        investigationEntity = InvestigationUtil.createInvestigationEntity(ID);
 
         inputEntity =
-                AppointmentUtil.createAppointmentEntity(id, date, startTime, endTime);
+                AppointmentUtil.createAppointmentEntity(ID, DATE, START_TIME, END_TIME);
 
-        inputDto = AppointmentUtil.createAppointmentDto(date, startTime);
+        inputDto = AppointmentUtil.createAppointmentDto(DATE, START_TIME);
 
         appointmentConverter = new AppointmentConverter();
     }

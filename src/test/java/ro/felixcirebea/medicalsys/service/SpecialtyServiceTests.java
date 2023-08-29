@@ -11,8 +11,8 @@ import ro.felixcirebea.medicalsys.dto.SpecialtyDto;
 import ro.felixcirebea.medicalsys.entity.SpecialtyEntity;
 import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
 import ro.felixcirebea.medicalsys.repository.SpecialtyRepository;
-import ro.felixcirebea.medicalsys.util.Contributor;
-import ro.felixcirebea.medicalsys.util.DeleteUtility;
+import ro.felixcirebea.medicalsys.helper.Contributor;
+import ro.felixcirebea.medicalsys.helper.DeleteUtility;
 import ro.felixcirebea.medicalsys.util.SpecialtyUtil;
 
 import java.util.Collections;

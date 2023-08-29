@@ -6,6 +6,11 @@ import org.junit.jupiter.api.Test;
 
 public class ContributorTests {
 
+    public static final int EXPECTED = 1;
+    public static final int YEAR = 2023;
+    public static final int MONTH = 1;
+    public static final int DAY = 2;
+
     private Contributor contributor;
 
     @BeforeEach
@@ -19,7 +24,7 @@ public class ContributorTests {
         contributor.incrementFailedDeleteOperations();
 
         //Assert
-        Assertions.assertThat(contributor.getFailedDeleteOperations()).isEqualTo(1);
+        Assertions.assertThat(contributor.getFailedDeleteOperations()).isEqualTo(EXPECTED);
     }
 
     @Test
@@ -28,7 +33,7 @@ public class ContributorTests {
         contributor.incrementNumberOfDataNotFoundExceptions();
 
         //Assert
-        Assertions.assertThat(contributor.getNumberOfDataNotFoundExceptions()).isEqualTo(1);
+        Assertions.assertThat(contributor.getNumberOfDataNotFoundExceptions()).isEqualTo(EXPECTED);
     }
 
     @Test
@@ -37,7 +42,7 @@ public class ContributorTests {
         contributor.incrementNumberOfDataMismatchExceptions();
 
         //Assert
-        Assertions.assertThat(contributor.getNumberOfDataMismatchExceptions()).isEqualTo(1);
+        Assertions.assertThat(contributor.getNumberOfDataMismatchExceptions()).isEqualTo(EXPECTED);
     }
 
     @Test
@@ -46,7 +51,7 @@ public class ContributorTests {
         contributor.incrementNumberOfConstraintViolationExceptions();
 
         //Assert
-        Assertions.assertThat(contributor.getNumberOfConstraintViolationExceptions()).isEqualTo(1);
+        Assertions.assertThat(contributor.getNumberOfConstraintViolationExceptions()).isEqualTo(EXPECTED);
     }
 
     @Test
@@ -55,7 +60,7 @@ public class ContributorTests {
         contributor.incrementNumberOfConcurrencyExceptions();
 
         //Assert
-        Assertions.assertThat(contributor.getNumberOfConcurrencyExceptions()).isEqualTo(1);
+        Assertions.assertThat(contributor.getNumberOfConcurrencyExceptions()).isEqualTo(EXPECTED);
     }
 
     @Test
@@ -64,9 +69,9 @@ public class ContributorTests {
         contributor.incrementCurrentDate();
 
         //Assert
-        Assertions.assertThat(contributor.getCurrentDate().getYear()).isEqualTo(2023);
-        Assertions.assertThat(contributor.getCurrentDate().getMonthValue()).isEqualTo(1);
-        Assertions.assertThat(contributor.getCurrentDate().getDayOfMonth()).isEqualTo(2);
+        Assertions.assertThat(contributor.getCurrentDate().getYear()).isEqualTo(YEAR);
+        Assertions.assertThat(contributor.getCurrentDate().getMonthValue()).isEqualTo(MONTH);
+        Assertions.assertThat(contributor.getCurrentDate().getDayOfMonth()).isEqualTo(DAY);
     }
 
 }

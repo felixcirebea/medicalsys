@@ -11,6 +11,9 @@ import ro.felixcirebea.medicalsys.util.SpecialtyUtil;
 
 public class InvestigationConverterTests {
 
+    public static final Long ID = 1L;
+    public static final Double DEFAULT_BASE_PRICE = 50D;
+
     private InvestigationConverter converter;
 
     private InvestigationDto inputDto;
@@ -21,13 +24,12 @@ public class InvestigationConverterTests {
 
     @BeforeEach
     public void setUp() {
-        Long id = 1L;
 
         converter = new InvestigationConverter();
 
         inputDto = InvestigationUtil.createInvestigationDto();
-        inputEntity = InvestigationUtil.createInvestigationEntity(id);
-        specialtyEntity = SpecialtyUtil.createSpecialtyEntity(id);
+        inputEntity = InvestigationUtil.createInvestigationEntity(ID);
+        specialtyEntity = SpecialtyUtil.createSpecialtyEntity(ID);
     }
 
     @Test
@@ -54,8 +56,7 @@ public class InvestigationConverterTests {
         Assertions.assertThat(returnValue.getName()).isEqualTo(inputDto.getName());
         Assertions.assertThat(returnValue.getSpecialty()).isEqualTo(specialtyEntity);
         Assertions.assertThat(returnValue.getDuration()).isEqualTo(inputDto.getDuration());
-        Double defaultBasePrice = 50D;
-        Assertions.assertThat(returnValue.getBasePrice()).isEqualTo(defaultBasePrice);
+        Assertions.assertThat(returnValue.getBasePrice()).isEqualTo(DEFAULT_BASE_PRICE);
     }
 
     @Test

@@ -9,6 +9,8 @@ import ro.felixcirebea.medicalsys.util.HolidayUtil;
 
 public class HolidayConverterTests {
 
+    public static final Long ID = 1L;
+
     private HolidayConverter converter;
 
     private HolidayDto inputDto;
@@ -17,12 +19,10 @@ public class HolidayConverterTests {
 
     @BeforeEach
     public void setUp() {
-        Long id = 1L;
-
         converter = new HolidayConverter();
 
         inputDto = HolidayUtil.createHolidayDto();
-        inputEntity = HolidayUtil.createHolidayEntity(id);
+        inputEntity = HolidayUtil.createHolidayEntity(ID);
     }
 
     @Test

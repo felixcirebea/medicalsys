@@ -46,7 +46,7 @@ public class VacationService {
     }
 
     public Long insertVacation(VacationDto vacationDto)
-            throws DataNotFoundException, DataMismatchException, ConcurrencyException {
+            throws DataNotFoundException, ConcurrencyException {
         DoctorEntity doctorEntity =
                 doctorRepository.findByNameAndIsActive(vacationDto.getDoctor(), true)
                         .orElseThrow(() -> new DataNotFoundException(

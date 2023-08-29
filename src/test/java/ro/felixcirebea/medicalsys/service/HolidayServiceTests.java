@@ -11,8 +11,8 @@ import ro.felixcirebea.medicalsys.dto.HolidayDto;
 import ro.felixcirebea.medicalsys.entity.HolidayEntity;
 import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
 import ro.felixcirebea.medicalsys.repository.HolidayRepository;
-import ro.felixcirebea.medicalsys.util.Contributor;
-import ro.felixcirebea.medicalsys.util.DeleteUtility;
+import ro.felixcirebea.medicalsys.helper.Contributor;
+import ro.felixcirebea.medicalsys.helper.DeleteUtility;
 import ro.felixcirebea.medicalsys.util.HolidayUtil;
 
 import java.time.LocalDate;

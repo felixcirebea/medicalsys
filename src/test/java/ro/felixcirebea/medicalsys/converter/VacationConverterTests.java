@@ -12,6 +12,7 @@ import ro.felixcirebea.medicalsys.util.VacationUtil;
 
 public class VacationConverterTests {
 
+    public static final Long ID = 1L;
     private VacationConverter converter;
 
     private VacationDto inputDto;
@@ -22,13 +23,11 @@ public class VacationConverterTests {
 
     @BeforeEach()
     public void setUp() {
-        Long id = 1L;
-
         converter = new VacationConverter();
 
         inputDto = VacationUtil.createVacationDto();
-        inputEntity = VacationUtil.createVacationEntity(id);
-        doctorEntity = DoctorUtil.createDoctorEntity(id);
+        inputEntity = VacationUtil.createVacationEntity(ID);
+        doctorEntity = DoctorUtil.createDoctorEntity(ID);
     }
 
     @Test

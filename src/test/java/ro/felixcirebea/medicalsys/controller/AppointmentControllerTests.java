@@ -33,6 +33,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ExtendWith(MockitoExtension.class)
 public class AppointmentControllerTests {
 
+    public static final String BASE_PATH = "/appointments";
+    public static final String DOCTOR = "TestDoctor";
+    public static final String INVESTIGATION = "TestInvestigation";
+    public static final LocalDate DESIRED_DATE = LocalDate.of(2023, 1, 15);
+    public static final String FAKE_DOCTOR = "FakeDoctor";
+    public static final LocalDate CURRENT_DATE = LocalDate.of(2023, 1, 30);
+    public static final Long ID = 1L;
+    public static final Long NON_EXISTENT_ID = 999L;
+    public static final String CLIENT_NAME = "TestClient";
+    public static final String SUCCESS_CANCEL_APPOINTMENT_MSG = "Appointment successfully canceled";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -47,6 +58,7 @@ public class AppointmentControllerTests {
 
     private AppointmentDto appointmentDto;
 
+
     @BeforeEach
     public void setUp() {
         LocalDate date = LocalDate.of(2023, 1, 15);
@@ -56,10 +68,6 @@ public class AppointmentControllerTests {
 
     @Test
     public void testGetAvailableHours_whenDoctorInvestigationAndDateValid_thenReturnOk() throws Exception {
-        String doctor = "TestDoctor";
-        String investigation = "TestInvestigation";
-        LocalDate desiredDate = LocalDate.of(2023, 1, 15);
-
         LocalTime time1 = LocalTime.of(8, 0);
         LocalTime time2 = LocalTime.of(9, 0);
         LocalTime time3 = LocalTime.of(9, 30);
@@ -67,13 +75,13 @@ public class AppointmentControllerTests {
 
         List<LocalTime> resultList = List.of(time1, time2, time3, time4);
 
-        when(appointmentService.getAvailableHours(doctor, investigation, desiredDate))
+        when(appointmentService.getAvailableHours(DOCTOR, INVESTIGATION, DESIRED_DATE))
                 .thenReturn(resultList);
 
-        ResultActions result = mockMvc.perform(get("/appointments/available-hours")
-                .param("doctor", doctor)
-                .param("investigation", investigation)
-                .param("date", String.valueOf(desiredDate)));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/available-hours")
+                .param("doctor", DOCTOR)
+                .param("investigation", INVESTIGATION)
+                .param("date", String.valueOf(DESIRED_DATE)));
 
         result.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", CoreMatchers.isA(List.class)))
@@ -82,34 +90,27 @@ public class AppointmentControllerTests {
 
     @Test
     public void testGetAvailableHours_whenDoctorNotExist_thenReturnBadRequest() throws Exception {
-        String doctor = "FakeDoctor";
-        String investigation = "TestInvestigation";
-        LocalDate desiredDate = LocalDate.of(2023, 1, 15);
-
-        when(appointmentService.getAvailableHours(doctor, investigation, desiredDate))
+        when(appointmentService.getAvailableHours(FAKE_DOCTOR, INVESTIGATION, DESIRED_DATE))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(get("/appointments/available-hours")
-                .param("doctor", doctor)
-                .param("investigation", investigation)
-                .param("date", String.valueOf(desiredDate)));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/available-hours")
+                .param("doctor", FAKE_DOCTOR)
+                .param("investigation", INVESTIGATION)
+                .param("date", String.valueOf(DESIRED_DATE)));
 
         result.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
     public void testGetAvailableHours_whenDateIsBeforeCurrentDate_thenReturnBadRequest() throws Exception {
-        LocalDate currentDate = LocalDate.of(2023, 1, 30);
-        String doctor = "TestDoctor";
-        String investigation = "TestInvestigation";
-        LocalDate desiredDate = currentDate.minusDays(15);
+        LocalDate desiredDate = CURRENT_DATE.minusDays(15);
 
-        when(appointmentService.getAvailableHours(doctor, investigation, desiredDate))
+        when(appointmentService.getAvailableHours(DOCTOR, INVESTIGATION, desiredDate))
                 .thenThrow(ConcurrencyException.class);
 
-        ResultActions result = mockMvc.perform(get("/appointments/available-hours")
-                .param("doctor", doctor)
-                .param("investigation", investigation)
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/available-hours")
+                .param("doctor", DOCTOR)
+                .param("investigation", INVESTIGATION)
                 .param("date", String.valueOf(desiredDate)));
 
         result.andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -117,25 +118,24 @@ public class AppointmentControllerTests {
 
     @Test
     public void testBookAppointment_whenDtoValid_thenReturnOk() throws Exception {
-        Long id = 1L;
         when(appointmentService.bookAppointment(appointmentDto))
-                .thenReturn(id);
+                .thenReturn(ID);
 
-        ResultActions result = mockMvc.perform(post("/appointments/book")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/book")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(appointmentDto)));
 
         result.andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(id)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)));
     }
 
     @Test
     public void testBookAppointment_whenDoctorNotExist_thenReturnBadRequest() throws Exception {
-        appointmentDto.setDoctor("FakeDoctor");
+        appointmentDto.setDoctor(FAKE_DOCTOR);
         when(appointmentService.bookAppointment(appointmentDto))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(post("/appointments/book")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/book")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(appointmentDto)));
 
@@ -144,13 +144,12 @@ public class AppointmentControllerTests {
 
     @Test
     public void testBookAppointment_whenDateIsBeforeCurrentDate_thenReturnBadRequest() throws Exception {
-        LocalDate currentDate = LocalDate.of(2023, 1, 30);
-        appointmentDto.setDate(currentDate.minusDays(15));
+        appointmentDto.setDate(CURRENT_DATE.minusDays(15));
 
         when(appointmentService.bookAppointment(appointmentDto))
                 .thenThrow(ConcurrencyException.class);
 
-        ResultActions result = mockMvc.perform(post("/appointments/book")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/book")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(appointmentDto)));
 
@@ -160,24 +159,24 @@ public class AppointmentControllerTests {
 
     @Test
     public void testGetAppointmentById_whenIdExists_thenReturnOk() throws Exception {
-        Long id = 1L;
-        when(appointmentService.getAppointmentById(id))
+        when(appointmentService.getAppointmentById(ID))
                 .thenReturn(appointmentDto);
 
-        ResultActions result = mockMvc.perform(get("/appointments/" + id));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/" + ID));
 
         result.andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.clientName", CoreMatchers.is("TestClient")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.date", CoreMatchers.is("2023-01-15")));
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.clientName", CoreMatchers.is(CLIENT_NAME)))
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.date", CoreMatchers.is(String.valueOf(DESIRED_DATE))));
     }
 
     @Test
     public void testGetAppointmentById_whenIdNotExist_thenReturnBadRequest() throws Exception {
-        Long nonExistentId = 999L;
-        when(appointmentService.getAppointmentById(nonExistentId))
+        when(appointmentService.getAppointmentById(NON_EXISTENT_ID))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(get("/appointments/" + nonExistentId));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/" + NON_EXISTENT_ID));
 
         result.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
@@ -186,36 +185,32 @@ public class AppointmentControllerTests {
     public void testGetAppointmentById_whenIdNotLong_thenReturnBadRequest() throws Exception {
         String id = "test";
 
-        ResultActions result = mockMvc.perform(get("/appointments/" + id));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/" + id));
 
         result.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
     public void testDeleteAppointmentByIdAndClientName_whenAppointmentExists_thenReturnOk() throws Exception {
-        Long id = 1L;
-        String clientName = "TestClient";
-        when(appointmentService.cancelAppointmentByIdAndName(id, clientName))
-                .thenReturn("Appointment successfully canceled");
+        when(appointmentService.cancelAppointmentByIdAndName(ID, CLIENT_NAME))
+                .thenReturn(SUCCESS_CANCEL_APPOINTMENT_MSG);
 
-        ResultActions result = mockMvc.perform(post("/appointments/cancel-book")
-                .param("id", String.valueOf(id))
-                .param("clientName", clientName));
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/cancel-book")
+                .param("id", String.valueOf(ID))
+                .param("clientName", CLIENT_NAME));
 
         result.andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("Appointment successfully canceled"));
+                .andExpect(MockMvcResultMatchers.content().string(SUCCESS_CANCEL_APPOINTMENT_MSG));
     }
 
     @Test
     public void testDeleteAppointmentByIdAndClientName_whenAppointmentNotExist_thenReturnBadRequest() throws Exception {
-        Long nonExistentId = 999L;
-        String clientName = "TestClient";
-        when(appointmentService.cancelAppointmentByIdAndName(nonExistentId, clientName))
+        when(appointmentService.cancelAppointmentByIdAndName(NON_EXISTENT_ID, CLIENT_NAME))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(post("/appointments/cancel-book")
-                .param("id", String.valueOf(nonExistentId))
-                .param("clientName", clientName));
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/cancel-book")
+                .param("id", String.valueOf(NON_EXISTENT_ID))
+                .param("clientName", CLIENT_NAME));
 
         result.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }

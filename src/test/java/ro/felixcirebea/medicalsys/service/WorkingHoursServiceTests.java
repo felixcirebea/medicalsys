@@ -14,7 +14,7 @@ import ro.felixcirebea.medicalsys.exception.DataMismatchException;
 import ro.felixcirebea.medicalsys.exception.DataNotFoundException;
 import ro.felixcirebea.medicalsys.repository.DoctorRepository;
 import ro.felixcirebea.medicalsys.repository.WorkingHoursRepository;
-import ro.felixcirebea.medicalsys.util.Contributor;
+import ro.felixcirebea.medicalsys.helper.Contributor;
 import ro.felixcirebea.medicalsys.util.DoctorUtil;
 import ro.felixcirebea.medicalsys.util.WorkingHoursUtil;
 

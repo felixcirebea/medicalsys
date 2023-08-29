@@ -11,6 +11,8 @@ import ro.felixcirebea.medicalsys.util.SpecialtyUtil;
 
 public class DoctorConverterTests {
 
+    public static final Long ID = 1L;
+
     private DoctorConverter converter;
 
     private DoctorDto inputDto;
@@ -21,13 +23,11 @@ public class DoctorConverterTests {
 
     @BeforeEach
     public void setUp() {
-        Long id = 1L;
-
         converter = new DoctorConverter();
 
         inputDto = DoctorUtil.createDoctorDto();
-        inputEntity = DoctorUtil.createDoctorEntity(id);
-        specialtyEntity = SpecialtyUtil.createSpecialtyEntity(id);
+        inputEntity = DoctorUtil.createDoctorEntity(ID);
+        specialtyEntity = SpecialtyUtil.createSpecialtyEntity(ID);
     }
 
     @Test

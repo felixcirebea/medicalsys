@@ -13,6 +13,9 @@ import java.time.DayOfWeek;
 
 public class WorkingHoursConverterTests {
 
+    public static final Long ID = 1L;
+    public static final Integer DAY_OF_WEEK = 1;
+
     private WorkingHoursConverter converter;
 
     private WorkingHoursDto inputDto;
@@ -23,14 +26,11 @@ public class WorkingHoursConverterTests {
 
     @BeforeEach()
     public void setUp() {
-        Long id = 1L;
-        Integer dayOfWeek = 1;
-
         converter = new WorkingHoursConverter();
 
-        inputDto = WorkingHoursUtil.createWorkingHoursDto(dayOfWeek);
-        inputEntity = WorkingHoursUtil.createWorkingHoursEntity(id, dayOfWeek);
-        doctorEntity = DoctorUtil.createDoctorEntity(id);
+        inputDto = WorkingHoursUtil.createWorkingHoursDto(DAY_OF_WEEK);
+        inputEntity = WorkingHoursUtil.createWorkingHoursEntity(ID, DAY_OF_WEEK);
+        doctorEntity = DoctorUtil.createDoctorEntity(ID);
     }
 
     @Test

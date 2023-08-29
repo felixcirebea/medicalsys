@@ -31,6 +31,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 public class DoctorControllerTests {
 
+    public static final String BASE_PATH = "/doctors";
+    public static final Long ID = 1L;
+    public static final Long NON_EXISTENT_ID = 999L;
+    public static final String DOCTOR = "TestDoctor";
+    public static final String FAKE_DOCTOR = "FakeDoctor";
+    public static final String SPECIALTY = "TestSpecialty";
+    public static final String FAKE_SPECIALTY = "TesFakeSpecialty";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -52,41 +60,38 @@ public class DoctorControllerTests {
 
     @Test
     public void testUpsertDoctor_whenDoctorNotExists_thenReturnOk() throws Exception {
-        Long expectedId = 1L;
         when(doctorService.upsertDoctor(doctorDto))
-                .thenReturn(expectedId);
+                .thenReturn(ID);
 
-        ResultActions result = mockMvc.perform(post("/doctors/insert")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/insert")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(doctorDto)));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(expectedId)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)));
     }
 
     @Test
     public void testUpsertDoctor_whenIdNotNullDoctorExists_thenReturnOk() throws Exception {
-        Long expectedId = 1L;
-        doctorDto.setId(expectedId);
+        doctorDto.setId(ID);
         when(doctorService.upsertDoctor(doctorDto))
-                .thenReturn(expectedId);
+                .thenReturn(ID);
 
-        ResultActions result = mockMvc.perform(post("/doctors/insert")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/insert")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(doctorDto)));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(expectedId)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)));
     }
 
     @Test
     public void testUpsertDoctor_whenIdNotNullDoctorNotExist_thenReturnBadRequest() throws Exception {
-        Long nonExistentId = 999L;
-        doctorDto.setId(nonExistentId);
+        doctorDto.setId(NON_EXISTENT_ID);
         when(doctorService.upsertDoctor(doctorDto))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(post("/doctors/insert")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/insert")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(doctorDto)));
 
@@ -95,10 +100,9 @@ public class DoctorControllerTests {
 
     @Test
     public void testGetDoctorById_whenDoctorExists_thenReturnOk() throws Exception {
-        Long id = 1L;
-        when(doctorService.getDoctorById(id)).thenReturn(doctorDto);
+        when(doctorService.getDoctorById(ID)).thenReturn(doctorDto);
 
-        ResultActions result = mockMvc.perform(get("/doctors/" + id));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/" + ID));
 
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath(
@@ -111,11 +115,10 @@ public class DoctorControllerTests {
 
     @Test
     public void testGetDoctorById_whenDoctorNotExist_thenReturnBadRequest() throws Exception {
-        Long nonExistentId = 999L;
-        when(doctorService.getDoctorById(nonExistentId))
+        when(doctorService.getDoctorById(NON_EXISTENT_ID))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(get("/doctors/" + nonExistentId));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/" + NON_EXISTENT_ID));
 
         result.andExpect(status().isBadRequest());
     }
@@ -124,19 +127,18 @@ public class DoctorControllerTests {
     public void testGetDoctorById_whenIdNotLong_thenReturnBadRequest() throws Exception {
         String id = "test";
 
-        ResultActions result = mockMvc.perform(get("/doctors/" + id));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/" + id));
 
         result.andExpect(status().isBadRequest());
     }
 
     @Test
     public void testGetDoctorByName_whenDoctorExists_thenReturnOk() throws Exception {
-        String name = "TestDoctor";
-        when(doctorService.getDoctorByName(name))
+        when(doctorService.getDoctorByName(DOCTOR))
                 .thenReturn(doctorDto);
 
-        ResultActions result = mockMvc.perform(get("/doctors/by-name")
-                .param("name", name));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/by-name")
+                .param("name", DOCTOR));
 
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath(
@@ -149,24 +151,22 @@ public class DoctorControllerTests {
 
     @Test
     public void testGetDoctorByName_whenDoctorNoeExist_thenReturnBadRequest() throws Exception {
-        String name = "FakeDoctor";
-        when(doctorService.getDoctorByName(name))
+        when(doctorService.getDoctorByName(FAKE_DOCTOR))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(get("/doctors/by-name")
-                .param("name", name));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/by-name")
+                .param("name", FAKE_DOCTOR));
 
         result.andExpect(status().isBadRequest());
     }
 
     @Test
     public void testGetDoctorsBySpecialty_whenSpecialtyExists_thenReturnOk() throws Exception {
-        String specialty = "TestSpecialty";
-        when(doctorService.getDoctorsBySpecialty(specialty))
+        when(doctorService.getDoctorsBySpecialty(SPECIALTY))
                 .thenReturn(List.of(doctorDto));
 
-        ResultActions result = mockMvc.perform(get("/doctors/by-specialty")
-                .param("specialty", specialty));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/by-specialty")
+                .param("specialty", SPECIALTY));
 
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath(
@@ -179,12 +179,11 @@ public class DoctorControllerTests {
 
     @Test
     public void testGetDoctorsBySpecialty_whenSpecialtyNotExist_thenReturnBadRequest() throws Exception {
-        String specialty = "TesFakeSpecialty";
-        when(doctorService.getDoctorsBySpecialty(specialty))
+        when(doctorService.getDoctorsBySpecialty(FAKE_SPECIALTY))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(get("/doctors/by-specialty")
-                .param("specialty", specialty));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/by-specialty")
+                .param("specialty", FAKE_SPECIALTY));
 
         result.andExpect(status().isBadRequest());
     }
@@ -193,7 +192,7 @@ public class DoctorControllerTests {
     public void testGetAllDoctors_whenDoctorsExist_thenReturnOk() throws Exception {
         when(doctorService.getAllDoctors()).thenReturn(List.of(doctorDto));
 
-        ResultActions result = mockMvc.perform(get("/doctors/all"));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/all"));
 
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath(
@@ -206,47 +205,42 @@ public class DoctorControllerTests {
 
     @Test
     public void testDeleteDoctorById_whenDoctorExists_thenReturnOk() throws Exception {
-        Long id = 1L;
-        when(doctorService.deleteDoctorById(id)).thenReturn(id);
+        when(doctorService.deleteDoctorById(ID)).thenReturn(ID);
 
-        ResultActions result = mockMvc.perform(delete("/doctors/"+id));
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/" +ID));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(id)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)));
     }
 
     @Test
     public void testDeleteDoctorById_whenDoctorNotExist_thenReturnOk() throws Exception {
-        Long nonExistentId = 999L;
-        when(doctorService.deleteDoctorById(nonExistentId)).thenReturn(nonExistentId);
+        when(doctorService.deleteDoctorById(NON_EXISTENT_ID)).thenReturn(NON_EXISTENT_ID);
 
-        ResultActions result = mockMvc.perform(delete("/doctors/"+nonExistentId));
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/" + NON_EXISTENT_ID));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(nonExistentId)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(NON_EXISTENT_ID)));
     }
 
     @Test
     public void testDeleteDoctorByName_whenDoctorExists_thenReturnOk() throws Exception {
-        Long id = 1L;
-        String name = "TestDoctor";
-        when(doctorService.deleteDoctorByName(name)).thenReturn(id);
+        when(doctorService.deleteDoctorByName(DOCTOR)).thenReturn(ID);
 
-        ResultActions result = mockMvc.perform(delete("/doctors/by-name")
-                .param("name", name));
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/by-name")
+                .param("name", DOCTOR));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(id)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)));
     }
 
     @Test
     public void testDeleteDoctorByName_whenDoctorNotExist_thenReturnBadRequest() throws Exception {
-        String name = "FakeDoctor";
-        when(doctorService.deleteDoctorByName(name))
+        when(doctorService.deleteDoctorByName(FAKE_DOCTOR))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(delete("/doctors/by-name")
-                .param("name", name));
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/by-name")
+                .param("name", FAKE_DOCTOR));
 
         result.andExpect(status().isBadRequest());
     }

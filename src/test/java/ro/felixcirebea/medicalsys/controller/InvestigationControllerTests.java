@@ -37,6 +37,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 public class InvestigationControllerTests {
 
+    public static final String BASE_PATH = "/investigations";
+    public static final Long ID = 1L;
+    public static final Long NON_EXISTENT_ID = 999L;
+    public static final String INVESTIGATION = "TestInvestigation";
+    public static final String FAKE_INVESTIGATION = "FakeInvestigation";
+    public static final String SPECIALTY = "TestSpecialty";
+    public static final String FAKE_SPECIALTY = "FakeSpecialty";
+    public static final Integer DURATION = 30;
+    public static final Integer NON_EXISTENT_DURATION = 1000;
+    public static final String DOCTOR = "TestDoctor";
+    public static final Double PRICE = 250D;
+    public static final String FAKE_DOCTOR = "FakeDoctor";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -58,41 +71,38 @@ public class InvestigationControllerTests {
 
     @Test
     public void testUpsertInvestigation_whenInvestigationExists_thenReturnOk() throws Exception {
-        Long expectedId = 1L;
         when(investigationService.upsertInvestigation(investigationDto))
-                .thenReturn(expectedId);
+                .thenReturn(ID);
 
-        ResultActions result = mockMvc.perform(post("/investigations/insert")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/insert")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(investigationDto)));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(expectedId)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)));
     }
 
     @Test
     public void testUpsertInvestigation_whenIdNotNotNullAndInvestigationExists_thenReturnOk() throws Exception {
-        Long expectedId = 1L;
-        investigationDto.setId(expectedId);
+        investigationDto.setId(ID);
         when(investigationService.upsertInvestigation(investigationDto))
-                .thenReturn(expectedId);
+                .thenReturn(ID);
 
-        ResultActions result = mockMvc.perform(post("/investigations/insert")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/insert")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(investigationDto)));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(expectedId)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)));
     }
 
     @Test
     public void testUpsertInvestigation_whenIdNotNotNullAndInvestigationNotExist_thenReturnBadRequest() throws Exception {
-        Long nonExistentId = 999L;
-        investigationDto.setId(nonExistentId);
+        investigationDto.setId(NON_EXISTENT_ID);
         when(investigationService.upsertInvestigation(investigationDto))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(post("/investigations/insert")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/insert")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(investigationDto)));
 
@@ -101,12 +111,11 @@ public class InvestigationControllerTests {
 
     @Test
     public void testGetInvestigationById_whenInvestigationExists_thenReturnOk() throws Exception {
-        Long id = 1L;
-        investigationDto.setId(id);
-        when(investigationService.getInvestigationById(id))
+        investigationDto.setId(ID);
+        when(investigationService.getInvestigationById(ID))
                 .thenReturn(investigationDto);
 
-        ResultActions result = mockMvc.perform(get("/investigations/" + id));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/" + ID));
 
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath(
@@ -121,11 +130,10 @@ public class InvestigationControllerTests {
 
     @Test
     public void testGetInvestigationById_whenInvestigationNotExist_thenReturnBadRequest() throws Exception {
-        Long nonExistentId = 1L;
-        when(investigationService.getInvestigationById(nonExistentId))
+        when(investigationService.getInvestigationById(NON_EXISTENT_ID))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(get("/investigations/" + nonExistentId));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/" + NON_EXISTENT_ID));
 
         result.andExpect(status().isBadRequest());
     }
@@ -134,23 +142,22 @@ public class InvestigationControllerTests {
     public void testGetInvestigationById_whenIdNotLong_thenReturnBadRequest() throws Exception {
         String id = "test";
 
-        ResultActions result = mockMvc.perform(get("/investigations/" + id));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/" + id));
 
         result.andExpect(status().isBadRequest());
     }
 
     @Test
     public void testGetInvestigationByName_whenInvestigationExists_thenReturnOk() throws Exception {
-        String inputName = investigationDto.getName();
-        when(investigationService.getInvestigationByName(inputName))
+        when(investigationService.getInvestigationByName(INVESTIGATION))
                 .thenReturn(investigationDto);
 
-        ResultActions result = mockMvc.perform(get("/investigations/get")
-                .param("name", inputName));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/get")
+                .param("name", INVESTIGATION));
 
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath(
-                        "$.name", CoreMatchers.is(inputName)))
+                        "$.name", CoreMatchers.is(INVESTIGATION)))
                 .andExpect(MockMvcResultMatchers.jsonPath(
                         "$.specialty", CoreMatchers.is(investigationDto.getSpecialty())))
                 .andExpect(MockMvcResultMatchers.jsonPath(
@@ -161,24 +168,22 @@ public class InvestigationControllerTests {
 
     @Test
     public void testGetInvestigationByName_whenInvestigationNotExist_thenReturnBadRequest() throws Exception {
-        String nonExistentName = "FakeInvestigation";
-        when(investigationService.getInvestigationByName(nonExistentName))
+        when(investigationService.getInvestigationByName(FAKE_INVESTIGATION))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(get("/investigations/get")
-                .param("name", nonExistentName));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/get")
+                .param("name", FAKE_INVESTIGATION));
 
         result.andExpect(status().isBadRequest());
     }
 
     @Test
     public void testGetInvestigationBySpecialty_whenSpecialtyExists_thenReturnOk() throws Exception {
-        String inputSpecialty = "TestSpecialty";
-        when(investigationService.getInvestigationBySpecialty(inputSpecialty))
+        when(investigationService.getInvestigationBySpecialty(SPECIALTY))
                 .thenReturn(List.of(investigationDto));
 
-        ResultActions result = mockMvc.perform(get("/investigations/by-specialty")
-                .param("specialty", inputSpecialty));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/by-specialty")
+                .param("specialty", SPECIALTY));
 
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", CoreMatchers.isA(List.class)))
@@ -196,24 +201,22 @@ public class InvestigationControllerTests {
 
     @Test
     public void testGetInvestigationBySpecialty_whenSpecialtyNotExist_thenReturnBadRequest() throws Exception {
-        String nonExistentSpecialty = "FakeSpecialty";
-        when(investigationService.getInvestigationBySpecialty(nonExistentSpecialty))
+        when(investigationService.getInvestigationBySpecialty(FAKE_SPECIALTY))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(get("/investigations/by-specialty")
-                .param("specialty", nonExistentSpecialty));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/by-specialty")
+                .param("specialty", FAKE_SPECIALTY));
 
         result.andExpect(status().isBadRequest());
     }
 
     @Test
     public void testGetInvestigationByDuration_whenDurationExists_thenReturnOk() throws Exception {
-        Integer inputDuration = 30;
-        when(investigationService.getInvestigationByDuration(inputDuration))
+        when(investigationService.getInvestigationByDuration(DURATION))
                 .thenReturn(List.of(investigationDto));
 
-        ResultActions result = mockMvc.perform(get("/investigations/by-duration")
-                .param("duration", String.valueOf(inputDuration)));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/by-duration")
+                .param("duration", String.valueOf(DURATION)));
 
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", CoreMatchers.isA(List.class)))
@@ -231,12 +234,11 @@ public class InvestigationControllerTests {
 
     @Test
     public void testGetInvestigationByDuration_whenDurationNotExist_thenReturnOkt() throws Exception {
-        Integer nonExistentDuration = 1000;
-        when(investigationService.getInvestigationByDuration(nonExistentDuration))
+        when(investigationService.getInvestigationByDuration(NON_EXISTENT_DURATION))
                 .thenReturn(Collections.emptyList());
 
-        ResultActions result = mockMvc.perform(get("/investigations/by-duration")
-                .param("duration", String.valueOf(nonExistentDuration)));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/by-duration")
+                .param("duration", String.valueOf(NON_EXISTENT_DURATION)));
 
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", CoreMatchers.isA(List.class)))
@@ -246,47 +248,43 @@ public class InvestigationControllerTests {
 
     @Test
     public void testDeleteInvestigationById_whenIdExists_thenReturnOk() throws Exception {
-        Long id = 1L;
-        when(investigationService.deleteInvestigationById(id))
-                .thenReturn(id);
+        when(investigationService.deleteInvestigationById(ID))
+                .thenReturn(ID);
 
-        ResultActions result = mockMvc.perform(delete("/investigations/" + id));
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/" + ID));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(id)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)));
     }
 
     @Test
     public void testDeleteInvestigationById_whenIdNotLong_thenReturnBadRequest() throws Exception {
         String id = "test";
 
-        ResultActions result = mockMvc.perform(delete("/investigations/" + id));
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/" + id));
 
         result.andExpect(status().isBadRequest());
     }
 
     @Test
     public void testDeleteInvestigationByName_whenNameExists_thenReturnOk() throws Exception {
-        Long id = 1L;
-        String name = "TestInvestigation";
-        when(investigationService.deleteInvestigationByName(name))
-                .thenReturn(id);
+        when(investigationService.deleteInvestigationByName(INVESTIGATION))
+                .thenReturn(ID);
 
-        ResultActions result = mockMvc.perform(delete("/investigations/by-name")
-                .param("investigation", name));
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/by-name")
+                .param("investigation", INVESTIGATION));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(id)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)));
     }
 
     @Test
     public void testDeleteInvestigationByName_whenNameNotExist_thenReturnBadRequest() throws Exception {
-        String nonExistentName = "FakeInvestigation";
-        when(investigationService.deleteInvestigationByName(nonExistentName))
+        when(investigationService.deleteInvestigationByName(FAKE_INVESTIGATION))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(delete("/investigations/by-name")
-                .param("investigation", nonExistentName));
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/by-name")
+                .param("investigation", FAKE_INVESTIGATION));
 
         result.andExpect(status().isBadRequest());
     }
@@ -301,7 +299,7 @@ public class InvestigationControllerTests {
         when(investigationService.getAllInvestigations())
                 .thenReturn(List.of(investigationDto1, investigationDto2));
 
-        ResultActions result = mockMvc.perform(get("/investigations/all"));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/all"));
 
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", CoreMatchers.isA(List.class)))
@@ -314,16 +312,12 @@ public class InvestigationControllerTests {
                 new TypeReference<>() {
                 };
 
-        String doctor = "TestDoctor";
-        String investigation = investigationDto.getName();
-        Double price = 250D;
+        when(investigationService.getInvestigationWithPricing(DOCTOR, INVESTIGATION))
+                .thenReturn(Map.of(DOCTOR, Map.of(INVESTIGATION, PRICE)));
 
-        when(investigationService.getInvestigationWithPricing(doctor, investigation))
-                .thenReturn(Map.of(doctor, Map.of(investigation, price)));
-
-        MvcResult mvcResult = mockMvc.perform(get("/investigations/pricing")
-                        .param("doctor", doctor)
-                        .param("investigation", investigation))
+        MvcResult mvcResult = mockMvc.perform(get(BASE_PATH + "/pricing")
+                        .param("doctor", DOCTOR)
+                        .param("investigation", INVESTIGATION))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
@@ -333,10 +327,10 @@ public class InvestigationControllerTests {
 
         Assertions.assertThat(result.isEmpty()).isFalse();
         Assertions.assertThat(result.size()).isEqualTo(1);
-        Assertions.assertThat(result.get(doctor).isEmpty()).isFalse();
-        Assertions.assertThat(result.get(doctor).size()).isEqualTo(1);
-        Assertions.assertThat(result.get(doctor).containsKey(investigation)).isTrue();
-        Assertions.assertThat(result.get(doctor).get(investigation)).isEqualTo(price);
+        Assertions.assertThat(result.get(DOCTOR).isEmpty()).isFalse();
+        Assertions.assertThat(result.get(DOCTOR).size()).isEqualTo(1);
+        Assertions.assertThat(result.get(DOCTOR).containsKey(INVESTIGATION)).isTrue();
+        Assertions.assertThat(result.get(DOCTOR).get(INVESTIGATION)).isEqualTo(PRICE);
     }
 
     @Test
@@ -345,16 +339,14 @@ public class InvestigationControllerTests {
                 new TypeReference<>() {
                 };
 
-        String doctor = "TestDoctor";
         String investigation1 = "TestInvestigation1";
         String investigation2 = "TestInvestigation2";
-        Double price = 250D;
 
-        when(investigationService.getInvestigationWithPricing(doctor, null))
-                .thenReturn(Map.of(doctor, Map.of(investigation1, price, investigation2, price)));
+        when(investigationService.getInvestigationWithPricing(DOCTOR, null))
+                .thenReturn(Map.of(DOCTOR, Map.of(investigation1, PRICE, investigation2, PRICE)));
 
-        MvcResult mvcResult = mockMvc.perform(get("/investigations/pricing")
-                        .param("doctor", doctor))
+        MvcResult mvcResult = mockMvc.perform(get(BASE_PATH + "/pricing")
+                        .param("doctor", DOCTOR))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
@@ -364,25 +356,22 @@ public class InvestigationControllerTests {
 
         Assertions.assertThat(result.isEmpty()).isFalse();
         Assertions.assertThat(result.size()).isEqualTo(1);
-        Assertions.assertThat(result.get(doctor).isEmpty()).isFalse();
-        Assertions.assertThat(result.get(doctor).size()).isEqualTo(2);
-        Assertions.assertThat(result.get(doctor).containsKey(investigation1)).isTrue();
-        Assertions.assertThat(result.get(doctor).containsKey(investigation2)).isTrue();
-        Assertions.assertThat(result.get(doctor).get(investigation1)).isEqualTo(price);
-        Assertions.assertThat(result.get(doctor).get(investigation2)).isEqualTo(price);
+        Assertions.assertThat(result.get(DOCTOR).isEmpty()).isFalse();
+        Assertions.assertThat(result.get(DOCTOR).size()).isEqualTo(2);
+        Assertions.assertThat(result.get(DOCTOR).containsKey(investigation1)).isTrue();
+        Assertions.assertThat(result.get(DOCTOR).containsKey(investigation2)).isTrue();
+        Assertions.assertThat(result.get(DOCTOR).get(investigation1)).isEqualTo(PRICE);
+        Assertions.assertThat(result.get(DOCTOR).get(investigation2)).isEqualTo(PRICE);
     }
 
     @Test
     public void testGetInvestigationWithPricing_whenDoctorNotExist_thenReturnBadRequest() throws Exception {
-        String doctor = "FakeDoctor";
-        String investigation = "TestInvestigation";
-
-        when(investigationService.getInvestigationWithPricing(doctor, investigation))
+        when(investigationService.getInvestigationWithPricing(FAKE_DOCTOR, INVESTIGATION))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(get("/investigations/pricing")
-                        .param("doctor", doctor)
-                        .param("investigation", investigation));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/pricing")
+                        .param("doctor", FAKE_DOCTOR)
+                        .param("investigation", INVESTIGATION));
 
         result.andExpect(status().isBadRequest());
     }
@@ -390,15 +379,13 @@ public class InvestigationControllerTests {
     @Test
     public void testGetInvestigationWithPricing_whenInvestigationNotNullAndNotExist_thenReturnBadRequest()
             throws Exception {
-        String doctor = "TestDoctor";
-        String investigation = "FakeInvestigation";
 
-        when(investigationService.getInvestigationWithPricing(doctor, investigation))
+        when(investigationService.getInvestigationWithPricing(DOCTOR, INVESTIGATION))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(get("/investigations/pricing")
-                .param("doctor", doctor)
-                .param("investigation", investigation));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/pricing")
+                .param("doctor", DOCTOR)
+                .param("investigation", INVESTIGATION));
 
         result.andExpect(status().isBadRequest());
     }

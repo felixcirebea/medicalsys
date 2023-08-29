@@ -31,6 +31,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ExtendWith(MockitoExtension.class)
 public class WorkingHoursControllerTests {
 
+    public static final String BASE_PATH = "/working-hours";
+    public static final Long ID = 1L;
+    public static final String DOCTOR = "TestDoctor";
+    public static final Integer DAY_OF_WEEK = 1;
+    public static final int INVALID_DAY_OF_WEEK = 15;
+    public static final String FAKE_DOCTOR = "FakeDoctor";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -52,16 +59,15 @@ public class WorkingHoursControllerTests {
 
     @Test
     public void testUpsertWorkingHours_whenDtoValid_thenReturnOk() throws Exception {
-        Long expectedId = 1L;
         when(workingHoursService.upsertWorkingHours(workingHoursDto))
-                .thenReturn(expectedId);
+                .thenReturn(ID);
 
-        ResultActions result = mockMvc.perform(post("/working-hours/insert")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/insert")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(workingHoursDto)));
 
         result.andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(expectedId)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)));
     }
 
     @Test
@@ -69,7 +75,7 @@ public class WorkingHoursControllerTests {
         when(workingHoursService.upsertWorkingHours(workingHoursDto))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(post("/working-hours/insert")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/insert")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(workingHoursDto)));
 
@@ -78,11 +84,11 @@ public class WorkingHoursControllerTests {
 
     @Test
     public void testUpsertWorkingHours_whenDayOfWeekNotValid_thenReturnBadRequest() throws Exception {
-        workingHoursDto.setDayOfWeek(15);
+        workingHoursDto.setDayOfWeek(INVALID_DAY_OF_WEEK);
         when(workingHoursService.upsertWorkingHours(workingHoursDto))
                 .thenThrow(DataMismatchException.class);
 
-        ResultActions result = mockMvc.perform(post("/working-hours/insert")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/insert")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(workingHoursDto)));
 
@@ -91,15 +97,12 @@ public class WorkingHoursControllerTests {
 
     @Test
     public void testGetWorkingHoursByDoctorAndDay_whenDoctorAndDayNotNull_thenReturnOk() throws Exception {
-        String doctor = "TestDoctor";
-        Integer dayOfWeek = 1;
-
-        when(workingHoursService.getWorkingHoursByDoctorAndDay(doctor, dayOfWeek))
+        when(workingHoursService.getWorkingHoursByDoctorAndDay(DOCTOR, DAY_OF_WEEK))
                 .thenReturn(List.of(workingHoursDto));
 
-        ResultActions result = mockMvc.perform(get("/working-hours/by-doctor-and-day")
-                .param("doctor", doctor)
-                .param("day", String.valueOf(dayOfWeek)));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/by-doctor-and-day")
+                .param("doctor", DOCTOR)
+                .param("day", String.valueOf(DAY_OF_WEEK)));
 
         result.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", CoreMatchers.isA(List.class)))
@@ -108,13 +111,11 @@ public class WorkingHoursControllerTests {
 
     @Test
     public void testGetWorkingHoursByDoctorAndDay_whenDayNull_thenReturnOk() throws Exception {
-        String doctor = "TestDoctor";
-
-        when(workingHoursService.getWorkingHoursByDoctorAndDay(doctor, null))
+        when(workingHoursService.getWorkingHoursByDoctorAndDay(DOCTOR, null))
                 .thenReturn(List.of(workingHoursDto));
 
-        ResultActions result = mockMvc.perform(get("/working-hours/by-doctor-and-day")
-                .param("doctor", doctor));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/by-doctor-and-day")
+                .param("doctor", DOCTOR));
 
         result.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", CoreMatchers.isA(List.class)))
@@ -123,13 +124,11 @@ public class WorkingHoursControllerTests {
 
     @Test
     public void testGetWorkingHoursByDoctorAndDay_whenDoctorNull_thenReturnOk() throws Exception {
-        Integer dayOfWeek = 1;
-
-        when(workingHoursService.getWorkingHoursByDoctorAndDay(null, dayOfWeek))
+        when(workingHoursService.getWorkingHoursByDoctorAndDay(null, DAY_OF_WEEK))
                 .thenReturn(List.of(workingHoursDto));
 
-        ResultActions result = mockMvc.perform(get("/working-hours/by-doctor-and-day")
-                .param("day", String.valueOf(dayOfWeek)));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/by-doctor-and-day")
+                .param("day", String.valueOf(DAY_OF_WEEK)));
 
         result.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", CoreMatchers.isA(List.class)))
@@ -141,7 +140,7 @@ public class WorkingHoursControllerTests {
         when(workingHoursService.getWorkingHoursByDoctorAndDay(null, null))
                 .thenReturn(List.of(workingHoursDto));
 
-        ResultActions result = mockMvc.perform(get("/working-hours/by-doctor-and-day"));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/by-doctor-and-day"));
 
         result.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", CoreMatchers.isA(List.class)))
@@ -150,92 +149,73 @@ public class WorkingHoursControllerTests {
 
     @Test
     public void testGetWorkingHoursByDoctorAndDay_whenDoctorNotExist_thenReturnBadRequest() throws Exception {
-        String doctor = "FakeDoctor";
-        Integer dayOfWeek = 1;
-
-        when(workingHoursService.getWorkingHoursByDoctorAndDay(doctor, dayOfWeek))
+        when(workingHoursService.getWorkingHoursByDoctorAndDay(DOCTOR, DAY_OF_WEEK))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(get("/working-hours/by-doctor-and-day")
-                .param("doctor", doctor)
-                .param("day", String.valueOf(dayOfWeek)));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/by-doctor-and-day")
+                .param("doctor", DOCTOR)
+                .param("day", String.valueOf(DAY_OF_WEEK)));
 
         result.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
     public void testGetWorkingHoursByDoctorAndDay_whenDayNotValid_thenReturnBadRequest() throws Exception {
-        String doctor = "TestDoctor";
-        Integer dayOfWeek = 15;
-
-        when(workingHoursService.getWorkingHoursByDoctorAndDay(doctor, dayOfWeek))
+        when(workingHoursService.getWorkingHoursByDoctorAndDay(DOCTOR, INVALID_DAY_OF_WEEK))
                 .thenThrow(DataMismatchException.class);
 
-        ResultActions result = mockMvc.perform(get("/working-hours/by-doctor-and-day")
-                .param("doctor", doctor)
-                .param("day", String.valueOf(dayOfWeek)));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/by-doctor-and-day")
+                .param("doctor", DOCTOR)
+                .param("day", String.valueOf(INVALID_DAY_OF_WEEK)));
 
         result.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
     public void testDeleteWorkingHoursByDoctorAndDay_whenDoctorAndDayNotNull_thenReturnOk() throws Exception {
-        Long expectedId = 1L;
-        String doctor = "TestDoctor";
-        Integer dayOfWeek = 1;
+        when(workingHoursService.deleteWorkingHoursByDoctorAndDay(DOCTOR, DAY_OF_WEEK))
+                .thenReturn(ID);
 
-        when(workingHoursService.deleteWorkingHoursByDoctorAndDay(doctor, dayOfWeek))
-                .thenReturn(expectedId);
-
-        ResultActions result = mockMvc.perform(delete("/working-hours/by-doctor-and-day")
-                .param("doctor", doctor)
-                .param("day", String.valueOf(dayOfWeek)));
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/by-doctor-and-day")
+                .param("doctor", DOCTOR)
+                .param("day", String.valueOf(DAY_OF_WEEK)));
 
         result.andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(expectedId)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(DAY_OF_WEEK)));
     }
 
     @Test
     public void testDeleteWorkingHoursByDoctorAndDay_whenDayNull_thenReturnOk() throws Exception {
-        Long expectedId = 1L;
-        String doctor = "TestDoctor";
+        when(workingHoursService.deleteWorkingHoursByDoctorAndDay(DOCTOR, null))
+                .thenReturn(ID);
 
-        when(workingHoursService.deleteWorkingHoursByDoctorAndDay(doctor, null))
-                .thenReturn(expectedId);
-
-        ResultActions result = mockMvc.perform(delete("/working-hours/by-doctor-and-day")
-                .param("doctor", doctor));
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/by-doctor-and-day")
+                .param("doctor", DOCTOR));
 
         result.andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(expectedId)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)));
     }
 
     @Test
     public void testDeleteWorkingHoursByDoctorAndDay_whenDoctorNotExist_thenReturnBadRequest() throws Exception {
-        String doctor = "FakeDoctor";
-        Integer dayOfWeek = 1;
-
-        when(workingHoursService.deleteWorkingHoursByDoctorAndDay(doctor, dayOfWeek))
+        when(workingHoursService.deleteWorkingHoursByDoctorAndDay(FAKE_DOCTOR, DAY_OF_WEEK))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(delete("/working-hours/by-doctor-and-day")
-                .param("doctor", doctor)
-                .param("day", String.valueOf(dayOfWeek)));
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/by-doctor-and-day")
+                .param("doctor", FAKE_DOCTOR)
+                .param("day", String.valueOf(DAY_OF_WEEK)));
 
         result.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
     public void testDeleteWorkingHoursByDoctorAndDay_whenDayNotValid_thenReturnBadRequest() throws Exception {
-        String doctor = "TestDoctor";
-        Integer dayOfWeek = 15;
-
-        when(workingHoursService.deleteWorkingHoursByDoctorAndDay(doctor, dayOfWeek))
+        when(workingHoursService.deleteWorkingHoursByDoctorAndDay(DOCTOR, INVALID_DAY_OF_WEEK))
                 .thenThrow(DataMismatchException.class);
 
-        ResultActions result = mockMvc.perform(delete("/working-hours/by-doctor-and-day")
-                .param("doctor", doctor)
-                .param("day", String.valueOf(dayOfWeek)));
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/by-doctor-and-day")
+                .param("doctor", DOCTOR)
+                .param("day", String.valueOf(INVALID_DAY_OF_WEEK)));
 
         result.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }

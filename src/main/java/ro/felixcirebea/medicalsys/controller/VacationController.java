@@ -28,7 +28,7 @@ public class VacationController {
     @PostMapping("/insert")
     public ResponseEntity<Long> insertVacation(
             @RequestBody @Valid VacationDto vacationDto)
-            throws DataMismatchException, DataNotFoundException, ConcurrencyException {
+            throws DataNotFoundException, ConcurrencyException {
         return ResponseEntity.ok(vacationService.insertVacation(vacationDto));
     }
 

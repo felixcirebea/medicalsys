@@ -38,6 +38,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 public class SpecialtyControllerTests {
 
+    public static final String BASE_PATH = "/specialties";
+    public static final Long ID = 1L;
+    public static final Long NON_EXISTENT_ID = 999L;
+    public static final String SPECIALTY = "TestSpecialty";
+    public static final String FAKE_SPECIALTY = "FakeSpecialty";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -62,40 +68,37 @@ public class SpecialtyControllerTests {
 
     @Test
     public void testUpsertSpecialty_whenSpecialtyNotPresent_thenReturnOk() throws Exception {
-        Long expectedId = 1L;
-        when(specialtyService.upsertSpecialty(specialtyDto1)).thenReturn(expectedId);
+        when(specialtyService.upsertSpecialty(specialtyDto1)).thenReturn(ID);
 
-        ResultActions result = mockMvc.perform(post("/specialties/insert")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/insert")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(specialtyDto1)));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("1"))
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)))
                 .andDo(MockMvcResultHandlers.print());
     }
 
     @Test
     public void testUpsertSpecialty_whenIdNotNullAndSpecialtyExists_thenReturnOk() throws Exception {
-        Long expectedId = 1L;
-        specialtyDto1.setId(expectedId);
-        when(specialtyService.upsertSpecialty(specialtyDto1)).thenReturn(expectedId);
+        specialtyDto1.setId(ID);
+        when(specialtyService.upsertSpecialty(specialtyDto1)).thenReturn(ID);
 
-        ResultActions result = mockMvc.perform(post("/specialties/insert")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/insert")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(specialtyDto1)));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("1"))
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)))
                 .andDo(MockMvcResultHandlers.print());
     }
 
     @Test
     public void testUpsertSpecialty_whenIdNotNullAndSpecialtyNotExist_thenReturnBadRequest() throws Exception {
-        Long nonExistentId = 999L;
-        specialtyDto1.setId(nonExistentId);
+        specialtyDto1.setId(NON_EXISTENT_ID);
         when(specialtyService.upsertSpecialty(specialtyDto1)).thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(post("/specialties/insert")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/insert")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(specialtyDto1)));
 
@@ -105,11 +108,9 @@ public class SpecialtyControllerTests {
 
     @Test
     public void testGetSpecialtyById_whenIdExists_thenReturnOk() throws Exception {
-        Long id = 1L;
+        when(specialtyService.getSpecialtyById(ID)).thenReturn(specialtyDto1.getName());
 
-        when(specialtyService.getSpecialtyById(id)).thenReturn(specialtyDto1.getName());
-
-        ResultActions result = mockMvc.perform(get("/specialties/" + id)
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/" + ID)
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isOk())
@@ -121,7 +122,7 @@ public class SpecialtyControllerTests {
     public void testGetSpecialtyById_whenIdNotLong_thenReturnBadRequest() throws Exception {
         String id = "test";
 
-        ResultActions result = mockMvc.perform(get("/specialties/" + id)
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/" + id)
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isBadRequest())
@@ -131,12 +132,10 @@ public class SpecialtyControllerTests {
 
     @Test
     public void testGetSpecialtyById_whenIdNotExist_thenReturnBadRequest() throws Exception {
-        Long nonExistentId = 999L;
-
-        when(specialtyService.getSpecialtyById(nonExistentId))
+        when(specialtyService.getSpecialtyById(NON_EXISTENT_ID))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(get("/specialties/" + nonExistentId)
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/" + NON_EXISTENT_ID)
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isBadRequest())
@@ -145,15 +144,13 @@ public class SpecialtyControllerTests {
 
     @Test
     public void testGetSpecialtyByName_whenSpecialtyExists_thenReturnOk() throws Exception {
-        String inputName = "TestSpecialty";
         String expectedName = specialtyDto1.getName();
 
-        when(specialtyService.getSpecialtyByName(inputName)).thenReturn(expectedName);
+        when(specialtyService.getSpecialtyByName(SPECIALTY)).thenReturn(expectedName);
 
-        ResultActions result = mockMvc.perform(get("/specialties/get")
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/get")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(expectedName)
-                .param("name", inputName));
+                .param("name", SPECIALTY));
 
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", CoreMatchers.is(expectedName)))
@@ -162,14 +159,13 @@ public class SpecialtyControllerTests {
 
     @Test
     public void testGetSpecialtyByName_whenSpecialtyNotExist_thenReturnBadRequest() throws Exception {
-        String inputName = "FakeSpecialty";
 
-        when(specialtyService.getSpecialtyByName(inputName))
+        when(specialtyService.getSpecialtyByName(FAKE_SPECIALTY))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(get("/specialties/get")
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/get")
                 .contentType(MediaType.APPLICATION_JSON)
-                .param("name", inputName));
+                .param("name", FAKE_SPECIALTY));
 
         result.andExpect(status().isBadRequest())
                 .andDo(MockMvcResultHandlers.print());
@@ -179,18 +175,17 @@ public class SpecialtyControllerTests {
     public void testGetAllSpecialties_whenSpecialtiesExist_thenReturnOk() throws Exception {
         specialtyDto1.setId(1L);
         specialtyDto2.setId(2L);
-        String expectedName = "TestSpecialty";
 
         when(specialtyService.getAllSpecialties()).thenReturn(List.of(specialtyDto1, specialtyDto2));
 
-        ResultActions result = mockMvc.perform(get("/specialties/all")
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/all")
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", CoreMatchers.isA(List.class)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()", CoreMatchers.is(2)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", CoreMatchers.is(expectedName)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name", CoreMatchers.is(expectedName)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", CoreMatchers.is(SPECIALTY)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name", CoreMatchers.is(SPECIALTY)))
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -198,7 +193,7 @@ public class SpecialtyControllerTests {
     public void testGetAllSpecialties_whenSpecialtiesNotExist_thenReturnOk() throws Exception {
         when(specialtyService.getAllSpecialties()).thenReturn(Collections.emptyList());
 
-        ResultActions result = mockMvc.perform(get("/specialties/all")
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/all")
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isOk())
@@ -209,15 +204,13 @@ public class SpecialtyControllerTests {
 
     @Test
     public void testDeleteById_whenIdExists_thenReturnOk() throws Exception {
-        Long id = 1L;
+        when(specialtyService.deleteSpecialtyById(ID)).thenReturn(ID);
 
-        when(specialtyService.deleteSpecialtyById(id)).thenReturn(id);
-
-        ResultActions result = mockMvc.perform(delete("/specialties/" + id)
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/" + ID)
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(id)))
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)))
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -225,7 +218,7 @@ public class SpecialtyControllerTests {
     public void testDeleteById_whenIdNotLong_thenReturnBadRequest() throws Exception {
         String id = "test";
 
-        ResultActions result = mockMvc.perform(delete("/specialties/" + id)
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/" + id)
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isBadRequest())
@@ -234,29 +227,24 @@ public class SpecialtyControllerTests {
 
     @Test
     public void testDeleteSpecialtyByName_whenNameExists_thenReturnOk() throws Exception {
-        Long id = 1L;
-        String inputName = "TestSpecialty";
+        when(specialtyService.deleteSpecialtyByName(SPECIALTY))
+                .thenReturn(ID);
 
-        when(specialtyService.deleteSpecialtyByName(inputName))
-                .thenReturn(id);
-
-        ResultActions result = mockMvc.perform(delete("/specialties/by-name")
-                .param("name", inputName)
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/by-name")
+                .param("name", SPECIALTY)
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(id)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)));
     }
 
     @Test
     public void testDeleteSpecialtyByName_whenNameNotExist_thenReturnBadRequest() throws Exception {
-        String inputName = "FakeSpecialty";
-
-        when(specialtyService.deleteSpecialtyByName(inputName))
+        when(specialtyService.deleteSpecialtyByName(FAKE_SPECIALTY))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(delete("/specialties/by-name")
-                .param("name", inputName)
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/by-name")
+                .param("name", FAKE_SPECIALTY)
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isBadRequest())
@@ -269,11 +257,10 @@ public class SpecialtyControllerTests {
     public void testGetAllSpecialties_withMapper_whenSpecialtiesExist_thenReturnOk() throws Exception {
         specialtyDto1.setId(1L);
         specialtyDto2.setId(2L);
-        String expectedName = "TestSpecialty";
 
         when(specialtyService.getAllSpecialties()).thenReturn(List.of(specialtyDto1, specialtyDto2));
 
-        MvcResult mvcResult = mockMvc.perform(get("/specialties/all"))
+        MvcResult mvcResult = mockMvc.perform(get(BASE_PATH + "/all"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
@@ -284,8 +271,8 @@ public class SpecialtyControllerTests {
 
         Assertions.assertThat(result.isEmpty()).isFalse();
         Assertions.assertThat(result.size()).isEqualTo(2);
-        Assertions.assertThat(result.get(0).getName()).isEqualTo(expectedName);
-        Assertions.assertThat(result.get(1).getName()).isEqualTo(expectedName);
+        Assertions.assertThat(result.get(0).getName()).isEqualTo(SPECIALTY);
+        Assertions.assertThat(result.get(1).getName()).isEqualTo(SPECIALTY);
     }
 
 

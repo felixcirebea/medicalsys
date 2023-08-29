@@ -31,6 +31,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class DeleteUtilityTests {
 
+    public static final String FIELD = "TestSpecialty";
     private static final Long ID = 1L;
 
     private static final String FAIL_MESSAGE = "Fail";
@@ -38,6 +39,8 @@ public class DeleteUtilityTests {
     private static final String SUCCESS_MESSAGE = "Success";
 
     private static final String EXCEPTION_MESSAGE = "Exception";
+    public static final String DELETE_WORKING_HOURS_MSG = "Working hours for %s deleted";
+    public static final String CANCEL_APPOINTMENTS_MSG = "Appointments for %s canceled";
 
     private SpecialtyEntity specialtyEntity;
 
@@ -124,14 +127,13 @@ public class DeleteUtilityTests {
     @Test
     public void testSoftDeleteByField_whenOptionalEmpty_thenThrowException() {
         //Arrange
-        String field = "TestSpecialty";
         Optional<SpecialtyEntity> specialtyEntityOptional = Optional.empty();
 
         doNothing().when(infoContributor).incrementFailedDeleteOperations();
 
         //Act && assert
         Assertions.assertThatThrownBy(() -> utility.softDeleteByField(
-                        field, specialtyEntityOptional, specialtyRepository,
+                        FIELD, specialtyEntityOptional, specialtyRepository,
                         FAIL_MESSAGE, SUCCESS_MESSAGE, EXCEPTION_MESSAGE, infoContributor))
                 .isInstanceOf(DataNotFoundException.class);
 
@@ -157,14 +159,14 @@ public class DeleteUtilityTests {
         specialtyEntity.setInvestigations(List.of(investigation1, investigation2));
 
         when(workingHoursService.deleteAllWorkingHoursForDoctor(doctor1))
-                .thenReturn(String.format("Working hours for %s deleted", doctor1.getName()));
+                .thenReturn(String.format(DELETE_WORKING_HOURS_MSG, doctor1.getName()));
         when(workingHoursService.deleteAllWorkingHoursForDoctor(doctor2))
-                .thenReturn(String.format("Working hours for %s deleted", doctor2.getName()));
+                .thenReturn(String.format(DELETE_WORKING_HOURS_MSG, doctor2.getName()));
 
         when(appointmentService.cancelAllAppointmentForDoctor(doctor1))
-                .thenReturn(String.format("Appointments for %s canceled", doctor1.getName()));
+                .thenReturn(String.format(CANCEL_APPOINTMENTS_MSG, doctor1.getName()));
         when(appointmentService.cancelAllAppointmentForDoctor(doctor2))
-                .thenReturn(String.format("Appointments for %s canceled", doctor2.getName()));
+                .thenReturn(String.format(CANCEL_APPOINTMENTS_MSG, doctor2.getName()));
 
         when(doctorRepository.saveAll(List.of(doctor1, doctor2)))
                 .thenReturn(List.of(doctor1, doctor2));

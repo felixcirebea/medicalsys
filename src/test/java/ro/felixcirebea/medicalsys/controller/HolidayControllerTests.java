@@ -33,6 +33,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 public class HolidayControllerTests {
 
+    public static final String BASE_PATH = "/holidays";
+    public static final Long ID = 1L;
+    public static final Long NON_EXISTENT_ID = 999L;
+    public static final String HOLIDAY = "TestHoliday";
+    public static final String FAKE_HOLIDAY = "FakeHoliday";
+    public static final String DATE = "2023-08-15";
+    public static final String WRONG_DATE = "2023/08/15";
+    public static final String DESCRIPTION = "TestHoliday";
+    public static final String FAKE_DESCRIPTION = "FakeDoctor";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -54,41 +64,38 @@ public class HolidayControllerTests {
 
     @Test
     public void testUpsertHoliday_whenHolidayNotExist_thenReturnOk() throws Exception {
-        Long expectedId = 1L;
         when(holidayService.upsertHoliday(holidayDto))
-                .thenReturn(expectedId);
+                .thenReturn(ID);
 
-        ResultActions result = mockMvc.perform(post("/holidays/insert")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/insert")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(holidayDto)));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(expectedId)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)));
     }
 
     @Test
     public void testUpsertHoliday_whenIdNotNullHolidayExists_thenReturnOk() throws Exception {
-        Long expectedId = 1L;
-        holidayDto.setId(expectedId);
+        holidayDto.setId(ID);
         when(holidayService.upsertHoliday(holidayDto))
-                .thenReturn(expectedId);
+                .thenReturn(ID);
 
-        ResultActions result = mockMvc.perform(post("/holidays/insert")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/insert")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(holidayDto)));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(expectedId)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)));
     }
 
     @Test
     public void testUpsertHoliday_whenIdNotNullHolidayNotExist_thenReturnBadRequest() throws Exception {
-        Long nonExistentId = 999L;
-        holidayDto.setId(nonExistentId);
+        holidayDto.setId(NON_EXISTENT_ID);
         when(holidayService.upsertHoliday(holidayDto))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(post("/holidays/insert")
+        ResultActions result = mockMvc.perform(post(BASE_PATH + "/insert")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(holidayDto)));
 
@@ -97,10 +104,9 @@ public class HolidayControllerTests {
 
     @Test
     public void testGetHolidayById_whenHolidayExists_thenReturnOk() throws Exception {
-        Long id = 1L;
-        when(holidayService.getHolidayById(id)).thenReturn(holidayDto);
+        when(holidayService.getHolidayById(ID)).thenReturn(holidayDto);
 
-        ResultActions result = mockMvc.perform(get("/holidays/" + id));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/" + ID));
 
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath(
@@ -113,11 +119,10 @@ public class HolidayControllerTests {
 
     @Test
     public void testGetHolidayById_whenHolidayNotExist_thenReturnBadRequest() throws Exception {
-        Long nonExistentId = 999L;
-        when(holidayService.getHolidayById(nonExistentId))
+        when(holidayService.getHolidayById(NON_EXISTENT_ID))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(get("/holidays/" + nonExistentId));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/" + NON_EXISTENT_ID));
 
         result.andExpect(status().isBadRequest());
     }
@@ -126,19 +131,18 @@ public class HolidayControllerTests {
     public void testGetHolidayById_whenIdNotLong_thenReturnBadRequest() throws Exception {
         String id = "test";
 
-        ResultActions result = mockMvc.perform(get("/holidays/" + id));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/" + id));
 
         result.andExpect(status().isBadRequest());
     }
 
     @Test
     public void testGetHolidayByDescription_whenHolidayExists_thenReturnOk() throws Exception {
-        String description = "TestHoliday";
-        when(holidayService.getHolidayByDescription(description))
+        when(holidayService.getHolidayByDescription(HOLIDAY))
                 .thenReturn(holidayDto);
 
-        ResultActions result = mockMvc.perform(get("/holidays/by-description")
-                .param("description", description));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/by-description")
+                .param("description", HOLIDAY));
 
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath(
@@ -151,12 +155,11 @@ public class HolidayControllerTests {
 
     @Test
     public void testGetHolidayByDescription_whenHolidayNotExist_thenReturnBadRequest() throws Exception {
-        String description = "FakeHoliday";
-        when(holidayService.getHolidayByDescription(description))
+        when(holidayService.getHolidayByDescription(FAKE_HOLIDAY))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(get("/holidays/by-description")
-                .param("description", description));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/by-description")
+                .param("description", FAKE_HOLIDAY));
 
         result.andExpect(status().isBadRequest());
     }
@@ -165,7 +168,7 @@ public class HolidayControllerTests {
     public void testGetAllHolidays_whenHolidaysExist_thenReturnOk() throws Exception {
         when(holidayService.getAllHolidays()).thenReturn(List.of(holidayDto));
 
-        ResultActions result = mockMvc.perform(get("/holidays/all"));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/all"));
 
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath(
@@ -178,13 +181,11 @@ public class HolidayControllerTests {
 
     @Test
     public void testIsHoliday_whenDateValid_thenReturnOk() throws Exception {
-        String date = "2023-08-15";
-
-        when(holidayService.isDateHoliday(LocalDate.parse(date)))
+        when(holidayService.isDateHoliday(LocalDate.parse(DATE)))
                 .thenReturn(true);
 
-        ResultActions result = mockMvc.perform(get("/holidays/is-holiday")
-                .param("date", date));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/is-holiday")
+                .param("date", DATE));
 
         result.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string(String.valueOf(true)));
@@ -192,57 +193,50 @@ public class HolidayControllerTests {
 
     @Test
     public void testIsHoliday_whenDateNotValid_thenReturnOk() throws Exception {
-        String date = "2023/08/15";
-
-        ResultActions result = mockMvc.perform(get("/holidays/is-holiday")
-                .param("date", date));
+        ResultActions result = mockMvc.perform(get(BASE_PATH + "/is-holiday")
+                .param("date", WRONG_DATE));
 
         result.andExpect(status().isBadRequest());
     }
 
     @Test
     public void testDeleteHolidayById_whenHolidayExists_thenReturnOk() throws Exception {
-        Long id = 1L;
-        when(holidayService.deleteHolidayById(id)).thenReturn(id);
+        when(holidayService.deleteHolidayById(ID)).thenReturn(ID);
 
-        ResultActions result = mockMvc.perform(delete("/holidays/"+id));
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/" + ID));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(id)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)));
     }
 
     @Test
     public void testDeleteHolidayById_whenHolidayNotExist_thenReturnOk() throws Exception {
-        Long nonExistentId = 999L;
-        when(holidayService.deleteHolidayById(nonExistentId)).thenReturn(nonExistentId);
+        when(holidayService.deleteHolidayById(NON_EXISTENT_ID)).thenReturn(NON_EXISTENT_ID);
 
-        ResultActions result = mockMvc.perform(delete("/holidays/"+nonExistentId));
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/" + NON_EXISTENT_ID));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(nonExistentId)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(NON_EXISTENT_ID)));
     }
 
     @Test
     public void testHolidayByDescription_whenHolidayExists_thenReturnOk() throws Exception {
-        Long id = 1L;
-        String description = "TestHoliday";
-        when(holidayService.deleteHolidayByDescription(description)).thenReturn(id);
+        when(holidayService.deleteHolidayByDescription(DESCRIPTION)).thenReturn(ID);
 
-        ResultActions result = mockMvc.perform(delete("/holidays/by-description")
-                .param("description", description));
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/by-description")
+                .param("description", DESCRIPTION));
 
         result.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(id)));
+                .andExpect(MockMvcResultMatchers.content().string(String.valueOf(ID)));
     }
 
     @Test
     public void testHolidayByDescription_whenHolidayNotExist_thenReturnBadRequest() throws Exception {
-        String description = "FakeDoctor";
-        when(holidayService.deleteHolidayByDescription(description))
+        when(holidayService.deleteHolidayByDescription(FAKE_DESCRIPTION))
                 .thenThrow(DataNotFoundException.class);
 
-        ResultActions result = mockMvc.perform(delete("/holidays/by-description")
-                .param("description", description));
+        ResultActions result = mockMvc.perform(delete(BASE_PATH + "/by-description")
+                .param("description", FAKE_DESCRIPTION));
 
         result.andExpect(status().isBadRequest());
     }
